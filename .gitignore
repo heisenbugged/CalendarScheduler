@@ -4,3 +4,5 @@
 .project
 .settings
 bin-debug
+html-template
+.DS_Store
