@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="620" height="600"
+		 creationComplete="createDaysGrid()">
+	<s:layout>
+		<s:BasicLayout/>
+	</s:layout>
+	
+	<fx:Script>
+		<![CDATA[
+			import classes.model.Week;
+			import classes.model.WeekDay;
+			import classes.utils.CommonUtils;
+			
+			import mx.collections.ArrayCollection;
+			[Bindable]
+			private var weekArray:ArrayCollection;
+			// create grid of days in current month as per current date provided
+			private function createDaysGrid():void
+			{
+				weekArray = new ArrayCollection();
+				var currentYear:int  = dtPicker.displayedYear;
+				var currentMonth:int = dtPicker.displayedMonth;
+				// always assume that first day of a month will have date as 1
+				// currentMonth and currentYear are supplied by main.mxml file		
+				var objDate:Date = new Date(currentYear, currentMonth, 1);
+				
+				// get total days count for currentMonth in currentYear
+				var intTotalDaysInMonth:int = CommonUtils.getDaysCount(currentMonth, currentYear);
+				var i:int;
+				// add empty items in case first day is not Sunday
+				// i.e. MonthView always shows 7 coloumns starting from Sunday and ending to Saturday
+				// so if it suppose Wednesday is the date 1 of this month that means we need to
+				// add 3 empty cells at start
+				var arrDays:Array = new Array();
+				var firstWeek:Week = new Week();
+				var weekDay:WeekDay;
+				var weekDays:Array = ['sunday','monday','tuesday','wednesday', 'thursday', 'friday','saturday'];
+				for(i=0; i<objDate.getDay(); i++)
+				{	
+					weekDay = new WeekDay();
+					weekDay.dayNumber = -1;
+					firstWeek[weekDays[i]] = weekDay;		
+				}
+				weekArray.addItem(firstWeek);
+				var currentWeek:Week;
+				// now loop through total number of days in this month and save values in array
+				for(i=0; i<intTotalDaysInMonth; i++)
+				{
+					if(i % 7 == 0){
+						currentWeek = new Week();
+					}
+					var dayNumber:int = i+1;
+					var objDate1:Date = new Date(currentYear, currentMonth,i);
+					var strDayName:String = CommonUtils.getDayName(objDate1.getDay());
+					var dayWeekNumber = objDate1.getDay();
+					weekDay = new WeekDay();
+					
+					weekDay.dayNumber = dayNumber;
+					weekDay.dayName = strDayName;
+					currentWeek[weekDays[dayWeekNumber]] = weekDay;
+					
+					if( i > 0 && i % 7 == 0){
+						weekArray.addItem(currentWeek);
+					}
+				}
+				
+			}		
+			
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<s:DataGrid id="grdCalendar" x="6" y="43" width="602" height="529" dataProvider="{weekArray}"
+				requestedRowCount="4" rowHeight="85" selectionMode="singleCell"
+				itemRenderer="com.components.WeekDayView">
+		
+		<s:columns>
+			<s:ArrayList>
+				<s:GridColumn width="85" dataField="sunday" headerText="Sunday" resizable="false"
+							  sortable="false">
+				</s:GridColumn>
+				<s:GridColumn width="85" dataField="monday" headerText="Monday" resizable="false"
+							  sortable="false">
+				</s:GridColumn>
+				<s:GridColumn width="85" dataField="tuesday" headerText="Tuesday"
+							  resizable="false" sortable="false">
+				</s:GridColumn>
+				<s:GridColumn width="85" dataField="wednesday" headerText="Wednesday"
+							  resizable="false" sortable="false">
+				</s:GridColumn>
+				<s:GridColumn width="85" dataField="thursday" headerText="Thursday"
+							  resizable="false" sortable="false">
+				</s:GridColumn>
+				<s:GridColumn width="85" dataField="friday" headerText="Friday" resizable="false"
+							  sortable="false">
+				</s:GridColumn>
+				<s:GridColumn width="85" dataField="saturday" headerText="Saturday"
+							  resizable="false" sortable="false">
+				</s:GridColumn>
+			</s:ArrayList>
+		</s:columns>
+				
+	</s:DataGrid>
+	
+	<mx:DateChooser id="dtPicker" x="415" y="10" height="31" enabled="true" showToday="false"
+					yearNavigationEnabled="true" change="createDaysGrid()"/>
+</s:Group>
