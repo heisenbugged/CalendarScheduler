@@ -93,7 +93,12 @@
 					weekDay.dayName = arrDays[i+6].dayName as String;
 					currentWeek.saturday = weekDay;
 					weekArray.addItem(currentWeek);
+					
 				}
+				
+				// Dispatch monthChanged event which tell item renderers
+				// to clear their values.
+				dispatchEvent(new Event('monthChanged', true));
 			}	
 			
 			protected function dtPicker_changeHandler(event:CalendarLayoutChangeEvent):void

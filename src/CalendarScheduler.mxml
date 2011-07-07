@@ -4,11 +4,20 @@
 			   xmlns:mx="library://ns.adobe.com/flex/mx"
 			   xmlns:ns1="*"
 			   xmlns:components="com.components.*"
-			   minWidth="955" minHeight="600">
+			   minWidth="955" minHeight="600" initialize="init()">
 	
 	<fx:Script>
 		<![CDATA[
 			import mx.controls.Alert;
+			
+			// Static reference to main application.
+			public static var INSTANCE:Application;
+			
+			private function init():void {
+				// set static instance variable to the instantiated main app.
+				INSTANCE = this;
+			}
+			
 			protected function button1_clickHandler(event:MouseEvent):void
 			{
 				Alert.show("Click me");
