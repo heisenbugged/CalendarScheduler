@@ -114,11 +114,40 @@ package classes.utils
 			}
 		}
 		
-		
-		
-		
-		
-		
-
+		public static function getArrayDays(objDate:Date,currentYear:int,currentMonth:int, intTotalDaysInMonth:int  ):Array{
+			var arrDays:Array = new Array();
+			var i:int;
+			for(i=0; i<objDate.getDay(); i++)
+			{
+				arrDays.push({dayNumber:-1, dayName:"Nome"});
+			}
+			
+			// now loop through total number of days in this month and save values in array
+			for(i=0; i<intTotalDaysInMonth; i++)
+			{
+				var objDate1:Date = new Date(currentYear, currentMonth, i+1);
+				var strStartDayName:String = CommonUtils.getDayName(objDate1.getDay());
+				arrDays.push({dayNumber:i+1, dayName:strStartDayName});
+			}
+			
+			// if first day of the month is Friday and it is not a leap year then we need to show 7 rows
+			// there could be max 42 items in a calendar grid for a month with 6 rows
+			// so add blank values in case still some cells are pending as per count of 7 cols x 6 rows = 42
+			if(objDate.getDay() >= 5 && arrDays.length <= 32)
+			{
+				for(i=arrDays.length; i<42; i++)
+				{
+					arrDays.push({dayNumber:-1, dayName:"Nome"});
+				}
+			}
+			else
+			{
+				for(i=arrDays.length; i<35; i++)
+				{
+					arrDays.push({dayNumber:-1, dayName:"Nome"});
+				}
+			}
+			return arrDays;
+		}
 	}
 }

@@ -18,14 +18,14 @@
 			{
 				if ( value != null ) {
 					
-					/*
+					
 					weekDay = value as WeekDay;
 					
 					if(displayLabel) {
 						displayLabel.text = value.toString();
-						// displayLabel.text = weekDay.dayNumber.toString();
+						 displayLabel.text = weekDay.dayNumber.toString();
 					}
-					*/
+					
 				}
 			}
 			
