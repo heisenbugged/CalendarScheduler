@@ -20,6 +20,10 @@
 			// create grid of days in current month as per current date provided
 			private function createDaysGrid():void
 			{
+				// Dispatch monthChanged event which tell item renderers
+				// to clear their values.
+				dispatchEvent(new Event('monthChanged', true));
+				
 				weekArray = new ArrayCollection();
 				var currentYear:int  = dtPicker.displayedYear;
 				var currentMonth:int = dtPicker.displayedMonth;
@@ -96,9 +100,6 @@
 					
 				}
 				
-				// Dispatch monthChanged event which tell item renderers
-				// to clear their values.
-				dispatchEvent(new Event('monthChanged', true));
 			}	
 			
 			protected function dtPicker_changeHandler(event:CalendarLayoutChangeEvent):void

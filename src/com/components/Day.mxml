@@ -18,8 +18,9 @@
 				CalendarScheduler.INSTANCE.addEventListener('monthChanged', clearValues);
 			}
 			
-			private function clearValues(event:Event=null):void {
+			private function clearValues(event:Event=null):void {				
 				displayLabel.text = "";
+				weekDay = null;
 			}
 			
 			public override function set data(value:Object):void
