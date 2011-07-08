@@ -1,4 +1,4 @@
-package classes.events
+package com.etherpros.events
 {
 	import flash.events.Event;
 	

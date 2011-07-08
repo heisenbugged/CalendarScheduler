@@ -1,4 +1,4 @@
-package classes.model
+package com.etherpros.model
 {
 	public class WeekDay
 	{

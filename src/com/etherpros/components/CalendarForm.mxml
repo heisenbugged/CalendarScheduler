@@ -1,11 +1,168 @@
 <?xml version="1.0" encoding="utf-8"?>
 <s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
-		 xmlns:mx="library://ns.adobe.com/flex/mx" width="600" height="500">
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="620" height="600"
+		 creationComplete="createDaysGrid()">
+	<s:layout>
+		<s:BasicLayout/>
+	</s:layout>
+	
+	<fx:Script>
+		<![CDATA[
+			import com.etherpros.model.Week;
+			import com.etherpros.model.WeekDay;
+			import com.etherpros.utils.CommonUtils;
+			
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.events.CalendarLayoutChangeEvent;
+			
+			import spark.events.GridEvent;
+			[Bindable]
+			private var weekArray:ArrayCollection;
+			// create grid of days in current month as per current date provided
+			private function createDaysGrid():void
+			{
+				// Dispatch monthChanged event which tell item renderers
+				// to clear their values.
+				dispatchEvent(new Event('monthChanged', true));
+				
+				weekArray = new ArrayCollection();
+				var currentYear:int  = dtPicker.displayedYear;
+				var currentMonth:int = dtPicker.displayedMonth;
+				// always assume that first day of a month will have date as 1
+				// currentMonth and currentYear are supplied by main.mxml file		
+				var objDate:Date = new Date(currentYear, currentMonth, 1);
+				
+				// get total days count for currentMonth in currentYear
+				var intTotalDaysInMonth:int = CommonUtils.getDaysCount(currentMonth, currentYear);
+				var i:int;
+				var arrDays:Array =  CommonUtils.getArrayDays(objDate, currentYear, currentMonth, intTotalDaysInMonth);
+				var weekDay:WeekDay;
+				var currentWeek:Week;
+				
+				for(i=0; i<arrDays.length; i = i + 7)
+				{
+					if(i % 7 == 0){
+						currentWeek = new Week();
+					}				
+					
+					weekDay = new WeekDay();					
+					weekDay.dayNumber = arrDays[i].dayNumber as int;
+					weekDay.dayName = arrDays[i].dayName as String;
+					currentWeek.sunday = weekDay;						
+					weekDay = new WeekDay();
+					if ( arrDays[i+1] == null ){
+						weekArray.addItem(currentWeek);
+						continue;
+					}
+					weekDay.dayNumber = arrDays[i+1].dayNumber as int;
+					weekDay.dayName = arrDays[i+1].dayName as String;
+					currentWeek.monday = weekDay;
+					weekDay = new WeekDay();
+					if ( arrDays[i+2] == null ){
+						weekArray.addItem(currentWeek);
+						continue;
+					}
+					weekDay.dayNumber = arrDays[i+2].dayNumber as int;
+					weekDay.dayName = arrDays[i+2].dayName as String;
+					currentWeek.tuesday = weekDay;					
+					if ( arrDays[i+3] == null ){
+						weekArray.addItem(currentWeek);
+						continue;
+					}
+					weekDay = new WeekDay();
+					weekDay.dayNumber = arrDays[i+3].dayNumber as int;
+					weekDay.dayName = arrDays[i+3].dayName as String;
+					currentWeek.wednesday = weekDay;
+					if ( arrDays[i+4] == null ){
+						weekArray.addItem(currentWeek);
+						continue;
+					}
+					weekDay = new WeekDay();
+					weekDay.dayNumber = arrDays[i+4].dayNumber as int;
+					weekDay.dayName = arrDays[i+4].dayName as String;
+					currentWeek.thursday = weekDay;
+					if ( arrDays[i+5] == null ){
+						weekArray.addItem(currentWeek);
+						continue;
+					}
+					weekDay = new WeekDay();
+					weekDay.dayNumber = arrDays[i+5].dayNumber as int;
+					weekDay.dayName = arrDays[i+5].dayName as String;
+					currentWeek.friday = weekDay;
+					if ( arrDays[i+6] == null ){
+						weekArray.addItem(currentWeek);
+						continue;
+					}
+					weekDay = new WeekDay();
+					weekDay.dayNumber = arrDays[i+6].dayNumber as int;
+					weekDay.dayName = arrDays[i+6].dayName as String;
+					currentWeek.saturday = weekDay;
+					weekArray.addItem(currentWeek);
+					
+				}
+				
+			}	
+			
+			protected function dtPicker_changeHandler(event:CalendarLayoutChangeEvent):void
+			{
+				createDaysGrid();
+				
+			}
+			
+			protected function dtPicker_clickHandler(event:MouseEvent):void
+			{
+				createDaysGrid();
+				
+			}
+			
+			protected function grdCalendar_gridClickHandler(event:GridEvent):void
+			{
+				var actualPosition:Point = new Point(stage.mouseX, stage.mouseY);
+				Alert.show("Post X " +stage.mouseX + "Post Y " + stage.mouseX);
+				
+			}
+			
+		]]>
+	</fx:Script>
+	
 	<fx:Declarations>
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
 	</fx:Declarations>
-	<s:Grid x="13" y="20" width="577" height="457">
+	<s:DataGrid id="grdCalendar" x="6" y="43" width="602" height="387" dataProvider="{weekArray}"
+				gridClick="grdCalendar_gridClickHandler(event)" requestedRowCount="4" rowHeight="60"
+				selectionMode="none">
 		
-	</s:Grid>
+		<s:columns>
+			<s:ArrayList>
+				<s:GridColumn width="85" dataField="sunday" headerText="Sunday" resizable="false"
+							  sortable="false" itemRenderer="com.etherpros.components.DayView">
+				</s:GridColumn>
+				<s:GridColumn width="85" dataField="monday" headerText="Monday" resizable="false"
+							  sortable="false" itemRenderer="com.etherpros.components.DayView">
+				</s:GridColumn>
+				<s:GridColumn width="85" dataField="tuesday" headerText="Tuesday"
+							  resizable="false" sortable="false" itemRenderer="com.etherpros.components.DayView">
+				</s:GridColumn>
+				<s:GridColumn width="85" dataField="wednesday" headerText="Wednesday"
+							  resizable="false" sortable="false" itemRenderer="com.etherpros.components.DayView">
+				</s:GridColumn>
+				<s:GridColumn width="85" dataField="thursday" headerText="Thursday"
+							  resizable="false" sortable="false" itemRenderer="com.etherpros.components.DayView">
+				</s:GridColumn>
+				<s:GridColumn width="85" dataField="friday" headerText="Friday" resizable="false"
+							  sortable="false" itemRenderer="com.etherpros.components.DayView">
+				</s:GridColumn>
+				<s:GridColumn width="85" dataField="saturday" headerText="Saturday"
+							  resizable="false" sortable="false" itemRenderer="com.etherpros.components.DayView">
+				</s:GridColumn>
+			</s:ArrayList>
+		</s:columns>
+				
+	</s:DataGrid>
+	
+	<mx:DateChooser id="dtPicker" x="415" y="10" height="31" change="dtPicker_changeHandler(event)"
+					click="dtPicker_clickHandler(event)" enabled="true" showToday="false"
+					yearNavigationEnabled="true"/>
 </s:Group>

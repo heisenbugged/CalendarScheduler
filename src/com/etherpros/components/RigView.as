@@ -1,4 +1,4 @@
-package com.components
+package com.etherpros.components
 {
 	import flash.display.Graphics;
 	import flash.display.Sprite;

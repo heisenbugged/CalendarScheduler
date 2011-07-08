@@ -8,7 +8,7 @@
 	</fx:Declarations>
 	<fx:Script>
 		<![CDATA[
-			import classes.model.WeekDay;
+			import com.etherpros.model.WeekDay;
 			
 			import mx.controls.listClasses.BaseListData;
 			

@@ -1,6 +1,5 @@
-package classes.utils
+package com.etherpros.utils
 {
-	import classes.model.DataHolder;
 	
 	import flash.events.MouseEvent;
 	
