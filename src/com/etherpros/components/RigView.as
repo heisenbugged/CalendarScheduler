@@ -13,7 +13,7 @@ package com.etherpros.components
 		private const LEFT:Number = 0;
 		private const RIGHT:Number = 1;
 		
-		private var s:Sprite = new Sprite();
+		private var s:Arrow = new Arrow();
 		private var g:Graphics;
 		
 		private var _width:Number;
@@ -28,12 +28,12 @@ package com.etherpros.components
 		
 		public function RigView(width:Number=300, height:Number=100) {
 			// add sprite with graphics to uicomponent container.
-			addChild(s);
+			addChild(s);			
 			g = s.graphics;
 			
 			// set width and height variables.
-			_width = width;
-			_height = height;
+			//_width = width;
+			//_height = height;
 			
 			// draw view
 			draw();
@@ -103,12 +103,12 @@ package com.etherpros.components
 		 *  with changes to the width or height of the component **/
 		private function draw():void {			
 			// clear out old graphics.
-			g.clear();
+			//g.clear();
 			
 			//re-paint
-			g.beginFill(0xFF0000);
-			g.drawRoundRect(0,0,width,height,15);
-			g.endFill();
+			//g.beginFill(0xFF0000);
+			//g.drawRoundRect(0,0,width,height,15);
+			//g.endFill();
 		}
 		
 		public override function set height(height:Number):void {
