@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
-		 xmlns:mx="library://ns.adobe.com/flex/mx" width="620" height="600"
-		 creationComplete="createDaysGrid()">
+		 xmlns:mx="library://ns.adobe.com/flex/mx"  
+		 xmlns:components="com.etherpros.components.*"
+		 width="620" height="600" creationComplete="init()">
+	
 	<s:layout>
 		<s:BasicLayout/>
 	</s:layout>
 	
 	<fx:Script>
 		<![CDATA[
+			import com.etherpros.controllers.RigsController;
 			import com.etherpros.model.Week;
 			import com.etherpros.model.WeekDay;
 			import com.etherpros.utils.CommonUtils;
@@ -21,6 +24,19 @@
 			import spark.events.GridEvent;
 			[Bindable]
 			private var weekArray:ArrayCollection;
+			
+			private var rigsController:RigsController;
+			
+			private function init():void {
+				// set up controlller for rig views.
+				rigsController = new RigsController(this);
+				// set the offset based on the position of the first day.
+				rigsController.setOffset(grdCalendar.x + 2, grdCalendar.y + 27); // 26 is the header height
+				
+				// create first initial month grid.
+				createDaysGrid();
+			}
+			
 			// create grid of days in current month as per current date provided
 			private function createDaysGrid():void
 			{
@@ -42,67 +58,36 @@
 				var weekDay:WeekDay;
 				var currentWeek:Week;
 				
+				var weekDays:Array = ['sunday','monday','tuesday','wednesday','thursday','friday','saturday'];
+				var currentWeekIndex:int = 0;
+				monthloop:
 				for(i=0; i<arrDays.length; i = i + 7)
 				{
 					if(i % 7 == 0){
 						currentWeek = new Week();
 					}				
 					
-					weekDay = new WeekDay();					
-					weekDay.dayNumber = arrDays[i].dayNumber as int;
-					weekDay.dayName = arrDays[i].dayName as String;
-					currentWeek.sunday = weekDay;						
-					weekDay = new WeekDay();
-					if ( arrDays[i+1] == null ){
-						weekArray.addItem(currentWeek);
-						continue;
+					for(var j:int=0; j < weekDays.length; j++) {
+						if(arrDays[i+j] == null) {
+							weekArray.addItem(currentWeek);
+							continue monthloop;							
+						}
+						
+						weekDay = new WeekDay();
+						weekDay.dayNumber = arrDays[i+j].dayNumber as int;
+						weekDay.dayName = arrDays[i+j].dayName as String;
+						weekDay.dayIndex = j;
+						weekDay.weekIndex = currentWeekIndex;
+						
+						currentWeek[ weekDays[j] ] = weekDay;
 					}
-					weekDay.dayNumber = arrDays[i+1].dayNumber as int;
-					weekDay.dayName = arrDays[i+1].dayName as String;
-					currentWeek.monday = weekDay;
-					weekDay = new WeekDay();
-					if ( arrDays[i+2] == null ){
-						weekArray.addItem(currentWeek);
-						continue;
-					}
-					weekDay.dayNumber = arrDays[i+2].dayNumber as int;
-					weekDay.dayName = arrDays[i+2].dayName as String;
-					currentWeek.tuesday = weekDay;					
-					if ( arrDays[i+3] == null ){
-						weekArray.addItem(currentWeek);
-						continue;
-					}
-					weekDay = new WeekDay();
-					weekDay.dayNumber = arrDays[i+3].dayNumber as int;
-					weekDay.dayName = arrDays[i+3].dayName as String;
-					currentWeek.wednesday = weekDay;
-					if ( arrDays[i+4] == null ){
-						weekArray.addItem(currentWeek);
-						continue;
-					}
-					weekDay = new WeekDay();
-					weekDay.dayNumber = arrDays[i+4].dayNumber as int;
-					weekDay.dayName = arrDays[i+4].dayName as String;
-					currentWeek.thursday = weekDay;
-					if ( arrDays[i+5] == null ){
-						weekArray.addItem(currentWeek);
-						continue;
-					}
-					weekDay = new WeekDay();
-					weekDay.dayNumber = arrDays[i+5].dayNumber as int;
-					weekDay.dayName = arrDays[i+5].dayName as String;
-					currentWeek.friday = weekDay;
-					if ( arrDays[i+6] == null ){
-						weekArray.addItem(currentWeek);
-						continue;
-					}
-					weekDay = new WeekDay();
-					weekDay.dayNumber = arrDays[i+6].dayNumber as int;
-					weekDay.dayName = arrDays[i+6].dayName as String;
-					currentWeek.saturday = weekDay;
-					weekArray.addItem(currentWeek);
 					
+					weekArray.addItem(currentWeek);
+					currentWeekIndex++;	
 				}
+				
+				// set week array to controller.
+				rigsController.weeks = weekArray;
 				
 			}	
 			
@@ -118,18 +103,10 @@
 				
 			}
 			
-			protected function grdCalendar_gridClickHandler(event:GridEvent):void
-			{
-				var actualPosition:Point = new Point(stage.mouseX, stage.mouseY);
-				//Alert.show("Post X " +stage.mouseX + "Post Y " + stage.mouseX);
-				var ringBar:RingBar = new RingBar();				
-				ringBar.width = 100;
-				ringBar.height = 20;
-				ringBar.x  = this.stage.mouseX-30;
-				//ringBar.x  = event.localX;
-				ringBar.y  = this.stage.mouseY-50;
-				//ringBar.y  = event.localY;
-				addElement(ringBar);
+			protected function addRigView(event:GridEvent):void {
+				// fork over creation of rig to RigsController.			
+				var day:WeekDay = event.item[event.column.dataField] as WeekDay;
+				rigsController.addRig(day);
 			}
 			
 		]]>
@@ -138,8 +115,9 @@
 	<fx:Declarations>
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
 	</fx:Declarations>
+		
 	<s:DataGrid id="grdCalendar" x="6" y="43" width="602" height="387" dataProvider="{weekArray}"
-				gridClick="grdCalendar_gridClickHandler(event)" requestedRowCount="4" rowHeight="60"
+				gridClick="addRigView(event)" requestedRowCount="4" rowHeight="60"
 				selectionMode="none">
 		
 		<s:columns>

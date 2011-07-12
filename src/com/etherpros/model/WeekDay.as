@@ -5,6 +5,10 @@ package com.etherpros.model
 		private var _dayNumber:int = -1;
 		private var _dayName:String = "";
 		
+		public var dayIndex:int;
+		public var weekIndex:int;
+		
+		
 		public function WeekDay()
 		{
 		}

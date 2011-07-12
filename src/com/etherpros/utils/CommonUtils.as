@@ -118,7 +118,7 @@ package com.etherpros.utils
 			var i:int;
 			for(i=0; i<objDate.getDay(); i++)
 			{
-				arrDays.push({dayNumber:-1, dayName:"Nome"});
+				arrDays.push({dayNumber:-1, dayName:"None"});
 			}
 			
 			// now loop through total number of days in this month and save values in array
@@ -136,14 +136,14 @@ package com.etherpros.utils
 			{
 				for(i=arrDays.length; i<42; i++)
 				{
-					arrDays.push({dayNumber:-1, dayName:"Nome"});
+					arrDays.push({dayNumber:-1, dayName:"None"});
 				}
 			}
 			else
 			{
 				for(i=arrDays.length; i<35; i++)
 				{
-					arrDays.push({dayNumber:-1, dayName:"Nome"});
+					arrDays.push({dayNumber:-1, dayName:"None"});
 				}
 			}
 			return arrDays;

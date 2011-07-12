@@ -6,14 +6,18 @@ package com.etherpros.components
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	
+	import mx.controls.Label;
 	import mx.core.UIComponent;
 	
-	public class RigView extends UIComponent
-	{
+	import spark.components.Group;
+	
+	public class RigView extends Group
+	{ 
+	
 		private const LEFT:Number = 0;
 		private const RIGHT:Number = 1;
 		
-		private var s:Arrow = new Arrow();
+		private var s:Sprite = new Sprite();
 		private var g:Graphics;
 		
 		private var _width:Number;
@@ -27,18 +31,34 @@ package com.etherpros.components
 		private var originalMousePos:Point;
 		
 		public function RigView(width:Number=300, height:Number=100) {
-			// add sprite with graphics to uicomponent container.
-			addChild(s);			
+			
+			var spriteContainer:UIComponent = new UIComponent();			
+			spriteContainer.addChild(s);
+			
+			// add sprite with graphics to this group.
+			addElement(spriteContainer);
+			
 			g = s.graphics;
 			
+			// add rig view label (test)
+			var rigName:Label = new Label();
+			rigName.setStyle('color', '#ffffff');
+			rigName.setStyle('fontWeight', 'bold');
+			rigName.setStyle('fontSize', '11');
+			rigName.text = "Test Rig";
+			rigName.x = 10;
+			addElement(rigName);
+			
 			// set width and height variables.
-			//_width = width;
-			//_height = height;
+			this.width = width;
+			this.height = height;
 			
+			addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);			
+
+		}
+		private function init(event:Event=null):void {
 			// draw view
-			draw();
-			
-			s.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
+			draw();			
 		}
 
 		/** Used for starting a drag operation when either 
@@ -50,12 +70,10 @@ package com.etherpros.components
 			//left-drag
 			if(mouseX < 15) {
 				dragDirection = LEFT;
-				// trace("Dragging from left!");
 				beginDrag();
 			// right-drag	
 			}else if(mouseX > s.width-15) {
 				dragDirection = RIGHT;				
-				// trace("Dragging from right!");
 				beginDrag();
 			} else { 
 				// no drag direction.
@@ -101,14 +119,14 @@ package com.etherpros.components
 		
 		/** Redraws the graphics of the rig. Used for updating the view
 		 *  with changes to the width or height of the component **/
-		private function draw():void {			
+		public function draw(event:Event=null):void {
 			// clear out old graphics.
-			//g.clear();
+			g.clear();
 			
 			//re-paint
-			//g.beginFill(0xFF0000);
-			//g.drawRoundRect(0,0,width,height,15);
-			//g.endFill();
+			g.beginFill(0xFF0000);
+			g.drawRoundRect(0,0,width,height,15);
+			g.endFill();
 		}
 		
 		public override function set height(height:Number):void {
