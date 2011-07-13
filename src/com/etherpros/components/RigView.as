@@ -1,11 +1,14 @@
 package com.etherpros.components
 {
+	import com.etherpros.model.WeekDay;
+	
 	import flash.display.Graphics;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	
+	import mx.controls.Alert;
 	import mx.controls.Label;
 	import mx.core.UIComponent;
 	
@@ -23,15 +26,20 @@ package com.etherpros.components
 		private var _width:Number;
 		private var _height:Number;
 		
+		//The week's day where the ring view starts
+		private var _startDay:WeekDay;
+		//The week's day where the ring view ends
+		private var _endDay:WeekDay;
 		// Can either be LEFT or RIGHT.
 		// Is used when resizing a component to determine how it is being resized.
 		private var dragDirection:Number;
+		//Limit used for the drag and drop functionallity, the limit is related with the grid with
+		private var dradAndDropLimit:Number = -1;
 		
 		// Used for determining the difference in mouse position when dragging.
 		private var originalMousePos:Point;
 		
-		public function RigView(width:Number=300, height:Number=100) {
-			
+		public function RigView(day:WeekDay, width:Number=300, height:Number=100, _dradAndDropLimit:Number  = 600 ) {
 			var spriteContainer:UIComponent = new UIComponent();			
 			spriteContainer.addChild(s);
 			
@@ -52,10 +60,22 @@ package com.etherpros.components
 			// set width and height variables.
 			this.width = width;
 			this.height = height;
-			
+			this.dradAndDropLimit = _dradAndDropLimit;
+			this._startDay = day;
 			addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);			
 
 		}
+
+		public function get startDay():WeekDay
+		{
+			return _startDay;
+		}
+
+		public function set startDay(value:WeekDay):void
+		{
+			_startDay = value;
+		}
+
 		private function init(event:Event=null):void {
 			// draw view
 			draw();			
@@ -100,7 +120,7 @@ package com.etherpros.components
 		private function resize(event:Event=null):void {
 			var mousePos:Point = new Point(this.stage.mouseX, this.stage.mouseY);			
 			var widthChange:Number = mousePos.x - originalMousePos.x; 
-		
+					
 			if(dragDirection == LEFT) {
 				// change width based on new difference between the original mouse
 				// position recorded before drag and the new mouse position.
@@ -112,21 +132,21 @@ package com.etherpros.components
 			} else {
 				
 				this.width += widthChange;				
-			}
-			
-			originalMousePos = mousePos;
+			}				
+			originalMousePos = mousePos;			
 		}
 		
 		/** Redraws the graphics of the rig. Used for updating the view
 		 *  with changes to the width or height of the component **/
 		public function draw(event:Event=null):void {
 			// clear out old graphics.
-			g.clear();
-			
-			//re-paint
-			g.beginFill(0xFF0000);
-			g.drawRoundRect(0,0,width,height,15);
-			g.endFill();
+			if ( (this.width < dradAndDropLimit) || (dradAndDropLimit == -1) ){
+				g.clear();				
+				//re-paint
+				g.beginFill(Math.random() * 0xFFFFFF);
+				g.drawRoundRect(0,0,width,height,15);
+				g.endFill();
+			}
 		}
 		
 		public override function set height(height:Number):void {

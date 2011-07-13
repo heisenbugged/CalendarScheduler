@@ -88,6 +88,7 @@
 				
 				// set week array to controller.
 				rigsController.weeks = weekArray;
+				rigsController.calendarGridWidth = grdCalendar.width;
 				
 			}	
 			
