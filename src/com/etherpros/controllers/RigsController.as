@@ -1,6 +1,7 @@
 package com.etherpros.controllers
 {
 	import com.etherpros.components.RigView;
+	import com.etherpros.components.RingBar;
 	import com.etherpros.model.WeekDay;
 	
 	import flash.geom.Point;
@@ -20,11 +21,12 @@ package com.etherpros.controllers
 		// list of rig views.
 		private var rigViews:ArrayCollection;
 		
-		private var _weeks:ArrayCollection;
+		private var _weeks:ArrayCollection;		
 		private var container:Group;
 		
 		public function RigsController(container:Group) {
 			this.container = container;
+			rigViews = new ArrayCollection();
 		}
 		
 		public function set weeks(arr:ArrayCollection):void {
@@ -35,12 +37,24 @@ package com.etherpros.controllers
 		}
 		
 		public function addRig(weekDay:WeekDay):void {
-			var view:RigView = new RigView(100, 15);
+			var view:RigView = new RigView(weekDay,100, 15);
 			// calculate view position based on day clicked.
 			// dayIndex is column and weekIndex is row.
-			view.x = (weekDay.dayIndex * DAY_WIDTH) + xOffset;
-			view.y = (weekDay.weekIndex * DAY_HEIGHT) + yOffset;
-			container.addElement(view);			
+			view.x = ( weekDay.dayIndex * DAY_WIDTH ) + xOffset;
+			view.y = ( weekDay.weekIndex * DAY_HEIGHT  ) +  yOffset + ( view.height * getYPosition(weekDay) + 1 );
+			container.addElement(view);
+			rigViews.addItem(view);			
+		}
+		
+		//Function that determines how many RingViews have been added in a day		
+		private function getYPosition( _weekDay:WeekDay ):int{
+			var ringCounter:int = 0;
+			for each  (var _ringView:RigView in rigViews) {
+				if ( _ringView.startDay.dayNumber == _weekDay.dayNumber ){
+					ringCounter++;
+				}
+			}
+			return ringCounter ;
 		}
 		
 		public function setOffset(x:int, y:int):void {

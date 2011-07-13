@@ -1,5 +1,7 @@
 package com.etherpros.components
 {
+	import com.etherpros.model.WeekDay;
+	
 	import flash.display.Graphics;
 	import flash.display.Sprite;
 	import flash.events.Event;
@@ -23,6 +25,10 @@ package com.etherpros.components
 		private var _width:Number;
 		private var _height:Number;
 		
+		//The week's day where the ring view starts
+		private var _startDay:WeekDay;
+		//The week's day where the ring view ends
+		private var _endDay:WeekDay;
 		// Can either be LEFT or RIGHT.
 		// Is used when resizing a component to determine how it is being resized.
 		private var dragDirection:Number;
@@ -30,7 +36,7 @@ package com.etherpros.components
 		// Used for determining the difference in mouse position when dragging.
 		private var originalMousePos:Point;
 		
-		public function RigView(width:Number=300, height:Number=100) {
+		public function RigView(day:WeekDay, width:Number=300, height:Number=100) {
 			
 			var spriteContainer:UIComponent = new UIComponent();			
 			spriteContainer.addChild(s);
@@ -52,10 +58,21 @@ package com.etherpros.components
 			// set width and height variables.
 			this.width = width;
 			this.height = height;
-			
+			_startDay = day;
 			addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);			
 
 		}
+
+		public function get startDay():WeekDay
+		{
+			return _startDay;
+		}
+
+		public function set startDay(value:WeekDay):void
+		{
+			_startDay = value;
+		}
+
 		private function init(event:Event=null):void {
 			// draw view
 			draw();			
@@ -124,7 +141,7 @@ package com.etherpros.components
 			g.clear();
 			
 			//re-paint
-			g.beginFill(0xFF0000);
+			g.beginFill(Math.random() * 0xFFFFFF);
 			g.drawRoundRect(0,0,width,height,15);
 			g.endFill();
 		}
