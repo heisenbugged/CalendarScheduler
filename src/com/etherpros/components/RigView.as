@@ -34,12 +34,18 @@ package com.etherpros.components
 		// Is used when resizing a component to determine how it is being resized.
 		private var dragDirection:Number;
 		//Limit used for the drag and drop functionallity, the limit is related with the grid with
-		private var dradAndDropLimit:Number = -1;
+		private var dragAndDropLimit:Number = -1;
+		private  var calendarGridWith:Number = 0;
+		private var originalWidth:Number = 0;
 		
 		// Used for determining the difference in mouse position when dragging.
 		private var originalMousePos:Point;
 		
-		public function RigView(day:WeekDay, width:Number=300, height:Number=100, _dradAndDropLimit:Number  = 600 ) {
+		private var mousePositionX:int = 0;
+		
+		private var widthChange:Number = 0;
+		
+		public function RigView(day:WeekDay, width:Number=300, height:Number=100, _calendarGridWith:Number  = 600 ) {
 			var spriteContainer:UIComponent = new UIComponent();			
 			spriteContainer.addChild(s);
 			
@@ -55,13 +61,13 @@ package com.etherpros.components
 			rigName.setStyle('fontSize', '11');
 			rigName.text = "Test Rig";
 			rigName.x = 10;
-			addElement(rigName);
-			
+			addElement(rigName);			
 			// set width and height variables.
 			this.width = width;
-			this.height = height;
-			this.dradAndDropLimit = _dradAndDropLimit;
+			this.height = height;			
 			this._startDay = day;
+			this.calendarGridWith	= _calendarGridWith;
+			this.originalWidth = width;
 			addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);			
 
 		}
@@ -105,7 +111,7 @@ package com.etherpros.components
 		private function beginDrag(event:Event=null):void {
 			// record position of mouse before drag to determine differences
 			originalMousePos = new Point(stage.mouseX, stage.mouseY);
-			
+			this.dragAndDropLimit = calendarGridWith - originalMousePos.x + this.originalWidth ;
 			// create event listener that listens for mouse movements to 
 			// determine when to resize the component.
 			stage.addEventListener(MouseEvent.MOUSE_MOVE, resize);
@@ -119,8 +125,8 @@ package com.etherpros.components
 		/** Resizes the width of our event based on the change in mouse position from the drag. **/
 		private function resize(event:Event=null):void {
 			var mousePos:Point = new Point(this.stage.mouseX, this.stage.mouseY);			
-			var widthChange:Number = mousePos.x - originalMousePos.x; 
-					
+			this.widthChange = mousePos.x - originalMousePos.x; 
+			mousePositionX  = 	mousePos.x;			
 			if(dragDirection == LEFT) {
 				// change width based on new difference between the original mouse
 				// position recorded before drag and the new mouse position.
@@ -139,14 +145,12 @@ package com.etherpros.components
 		/** Redraws the graphics of the rig. Used for updating the view
 		 *  with changes to the width or height of the component **/
 		public function draw(event:Event=null):void {
-			// clear out old graphics.
-			if ( (this.width < dradAndDropLimit) || (dradAndDropLimit == -1) ){
-				g.clear();				
-				//re-paint
-				g.beginFill(Math.random() * 0xFFFFFF);
-				g.drawRoundRect(0,0,width,height,15);
-				g.endFill();
-			}
+			// clear out old graphics.			
+			g.clear();				
+			//re-paint
+			g.beginFill(Math.random() * 0xFFFFFF);
+			g.drawRoundRect(0,0,width,height,15);
+			g.endFill();			
 		}
 		
 		public override function set height(height:Number):void {
@@ -157,8 +161,10 @@ package com.etherpros.components
 		
 		public override function set width(width:Number):void {
 			super.width = width;
-			_width = width;			
-			draw();
+			_width = width;
+			if ( (this.width < dragAndDropLimit ) || (dragAndDropLimit == -1) ){
+				draw();
+			}
 		}
 		
 	}
