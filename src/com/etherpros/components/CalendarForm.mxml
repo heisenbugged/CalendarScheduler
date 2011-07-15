@@ -12,6 +12,7 @@
 	<fx:Script>
 		<![CDATA[
 			import com.etherpros.controllers.RigsController;
+			import com.etherpros.events.RigCreationEvent;
 			import com.etherpros.model.Week;
 			import com.etherpros.model.WeekDay;
 			import com.etherpros.utils.CommonUtils;
@@ -35,6 +36,7 @@
 				
 				// create first initial month grid.
 				createDaysGrid();
+				this.addEventListener(RigCreationEvent.REACHED_WEEK_LIMIT,reachedWeekLimit);
 			}
 			
 			// create grid of days in current month as per current date provided
@@ -88,7 +90,7 @@
 				
 				// set week array to controller.
 				rigsController.weeks = weekArray;
-				rigsController.calendarGridWidth = grdCalendar.width;
+				rigsController.calendarGridWidth = grdCalendar.width + 20;
 				
 			}	
 			
@@ -108,6 +110,10 @@
 				// fork over creation of rig to RigsController.			
 				var day:WeekDay = event.item[event.column.dataField] as WeekDay;
 				rigsController.addRig(day);
+			}
+			
+			protected function reachedWeekLimit(event:RigCreationEvent):void{
+				Alert.show("Add new rigview for " + event.rigView.startDay.dayName);
 			}
 			
 		]]>

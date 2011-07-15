@@ -1,5 +1,6 @@
 package com.etherpros.components
 {
+	import com.etherpros.events.RigCreationEvent;
 	import com.etherpros.model.WeekDay;
 	
 	import flash.display.Graphics;
@@ -25,7 +26,9 @@ package com.etherpros.components
 		
 		private var _width:Number;
 		private var _height:Number;
-		
+		//Previews and next Rig bar for making a linked list
+		private var _previewRigView:RigView;
+		private var _nextRigView:RigView;
 		//The week's day where the ring view starts
 		private var _startDay:WeekDay;
 		//The week's day where the ring view ends
@@ -111,7 +114,11 @@ package com.etherpros.components
 		private function beginDrag(event:Event=null):void {
 			// record position of mouse before drag to determine differences
 			originalMousePos = new Point(stage.mouseX, stage.mouseY);
-			this.dragAndDropLimit = calendarGridWith - originalMousePos.x + this.originalWidth ;
+			if ( this.dragAndDropLimit == -1 ){
+				this.dragAndDropLimit = calendarGridWith - originalMousePos.x + this.originalWidth ;
+			}else{
+				this.dragAndDropLimit = calendarGridWith - originalMousePos.x + this.width;				
+			}
 			// create event listener that listens for mouse movements to 
 			// determine when to resize the component.
 			stage.addEventListener(MouseEvent.MOUSE_MOVE, resize);
@@ -162,9 +169,14 @@ package com.etherpros.components
 		public override function set width(width:Number):void {
 			super.width = width;
 			_width = width;
-			if ( (this.width < dragAndDropLimit ) || (dragAndDropLimit == -1) ){
+			if ( (this.width < dragAndDropLimit  && this.width < this.calendarGridWith) 
+				|| (dragAndDropLimit == -1) ){
 				draw();
+			}else if ( dragAndDropLimit != -1 ){
+				var  rigCreationEvent:RigCreationEvent = new RigCreationEvent(RigCreationEvent.REACHED_WEEK_LIMIT,this,true);
+				dispatchEvent(rigCreationEvent);
 			}
+			
 		}
 		
 	}
