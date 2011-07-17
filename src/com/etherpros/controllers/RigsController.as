@@ -41,8 +41,8 @@ package com.etherpros.controllers
 			return this._weeks;
 		}
 		
-		public function addRig(weekDay:WeekDay):RigView {
-			var view:RigView = new RigView(weekDay,100, 15, _calendarGridWidth);
+		public function addRig(weekDay:WeekDay, _previousRig:RigView = null):RigView {
+			var view:RigView = new RigView(weekDay,100, 15, _calendarGridWidth,_previousRig);
 			// calculate view position based on day clicked.
 			// dayIndex is column and weekIndex is row.
 			view.x = ( weekDay.dayIndex * DAY_WIDTH ) + xOffset;

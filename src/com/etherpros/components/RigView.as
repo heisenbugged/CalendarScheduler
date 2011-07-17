@@ -47,14 +47,16 @@ package com.etherpros.components
 		private var mousePositionX:int = 0;
 		
 		private var widthChange:Number = 0;
+		//For setting color to rig
+		private var _rigColor:uint = 0;
 		
-		public function RigView(day:WeekDay, width:Number=300, height:Number=100, _calendarGridWith:Number  = 600 ) {
+		public function RigView(day:WeekDay, width:Number=300, height:Number=100, _calendarGridWith:Number  = 600, _previousRig:RigView = null ) {
 			var spriteContainer:UIComponent = new UIComponent();			
 			spriteContainer.addChild(s);
 			
 			// add sprite with graphics to this group.
 			addElement(spriteContainer);
-			
+			this.previousRigView = _previousRig;
 			g = s.graphics;
 			
 			// add rig view label (test)
@@ -70,7 +72,7 @@ package com.etherpros.components
 			this.height = height;			
 			this._startDay = day;
 			this.calendarGridWith	= _calendarGridWith;
-			this.originalWidth = width;
+			this.originalWidth = width;			
 			addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);			
 
 		}
@@ -152,10 +154,15 @@ package com.etherpros.components
 		/** Redraws the graphics of the rig. Used for updating the view
 		 *  with changes to the width or height of the component **/
 		public function draw(event:Event=null):void {
+			if (  previousRigView != null  ){
+				_rigColor = previousRigView.rigColor;
+			}else if ( _rigColor == 0  ){
+					_rigColor = Math.random() * 0xFFFFFF;
+			}
 			// clear out old graphics.			
-			g.clear();				
-			//re-paint
-			g.beginFill(Math.random() * 0xFFFFFF);
+			g.clear();
+			g.beginFill(_rigColor);
+			//re-paint			
 			g.drawRoundRect(0,0,width,height,15);
 			g.endFill();			
 		}
@@ -199,6 +206,16 @@ package com.etherpros.components
 		public function set previousRigView(value:RigView):void
 		{
 			_previousRigView = value;
+		}
+
+		public function get rigColor():uint
+		{
+			return _rigColor;
+		}
+
+		public function set rigColor(value:uint):void
+		{
+			_rigColor = value;
 		}
 
 		

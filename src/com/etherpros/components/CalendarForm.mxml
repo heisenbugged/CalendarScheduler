@@ -131,8 +131,7 @@
 				if (  _week.saturday != null  && _nextWeek != null ){
 					var _lastWeekDay:WeekDay = _week.saturday;
 					if ( _nextWeek.sunday != null ){
-						var rigView:RigView = rigsController.addRig( _nextWeek.sunday );
-						rigView.previousRigView = event.rigView;
+						var rigView:RigView = rigsController.addRig( _nextWeek.sunday, event.rigView );
 						event.rigView.nextRigView = rigView;
 					}
 				}
