@@ -1,6 +1,7 @@
 package com.etherpros.components
 {
 	import com.etherpros.events.RigCreationEvent;
+	import com.etherpros.model.Staff;
 	import com.etherpros.model.WeekDay;
 	
 	import flash.display.Graphics;
@@ -50,10 +51,12 @@ package com.etherpros.components
 		//For setting color to rig
 		private var _rigColor:uint = 0;
 		
-		public function RigView(day:WeekDay, width:Number=300, height:Number=100, _calendarGridWith:Number  = 600, _previousRig:RigView = null ) {
+		private var _staff:Staff;
+		
+		public function RigView(day:WeekDay, rigStaff:Staff, width:Number=300, height:Number=100, _calendarGridWith:Number  = 600, _previousRig:RigView = null ) {
 			var spriteContainer:UIComponent = new UIComponent();			
 			spriteContainer.addChild(s);
-			
+			this._staff = rigStaff;
 			// add sprite with graphics to this group.
 			addElement(spriteContainer);
 			this.previousRigView = _previousRig;
@@ -64,10 +67,11 @@ package com.etherpros.components
 			rigName.setStyle('color', '#ffffff');
 			rigName.setStyle('fontWeight', 'bold');
 			rigName.setStyle('fontSize', '11');
-			rigName.text = "Test Rig";
+			rigName.text = this._staff.name;
 			rigName.x = 10;
 			addElement(rigName);			
 			// set width and height variables.
+			
 			this.width = width;
 			this.height = height;			
 			this._startDay = day;
@@ -216,6 +220,16 @@ package com.etherpros.components
 		public function set rigColor(value:uint):void
 		{
 			_rigColor = value;
+		}
+
+		public function get staff():Staff
+		{
+			return _staff;
+		}
+
+		public function set staff(value:Staff):void
+		{
+			_staff = value;
 		}
 
 		

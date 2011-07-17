@@ -2,6 +2,7 @@ package com.etherpros.controllers
 {
 	import com.etherpros.components.RigView;
 	import com.etherpros.components.RingBar;
+	import com.etherpros.model.Staff;
 	import com.etherpros.model.WeekDay;
 	
 	import flash.geom.Point;
@@ -41,8 +42,8 @@ package com.etherpros.controllers
 			return this._weeks;
 		}
 		
-		public function addRig(weekDay:WeekDay, _previousRig:RigView = null):RigView {
-			var view:RigView = new RigView(weekDay,100, 15, _calendarGridWidth,_previousRig);
+		public function addRig(weekDay:WeekDay,_staff:Staff, _previousRig:RigView = null):RigView {
+			var view:RigView = new RigView(weekDay,_staff,100, 15, _calendarGridWidth,_previousRig);
 			// calculate view position based on day clicked.
 			// dayIndex is column and weekIndex is row.
 			view.x = ( weekDay.dayIndex * DAY_WIDTH ) + xOffset;

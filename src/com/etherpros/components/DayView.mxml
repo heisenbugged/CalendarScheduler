@@ -2,15 +2,25 @@
 <s:GridItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009" 
 					xmlns:s="library://ns.adobe.com/flex/spark" 
 					xmlns:mx="library://ns.adobe.com/flex/mx"
-					creationComplete="init()">
+					creationComplete="init()" 
+					dragEnter="dragAccept(event)" 
+					dragDrop="dragDropHandler(event);" 
+					>
 	<fx:Declarations>
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
 	</fx:Declarations>
 	<fx:Script>
 		<![CDATA[
+			import com.etherpros.events.RigCreationEvent;
+			import com.etherpros.model.Staff;
 			import com.etherpros.model.WeekDay;
 			
+			import mx.controls.Alert;
 			import mx.controls.listClasses.BaseListData;
+			import mx.events.DragEvent;
+			import mx.managers.DragManager;
+			
+			import spark.components.List;
 			
 			private var weekDay:WeekDay;
 			
@@ -45,7 +55,25 @@
 				}
 			}
 			
+			private function dragAccept(event:DragEvent):void
+			{
+				//if ( this.weekDay != null && weekDay.dayNumber == -1){
+					var dropTarget:GridItemRenderer = event.currentTarget as GridItemRenderer;
+					DragManager.acceptDragDrop(dropTarget);
+				//}
+			}
+			
+			protected function dragDropHandler(event:DragEvent):void
+			{	
+				var _staffList:List = event.dragInitiator as List;
+				var staffSelected:Staff =  _staffList.selectedItem as Staff;
+				var  rigCreationEvent:RigCreationEvent = new RigCreationEvent(RigCreationEvent.ADD_NEW_RIG, null, true);
+				rigCreationEvent.staffRig = staffSelected;
+				rigCreationEvent.weekDay = this.weekDay;
+				dispatchEvent(rigCreationEvent);		
+			}
+			
 		]]>
 	</fx:Script>
-	<s:Label id="displayLabel"  />
+	<s:Label id="displayLabel"  width="100%" height="100%"/>
 </s:GridItemRenderer>
