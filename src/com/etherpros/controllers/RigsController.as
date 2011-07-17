@@ -37,15 +37,19 @@ package com.etherpros.controllers
 			// since month has changed, clear all existing rigs.
 			// clearRigs();
 		}
+		public function get weeks():ArrayCollection {
+			return this._weeks;
+		}
 		
-		public function addRig(weekDay:WeekDay):void {
+		public function addRig(weekDay:WeekDay):RigView {
 			var view:RigView = new RigView(weekDay,100, 15, _calendarGridWidth);
 			// calculate view position based on day clicked.
 			// dayIndex is column and weekIndex is row.
 			view.x = ( weekDay.dayIndex * DAY_WIDTH ) + xOffset;
 			view.y = ( weekDay.weekIndex * DAY_HEIGHT  ) +  yOffset + ( view.height * getYPosition(weekDay) + 1 );
 			container.addElement(view);
-			rigViews.addItem(view);			
+			rigViews.addItem(view);
+			return view;
 		}
 		
 		//Function that determines how many RingViews have been added in a day		
