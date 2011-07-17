@@ -76,6 +76,12 @@
 						}
 						
 						weekDay = new WeekDay();
+						if ( weekDays[j] == 'sunday' ){
+							weekDay.isBeginDayWeek = true;							
+						}
+						if ( weekDays[j] == 'saturday' ){
+							weekDay.isEndDayWeek = true;							
+						}
 						weekDay.dayNumber = arrDays[i+j].dayNumber as int;
 						weekDay.dayName = arrDays[i+j].dayName as String;
 						weekDay.dayIndex = j;
@@ -107,13 +113,29 @@
 			}
 			
 			protected function addRigView(event:GridEvent):void {
-				// fork over creation of rig to RigsController.			
-				var day:WeekDay = event.item[event.column.dataField] as WeekDay;
-				rigsController.addRig(day);
+				// fork over creation of rig to RigsController.	
+				if ( event.column != null && event.column.dataField != null ){
+					var day:WeekDay = event.item[event.column.dataField] as WeekDay;
+					if ( day != null && day.dayNumber != -1 ){
+						rigsController.addRig(day);
+					}
+				}
 			}
 			
 			protected function reachedWeekLimit(event:RigCreationEvent):void{
-				Alert.show("Add new rigview for " + event.rigView.startDay.dayName);
+				//var day:WeekDay = event.item[event.column.dataField] as WeekDay;
+				//rigsController.addRig(day);
+				var eventDay:WeekDay =  event.rigView.startDay;				
+				var _week:Week =  rigsController.weeks.getItemAt(eventDay.weekIndex) as Week;
+				var _nextWeek:Week =  rigsController.weeks.getItemAt(eventDay.weekIndex + 1) as Week;
+				if (  _week.saturday != null  && _nextWeek != null ){
+					var _lastWeekDay:WeekDay = _week.saturday;
+					if ( _nextWeek.sunday != null ){
+						var rigView:RigView = rigsController.addRig( _nextWeek.sunday );
+						rigView.previousRigView = event.rigView;
+						event.rigView.nextRigView = rigView;
+					}
+				}
 			}
 			
 		]]>

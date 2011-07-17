@@ -8,6 +8,8 @@ package com.etherpros.model
 		public var dayIndex:int;
 		public var weekIndex:int;
 		
+		private var _isBeginDayWeek:Boolean = false;
+		private var _isEndDayWeek:Boolean= false;
 		
 		public function WeekDay()
 		{
@@ -33,6 +35,27 @@ package com.etherpros.model
 		{
 			_dayNumber = value;
 		}
+
+		public function get isBeginDayWeek():Boolean
+		{
+			return _isBeginDayWeek;
+		}
+
+		public function set isBeginDayWeek(value:Boolean):void
+		{
+			_isBeginDayWeek = value;
+		}
+
+		public function get isEndDayWeek():Boolean
+		{
+			return _isEndDayWeek;
+		}
+
+		public function set isEndDayWeek(value:Boolean):void
+		{
+			_isEndDayWeek = value;
+		}
+
 
 	}
 }

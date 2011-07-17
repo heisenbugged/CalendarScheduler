@@ -27,7 +27,7 @@ package com.etherpros.components
 		private var _width:Number;
 		private var _height:Number;
 		//Previews and next Rig bar for making a linked list
-		private var _previewRigView:RigView;
+		private var _previousRigView:RigView;
 		private var _nextRigView:RigView;
 		//The week's day where the ring view starts
 		private var _startDay:WeekDay;
@@ -174,10 +174,33 @@ package com.etherpros.components
 				draw();
 			}else if ( dragAndDropLimit != -1 ){
 				var  rigCreationEvent:RigCreationEvent = new RigCreationEvent(RigCreationEvent.REACHED_WEEK_LIMIT,this,true);
-				dispatchEvent(rigCreationEvent);
+				if ( this.nextRigView == null ){
+					dispatchEvent(rigCreationEvent);
+				}
 			}
 			
 		}
+
+		public function get nextRigView():RigView
+		{
+			return _nextRigView;
+		}
+
+		public function set nextRigView(value:RigView):void
+		{
+			_nextRigView = value;
+		}
+
+		public function get previousRigView():RigView
+		{
+			return _previousRigView;
+		}
+
+		public function set previousRigView(value:RigView):void
+		{
+			_previousRigView = value;
+		}
+
 		
 	}
 }
