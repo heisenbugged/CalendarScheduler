@@ -18,6 +18,7 @@ package com.etherpros.controllers
 		
 		public static var DAY_WIDTH:int = 84;
 		public static var DAY_HEIGHT:int = 59;
+		public static var CALENDAR_WIDTH:int;
 		
 		// list of rig views.
 		private var rigViews:ArrayCollection;
@@ -42,14 +43,21 @@ package com.etherpros.controllers
 			return this._weeks;
 		}
 		
-		public function addRig(weekDay:WeekDay,_staff:Staff, _previousRig:RigView = null):RigView {
-			var view:RigView = new RigView(weekDay,_staff,100, 15, _calendarGridWidth,_previousRig);
+		public function addRig(weekDay:WeekDay, _staff:Staff, _previousRig:RigView = null):RigView {
+			var RIG_HEIGHT:Number = 15;
+			
 			// calculate view position based on day clicked.
 			// dayIndex is column and weekIndex is row.
-			view.x = ( weekDay.dayIndex * DAY_WIDTH ) + xOffset;
-			view.y = ( weekDay.weekIndex * DAY_HEIGHT  ) +  yOffset + ( view.height * getYPosition(weekDay) + 1 );
+			var x:int = ( weekDay.dayIndex * DAY_WIDTH );
+			var y:int = ( weekDay.weekIndex * DAY_HEIGHT  )  + (RIG_HEIGHT * getYPosition(weekDay) + 1 );
+			
+			var view:RigView = new RigView(weekDay,_staff, DAY_WIDTH, RIG_HEIGHT, x, y);			
+			view.x = xOffset;
+			view.y = yOffset
+			
 			container.addElement(view);
 			rigViews.addItem(view);
+			
 			return view;
 		}
 		

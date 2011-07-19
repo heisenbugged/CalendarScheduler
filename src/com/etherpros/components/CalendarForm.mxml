@@ -41,6 +41,7 @@
 				rigsController = new RigsController(this);
 				// set the offset based on the position of the first day.
 				rigsController.setOffset(grdCalendar.x + 2, grdCalendar.y + 27); // 26 is the header height
+				RigsController.CALENDAR_WIDTH = grdCalendar.width;
 				
 				// create first initial month grid.
 				createDaysGrid();
@@ -105,9 +106,7 @@
 				}
 				
 				// set week array to controller.
-				rigsController.weeks = weekArray;
-				rigsController.calendarGridWidth = grdCalendar.width + 20;
-				
+				rigsController.weeks = weekArray;				
 			}	
 			
 			protected function dtPicker_changeHandler(event:CalendarLayoutChangeEvent):void

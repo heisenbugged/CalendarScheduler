@@ -1,10 +1,12 @@
 package com.etherpros.components
 {
+	import com.etherpros.controllers.RigsController;
 	import com.etherpros.events.RigCreationEvent;
 	import com.etherpros.model.Staff;
 	import com.etherpros.model.WeekDay;
 	
 	import flash.display.Graphics;
+	import flash.display.SpreadMethod;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
@@ -13,118 +15,133 @@ package com.etherpros.components
 	import mx.controls.Alert;
 	import mx.controls.Label;
 	import mx.core.UIComponent;
+	import mx.graphics.GradientBase;
 	
 	import spark.components.Group;
 	
 	public class RigView extends Group
 	{ 
-	
+		private const X_PADDING:Number = 8;
+		
 		private const LEFT:Number = 0;
 		private const RIGHT:Number = 1;
 		
-		private var s:Sprite = new Sprite();
-		private var g:Graphics;
-		
-		private var _width:Number;
-		private var _height:Number;
-		//Previews and next Rig bar for making a linked list
-		private var _previousRigView:RigView;
-		private var _nextRigView:RigView;
-		//The week's day where the ring view starts
-		private var _startDay:WeekDay;
-		//The week's day where the ring view ends
-		private var _endDay:WeekDay;
-		// Can either be LEFT or RIGHT.
-		// Is used when resizing a component to determine how it is being resized.
-		private var dragDirection:Number;
-		//Limit used for the drag and drop functionallity, the limit is related with the grid with
-		private var dragAndDropLimit:Number = -1;
-		private  var calendarGridWith:Number = 0;
-		private var originalWidth:Number = 0;
-		
-		// Used for determining the difference in mouse position when dragging.
-		private var originalMousePos:Point;
-		
-		private var mousePositionX:int = 0;
-		
-		private var widthChange:Number = 0;
-		//For setting color to rig
-		private var _rigColor:uint = 0;
-		
+		private var _rigColor:int;		
 		private var _staff:Staff;
 		
-		public function RigView(day:WeekDay, rigStaff:Staff, width:Number=300, height:Number=100, _calendarGridWith:Number  = 600, _previousRig:RigView = null ) {
-			var spriteContainer:UIComponent = new UIComponent();			
-			spriteContainer.addChild(s);
-			this._staff = rigStaff;
-			// add sprite with graphics to this group.
-			addElement(spriteContainer);
-			this.previousRigView = _previousRig;
-			g = s.graphics;
+		// width and height of new empty sprites.
+		// this usually corresponds to the width of a single day.
+		private var defaultWidth:Number;
+		private var defaultHeight:Number;
+		private var initialX:Number;
+		private var initialY:Number;
+
+		
+		// contains all the rounded corner sprites
+		// per week (a week is a row).
+		private var spriteRows:Array = [];
+						
+		// Previews and next Rig bar for making a linked list
+		private var _previousRigView:RigView;
+		private var _nextRigView:RigView;
+		
+		// Day range that the rig covers.
+		private var _startDay:WeekDay;
+		private var _endDay:WeekDay;
+		
+		// Target of active drag.
+		private var dragTarget:RigSprite;
+		// Can either be LEFT or RIGHT.		
+		// Is used when resizing a component to determine how it is being resized.			
+		private var dragDirection:Number;		
+		//Limit used for the drag and drop functionallity, the limit is related with the grid with
+		private var dragAndDropLimit:Number = -1;
+		private var originalWidth:Number = 0;		
+		// Used for determining the difference in mouse position when dragging.
+		private var originalMousePos:Point;		
+		private var mousePositionX:int = 0;			
+		// When set to false resize operations are disabled.
+		private var dragValid:Boolean = true;
+		
+		public function RigView(day:WeekDay, rigStaff:Staff, width:Number=300, height:Number=100, initialX:Number=0, initialY:Number=0) {
+			// initialize variables
+			this.staff = rigStaff;		
+			this.startDay = day;			
+			this.defaultWidth = width;
+			this.defaultHeight = height;
+			this.initialX = initialX;
+			this.initialY = initialY;
 			
-			// add rig view label (test)
-			var rigName:Label = new Label();
-			rigName.setStyle('color', '#ffffff');
-			rigName.setStyle('fontWeight', 'bold');
-			rigName.setStyle('fontSize', '11');
-			rigName.text = this._staff.name;
-			rigName.x = 10;
-			addElement(rigName);			
-			// set width and height variables.
+			// if color hasn't been set already, assign a new random color.
+			if (!rigColor) {								
+				rigColor = Math.random() * 0xFFFFFF;
+			}
+						
+			var sprite:RigSprite = createEmptySprite();
+			sprite.x = initialX;
+			sprite.y = initialY;
+			// add first sprite row.
+			addElement(sprite);
+		}
+		
+		/** Creates empty sprite and adds the sprite to the spriteRows array.
+		 *  This function is used when a rigview jumps to a new week row. **/
+		private function createEmptySprite():RigSprite {			
+			var sprite:RigSprite = new RigSprite(rigColor, staff.name);
+			sprite.width = defaultWidth;
+			sprite.height = defaultHeight;
+			sprite.addEventListener(MouseEvent.MOUSE_DOWN,mouseDown);
+			// add sprite to sprite rows array.
+			spriteRows.push(sprite);
 			
-			this.width = width;
-			this.height = height;			
-			this._startDay = day;
-			this.calendarGridWith	= _calendarGridWith;
-			this.originalWidth = width;			
-			addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);			
-
+			return sprite;
 		}
-
-		public function get startDay():WeekDay
-		{
-			return _startDay;
+					
+		/** Causes rig to 'snap' to a day based on it's x position and width **/
+		private function snap():void {				
+			dragTarget.x = Math.floor(dragTarget.x/RigsController.DAY_WIDTH) * RigsController.DAY_WIDTH;			
+			dragTarget.width = Math.ceil(dragTarget.width/RigsController.DAY_WIDTH)  * RigsController.DAY_WIDTH;			
+			// if new width surpasses calendar width, snap backwards
+			if( (dragTarget.width + dragTarget.x) > RigsController.CALENDAR_WIDTH) {				
+				dragTarget.width = RigsController.CALENDAR_WIDTH - dragTarget.x;
+			}
 		}
-
-		public function set startDay(value:WeekDay):void
-		{
-			_startDay = value;
-		}
-
-		private function init(event:Event=null):void {
-			// draw view
-			draw();			
-		}
-
+		
 		/** Used for starting a drag operation when either 
 		 *  the left or right corner of the component is clicked **/		
-		private function mouseDown(event:Event=null):void {
-			var mouseX:Number = s.mouseX;
-			var mouseY:Number = s.mouseY;
+		private function mouseDown(event:Event):void {
+			var target:RigSprite = event.currentTarget as RigSprite;			
+			var index:int = findSpriteIndex(target);
+			var mouseX:Number = target.mouseX;
+			var mouseY:Number = target.mouseY;
 			
-			//left-drag
-			if(mouseX < 15) {
+			// left-drag. Only permit left drag if the first sprite row was grabbed.
+			if(mouseX < 15 && index == 0) {
 				dragDirection = LEFT;
-				beginDrag();
-			// right-drag	
-			}else if(mouseX > s.width-15) {
+				beginDrag(target);
+			// right-drag. Only permit right drag if the last sprite row was grabbed.	
+			}else if(mouseX > target.width-15 && index == spriteRows.length-1) {
 				dragDirection = RIGHT;				
-				beginDrag();
-			} else { 
+				beginDrag(target);
+			} else { 				
 				// no drag direction.
 				dragDirection = -1;
 			}
 		}
 		
-		
-		private function beginDrag(event:Event=null):void {
+		private function beginDrag(target:RigSprite):void {			
+			dragTarget = target;
+			
 			// record position of mouse before drag to determine differences
 			originalMousePos = new Point(stage.mouseX, stage.mouseY);
+			
+			
 			if ( this.dragAndDropLimit == -1 ){
-				this.dragAndDropLimit = calendarGridWith - originalMousePos.x + this.originalWidth ;
+				this.dragAndDropLimit = RigsController.CALENDAR_WIDTH - originalMousePos.x + this.originalWidth;
 			}else{
-				this.dragAndDropLimit = calendarGridWith - originalMousePos.x + this.width;				
+				this.dragAndDropLimit = RigsController.CALENDAR_WIDTH - originalMousePos.x + this.width;				
 			}
+			
 			// create event listener that listens for mouse movements to 
 			// determine when to resize the component.
 			stage.addEventListener(MouseEvent.MOUSE_MOVE, resize);
@@ -132,106 +149,142 @@ package com.etherpros.components
 		}
 		
 		private function endDrag(event:Event=null):void {
+			dragValid = true;
 			stage.removeEventListener(MouseEvent.MOUSE_MOVE, resize);
+			
+			// After a drag-drop operation, snap the rig to the correct day 
+			snap();		
 		}
 		
 		/** Resizes the width of our event based on the change in mouse position from the drag. **/
 		private function resize(event:Event=null):void {
+			var target:RigSprite = dragTarget;
+			
+			// exit out of function if drag has been invalidated.			
+			if(!dragValid) { return; }
+			
 			var mousePos:Point = new Point(this.stage.mouseX, this.stage.mouseY);			
-			this.widthChange = mousePos.x - originalMousePos.x; 
+			var widthChange:int = mousePos.x - originalMousePos.x; 
 			mousePositionX  = 	mousePos.x;			
 			if(dragDirection == LEFT) {
 				// change width based on new difference between the original mouse
 				// position recorded before drag and the new mouse position.
-				this.width -= widthChange;	
+				target.width -= widthChange;	
 				
 				// if the direction of the drag is LEFT, then we must also offset the 
 				// change in width through the x position.				
-				this.x += widthChange;
-			} else {
-				
-				this.width += widthChange;				
+				target.x += widthChange;
+			} else {				
+				target.width += widthChange;				
 			}				
-			originalMousePos = mousePos;			
+			originalMousePos = mousePos;
+			
+			// if the width of the rig has surpassed that of our calendar
+			// break the rig into a new row.
+						
+			if( (target.width + target.x) > RigsController.CALENDAR_WIDTH) {				
+				// reset width to be the same as the calendar width.
+				target.width = RigsController.CALENDAR_WIDTH - target.x;
+				
+				// create new row!
+				var row:UIComponent = createEmptySprite();
+				row.y = RigsController.DAY_HEIGHT * (spriteRows.length-1) + initialY;
+				addElement(row);				
+				// redraw rows.
+				draw();
+				
+				// When resizing a rig, if the rig jumps to a new
+				// row when it is resized beyond its available width.
+				// the current resize operation that is taking place
+				// becomes no longer valid, since the rig is now placed into a new row.
+				// So we invalidate the current drag-drop operation to force the user
+				// to start dragging from the new row.
+				dragValid = false;
+			}			
 		}
 		
 		/** Redraws the graphics of the rig. Used for updating the view
 		 *  with changes to the width or height of the component **/
-		public function draw(event:Event=null):void {
-			if (  previousRigView != null  ){
-				_rigColor = previousRigView.rigColor;
-			}else if ( _rigColor == 0  ){
-					_rigColor = Math.random() * 0xFFFFFF;
+		public function draw(event:Event=null):void {			
+			// loop through all sprites in sprites array
+			// and redraw their graphics.
+			for each(var sprite:RigSprite in spriteRows) {
+				sprite.draw();		
 			}
-			// clear out old graphics.			
-			g.clear();
-			g.beginFill(_rigColor);
-			//re-paint			
-			g.drawRoundRect(0,0,width,height,15);
-			g.endFill();			
 		}
 		
+		/** Searches for passed in sprite in the spriteRows
+		 *  array and returns the corresponding index.
+		 *  If the sprite is not found in the array, -1
+		 *  is returned **/
+		private function findSpriteIndex(sprite:RigSprite):int {
+			var i:int = 0;
+			for each(var currentSprite:RigSprite in spriteRows) {
+				// match found
+				if(sprite == currentSprite) {
+					return i;
+				}
+				i++;
+			}
+			// if no matches found, return -1
+			return -1;
+		}
+		
+		
+		// -------------------
+		// Getters and Setters
+		// -------------------
+		
+		/*
 		public override function set height(height:Number):void {
-			super.height = height;
-			_height = height;
+			super.height = height;			
 			draw();
 		}
 		
 		public override function set width(width:Number):void {
-			super.width = width;
-			_width = width;
-			if ( (this.width < dragAndDropLimit  && this.width < this.calendarGridWith) 
-				|| (dragAndDropLimit == -1) ){
-				draw();
-			}else if ( dragAndDropLimit != -1 ){
-				var  rigCreationEvent:RigCreationEvent = new RigCreationEvent(RigCreationEvent.REACHED_WEEK_LIMIT,this,true);
-				if ( this.nextRigView == null ){
-					dispatchEvent(rigCreationEvent);
-				}
-			}
-			
+			super.width = width;		
+			draw();
 		}
+		*/
 
-		public function get nextRigView():RigView
-		{
+		public function get startDay():WeekDay {
+			return _startDay;
+		}
+		
+		public function set startDay(value:WeekDay):void {
+			_startDay = value;
+		}
+		
+		public function get nextRigView():RigView {
 			return _nextRigView;
 		}
 
-		public function set nextRigView(value:RigView):void
-		{
+		public function set nextRigView(value:RigView):void {
 			_nextRigView = value;
 		}
 
-		public function get previousRigView():RigView
-		{
+		public function get previousRigView():RigView {
 			return _previousRigView;
 		}
 
-		public function set previousRigView(value:RigView):void
-		{
+		public function set previousRigView(value:RigView):void {
 			_previousRigView = value;
 		}
 
-		public function get rigColor():uint
-		{
+		public function get rigColor():int {
 			return _rigColor;
 		}
 
-		public function set rigColor(value:uint):void
-		{
+		public function set rigColor(value:int):void {
 			_rigColor = value;
 		}
 
-		public function get staff():Staff
-		{
+		public function get staff():Staff {
 			return _staff;
 		}
 
-		public function set staff(value:Staff):void
-		{
+		public function set staff(value:Staff):void {
 			_staff = value;
 		}
-
-		
 	}
 }
