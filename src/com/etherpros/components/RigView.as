@@ -1,17 +1,14 @@
 package com.etherpros.components
 {
-	import com.etherpros.controllers.RigsController;
-	import com.etherpros.events.RigCreationEvent;
-	import com.etherpros.model.Staff;
-	import com.etherpros.model.WeekDay;
+	import com.etherpros.controllers.*;
+	import com.etherpros.events.RigEvent;
+	import com.etherpros.model.*;
 	
-	import flash.display.Graphics;
-	import flash.display.SpreadMethod;
-	import flash.display.Sprite;
-	import flash.events.Event;
-	import flash.events.MouseEvent;
+	import flash.display.*;
+	import flash.events.*;
 	import flash.geom.Point;
 	
+	import mx.collections.ArrayCollection;
 	import mx.controls.Alert;
 	import mx.controls.Label;
 	import mx.core.UIComponent;
@@ -29,38 +26,41 @@ package com.etherpros.components
 		private var _rigColor:int;		
 		private var _staff:Staff;
 		
-		// width and height of new empty sprites.
-		// this usually corresponds to the width of a single day.
+		/** width and height of new empty sprites.
+		 *  this usually corresponds to the width of a single day. **/
 		private var defaultWidth:Number;
 		private var defaultHeight:Number;
+		
+		/** X and Y position of first row added **/
 		private var initialX:Number;
 		private var initialY:Number;
 
 		
-		// contains all the rounded corner sprites
-		// per week (a week is a row).
-		private var spriteRows:Array = [];
+		/** contains all the rounded corner sprites per week (a week is a row). **/
+		private var spriteRows:ArrayCollection = new ArrayCollection();
 						
-		// Previews and next Rig bar for making a linked list
+		// DEPRECATED Previews and next Rig bar for making a linked list
 		private var _previousRigView:RigView;
 		private var _nextRigView:RigView;
 		
-		// Day range that the rig covers.
+		/** Day range that the rig covers. **/
 		private var _startDay:WeekDay;
 		private var _endDay:WeekDay;
 		
-		// Target of active drag.
+		/** Selected grid row during a resize operation **/
 		private var dragTarget:RigSprite;
-		// Can either be LEFT or RIGHT.		
-		// Is used when resizing a component to determine how it is being resized.			
-		private var dragDirection:Number;		
-		//Limit used for the drag and drop functionallity, the limit is related with the grid with
+		
+		/** Can either be LEFT or RIGHT.
+		 *  Is used when resizing a component to determine how it is being resized. **/			
+		private var dragDirection:Number;
+		/** Limit used for the drag and drop functionallity, the limit is related with the grid with **/
 		private var dragAndDropLimit:Number = -1;
+		
 		private var originalWidth:Number = 0;		
-		// Used for determining the difference in mouse position when dragging.
+		/** Used for determining the difference in mouse position when dragging. **/
 		private var originalMousePos:Point;		
 		private var mousePositionX:int = 0;			
-		// When set to false resize operations are disabled.
+		/** When set to false resize operations are disabled. **/
 		private var dragValid:Boolean = true;
 		
 		public function RigView(day:WeekDay, rigStaff:Staff, width:Number=300, height:Number=100, initialX:Number=0, initialY:Number=0) {
@@ -92,7 +92,7 @@ package com.etherpros.components
 			sprite.height = defaultHeight;
 			sprite.addEventListener(MouseEvent.MOUSE_DOWN,mouseDown);
 			// add sprite to sprite rows array.
-			spriteRows.push(sprite);
+			spriteRows.addItem(sprite);
 			
 			return sprite;
 		}
@@ -135,13 +135,6 @@ package com.etherpros.components
 			// record position of mouse before drag to determine differences
 			originalMousePos = new Point(stage.mouseX, stage.mouseY);
 			
-			
-			if ( this.dragAndDropLimit == -1 ){
-				this.dragAndDropLimit = RigsController.CALENDAR_WIDTH - originalMousePos.x + this.originalWidth;
-			}else{
-				this.dragAndDropLimit = RigsController.CALENDAR_WIDTH - originalMousePos.x + this.width;				
-			}
-			
 			// create event listener that listens for mouse movements to 
 			// determine when to resize the component.
 			stage.addEventListener(MouseEvent.MOUSE_MOVE, resize);
@@ -151,12 +144,20 @@ package com.etherpros.components
 		private function endDrag(event:Event=null):void {
 			dragValid = true;
 			stage.removeEventListener(MouseEvent.MOUSE_MOVE, resize);
-			
-			// After a drag-drop operation, snap the rig to the correct day 
-			snap();		
-		}
 		
-		/** Resizes the width of our event based on the change in mouse position from the drag. **/
+			if(spriteRows.length > 0) {
+				// After a drag-drop operation, snap the rig to the correct day 
+				snap();
+				
+				// dispatch event marking resize has finished!
+				var resizedEvent:RigEvent = new RigEvent(RigEvent.RIG_RESIZED);
+				resizedEvent.view = this;			
+				dispatchEvent(resizedEvent);					
+			}
+			// define remove event
+		}
+				
+		/** Resizes the width of the selected rig row based on the change in mouse position from the drag. **/
 		private function resize(event:Event=null):void {
 			var target:RigSprite = dragTarget;
 			
@@ -179,9 +180,8 @@ package com.etherpros.components
 			}				
 			originalMousePos = mousePos;
 			
-			// if the width of the rig has surpassed that of our calendar
-			// break the rig into a new row.
-						
+			// if the width of the rig row has surpassed that of our calendar
+			// break the rig into a new row.					
 			if( (target.width + target.x) > RigsController.CALENDAR_WIDTH) {				
 				// reset width to be the same as the calendar width.
 				target.width = RigsController.CALENDAR_WIDTH - target.x;
@@ -200,7 +200,24 @@ package com.etherpros.components
 				// So we invalidate the current drag-drop operation to force the user
 				// to start dragging from the new row.
 				dragValid = false;
-			}			
+				
+				// TODO: Throw row added event.
+			}
+
+			// if the width of the rig row is 0, remove row from array
+			if(target.width <= 0) {
+				// TODO: Throw destroy event.				
+				// remove rig row from rows array.
+				var index:int = spriteRows.getItemIndex(target);
+				// only remove sprite if it was found in the array
+				if(index != -1) {
+					spriteRows.removeItemAt(index);
+				}
+				// remove sprite row from stage
+				removeElement(target);
+				
+				dragValid = false;
+			}
 		}
 		
 		/** Redraws the graphics of the rig. Used for updating the view
@@ -235,24 +252,28 @@ package com.etherpros.components
 		// Getters and Setters
 		// -------------------
 		
-		/*
-		public override function set height(height:Number):void {
-			super.height = height;			
-			draw();
+		public function get firstRow():RigSprite {
+			return spriteRows[0];
 		}
 		
-		public override function set width(width:Number):void {
-			super.width = width;		
-			draw();
+		public function get lastRow():RigSprite {
+			return spriteRows[spriteRows.length-1];
 		}
-		*/
-
+		
 		public function get startDay():WeekDay {
 			return _startDay;
 		}
 		
 		public function set startDay(value:WeekDay):void {
 			_startDay = value;
+		}
+		
+		public function get endDay():WeekDay {
+			return _endDay;
+		}
+		
+		public function set endDay(value:WeekDay):void {
+			_endDay = value;
 		}
 		
 		public function get nextRigView():RigView {

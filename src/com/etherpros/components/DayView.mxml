@@ -46,7 +46,7 @@
 							displayLabel.enabled  = false;
 						}else{
 							displayLabel.text = value.toString();
-							displayLabel.text = weekDay.dayNumber.toString() +"-" +weekDay.dayName;
+							displayLabel.text = weekDay.dayNumber.toString();
 						}
 					}					
 				}else{
@@ -75,5 +75,5 @@
 			
 		]]>
 	</fx:Script>
-	<s:Label id="displayLabel"  width="100%" height="100%"/>
+	<s:Label id="displayLabel" x="2" y="2" width="100%" height="100%"/>
 </s:GridItemRenderer>

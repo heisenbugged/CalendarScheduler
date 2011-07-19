@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+<s:BorderContainer xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
 		 xmlns:mx="library://ns.adobe.com/flex/mx"  
 		 xmlns:components="com.etherpros.components.*"
-		 width="760" height="444" creationComplete="init()" xmlns:model="com.etherpros.model.*">
+		 creationComplete="init()" xmlns:model="com.etherpros.model.*"
+		 backgroundColor="#eeeeee" borderColor="#e3e3e3">
 	
 	<s:layout>
 		<s:BasicLayout/>
@@ -40,9 +41,9 @@
 				// set up controlller for rig views.
 				rigsController = new RigsController(this);
 				// set the offset based on the position of the first day.
-				rigsController.setOffset(grdCalendar.x + 2, grdCalendar.y + 27); // 26 is the header height
-				RigsController.CALENDAR_WIDTH = grdCalendar.width;
-				
+				rigsController.setOffset(grdCalendar.x + 2, grdCalendar.y + grdCalendar.columnHeaderGroup.height);
+				RigsController.setCalendarDimensions(grdCalendar.width, grdCalendar.height - grdCalendar.columnHeaderGroup.height);
+			
 				// create first initial month grid.
 				createDaysGrid();
 				initStaffList();
@@ -136,7 +137,7 @@
 				if (  _week.saturday != null  && _nextWeek != null ){
 					var _lastWeekDay:WeekDay = _week.saturday;
 					if ( _nextWeek.sunday != null ){
-						var rigView:RigView = rigsController.addRig( _nextWeek.sunday,event.rigView.staff, event.rigView );
+						var rigView:RigView = rigsController.addRig( _nextWeek.sunday,event.rigView.staff);
 						event.rigView.nextRigView = rigView;
 					}
 				}
@@ -161,6 +162,9 @@
 				staffDP.addItem(staff);				
 				staffList.dataProvider = staffDP;
 			}
+			
+			[Bindable]
+			public static var COLUMN_WIDTH:int = 146;
 		]]>
 	</fx:Script>
 	
@@ -168,30 +172,30 @@
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
 	</fx:Declarations>
 		
-	<s:DataGrid id="grdCalendar" x="6" y="43" width="602" height="387" dataProvider="{weekArray}"
-				 requestedRowCount="4" rowHeight="60" selectionMode="none"  >
+	<s:DataGrid id="grdCalendar" width="1024" height="766" dataProvider="{weekArray}"
+				 requestedRowCount="4" rowHeight="123" selectionMode="none">
 		
 		<s:columns>
 			<s:ArrayList>
-				<s:GridColumn width="85" dataField="sunday" headerText="Sunday" resizable="false"
+				<s:GridColumn width="{COLUMN_WIDTH}" dataField="sunday" headerText="Sunday" resizable="false"
 							  sortable="false" itemRenderer="com.etherpros.components.DayView">
 				</s:GridColumn>
-				<s:GridColumn width="85" dataField="monday" headerText="Monday" resizable="false"
+				<s:GridColumn width="{COLUMN_WIDTH}" dataField="monday" headerText="Monday" resizable="false"
 							  sortable="false" itemRenderer="com.etherpros.components.DayView">
 				</s:GridColumn>
-				<s:GridColumn width="85" dataField="tuesday" headerText="Tuesday"
+				<s:GridColumn width="{COLUMN_WIDTH}" dataField="tuesday" headerText="Tuesday"
 							  resizable="false" sortable="false" itemRenderer="com.etherpros.components.DayView">
 				</s:GridColumn>
-				<s:GridColumn width="85" dataField="wednesday" headerText="Wednesday"
+				<s:GridColumn width="{COLUMN_WIDTH}" dataField="wednesday" headerText="Wednesday"
 							  resizable="false" sortable="false" itemRenderer="com.etherpros.components.DayView">
 				</s:GridColumn>
-				<s:GridColumn width="85" dataField="thursday" headerText="Thursday"
+				<s:GridColumn width="{COLUMN_WIDTH}" dataField="thursday" headerText="Thursday"
 							  resizable="false" sortable="false" itemRenderer="com.etherpros.components.DayView">
 				</s:GridColumn>
-				<s:GridColumn width="85" dataField="friday" headerText="Friday" resizable="false"
+				<s:GridColumn width="{COLUMN_WIDTH}" dataField="friday" headerText="Friday" resizable="false"
 							  sortable="false" itemRenderer="com.etherpros.components.DayView">
 				</s:GridColumn>
-				<s:GridColumn width="85" dataField="saturday" headerText="Saturday"
+				<s:GridColumn width="{COLUMN_WIDTH}" dataField="saturday" headerText="Saturday"
 							  resizable="false" sortable="false" itemRenderer="com.etherpros.components.DayView">
 				</s:GridColumn>
 			</s:ArrayList>
@@ -199,10 +203,12 @@
 				
 	</s:DataGrid>
 	
-	<mx:DateChooser id="dtPicker" x="415" y="10" height="31" change="dtPicker_changeHandler(event)"
+	<mx:DateChooser id="dtPicker" x="1030" height="31" change="dtPicker_changeHandler(event)"
 					click="dtPicker_clickHandler(event)" enabled="true" showToday="false"
 					yearNavigationEnabled="true"/>
-	<s:List id="staffList" x="616" y="43" dragEnabled="true" labelField="name" 
+	
+	<s:List id="staffList" x="1030" y="43" dragEnabled="true" labelField="name" 
 			dropEnabled="false" width="125" height="330" >
 	</s:List>
-</s:Group>
+	
+</s:BorderContainer>
