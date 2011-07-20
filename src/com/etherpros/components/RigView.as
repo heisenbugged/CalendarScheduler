@@ -23,8 +23,6 @@ package com.etherpros.components
 		private const LEFT:Number = 0;
 		private const RIGHT:Number = 1;
 		
-		private var _rigColor:int;		
-		private var _staff:Staff;
 		
 		/** width and height of new empty sprites.
 		 *  this usually corresponds to the width of a single day. **/
@@ -43,9 +41,7 @@ package com.etherpros.components
 		private var _previousRigView:RigView;
 		private var _nextRigView:RigView;
 		
-		/** Day range that the rig covers. **/
-		private var _startDay:WeekDay;
-		private var _endDay:WeekDay;
+		private var _rigDetail:RigDetail;
 		
 		/** Selected grid row during a resize operation **/
 		private var dragTarget:RigSprite;
@@ -63,31 +59,32 @@ package com.etherpros.components
 		/** When set to false resize operations are disabled. **/
 		private var dragValid:Boolean = true;
 		
-		public function RigView(day:WeekDay, rigStaff:Staff, width:Number=300, height:Number=100, initialX:Number=0, initialY:Number=0) {
-			// initialize variables
-			this.staff = rigStaff;		
-			this.startDay = day;			
+		private var initialSprite:RigSprite;
+		
+		public function RigView(rigDetail:RigDetail, width:Number=300, height:Number=100, initialX:Number=0, initialY:Number=0) {
+			// initialize variables			
+			this._rigDetail = rigDetail;		
 			this.defaultWidth = width;
 			this.defaultHeight = height;
 			this.initialX = initialX;
 			this.initialY = initialY;
 			
 			// if color hasn't been set already, assign a new random color.
-			if (!rigColor) {								
-				rigColor = Math.random() * 0xFFFFFF;
+			if (!this._rigDetail.rigColor) {								
+				this._rigDetail.rigColor = Math.random() * 0xFFFFFF;
 			}
 						
-			var sprite:RigSprite = createEmptySprite();
-			sprite.x = initialX;
-			sprite.y = initialY;
+			initialSprite= createEmptySprite();
+			initialSprite.x = initialX;
+			initialSprite.y = initialY;
 			// add first sprite row.
-			addElement(sprite);
+			addElement(initialSprite);
 		}
 		
 		/** Creates empty sprite and adds the sprite to the spriteRows array.
 		 *  This function is used when a rigview jumps to a new week row. **/
 		private function createEmptySprite():RigSprite {			
-			var sprite:RigSprite = new RigSprite(rigColor, staff.name);
+			var sprite:RigSprite = new RigSprite(this._rigDetail.rigColor, this._rigDetail.staff.name);
 			sprite.width = defaultWidth;
 			sprite.height = defaultHeight;
 			sprite.addEventListener(MouseEvent.MOUSE_DOWN,mouseDown);
@@ -143,7 +140,9 @@ package com.etherpros.components
 		
 		private function endDrag(event:Event=null):void {
 			dragValid = true;
-			stage.removeEventListener(MouseEvent.MOUSE_MOVE, resize);
+			if ( stage != null ){
+				stage.removeEventListener(MouseEvent.MOUSE_MOVE, resize);
+			}
 		
 			if(spriteRows.length > 0) {
 				// After a drag-drop operation, snap the rig to the correct day 
@@ -220,6 +219,15 @@ package com.etherpros.components
 			}
 		}
 		
+		public function reDraw(dayLengt:int):void{
+			initialSprite.width = Math.ceil(initialSprite.width/RigsController.DAY_WIDTH)  * RigsController.DAY_WIDTH + (defaultWidth * dayLengt);			
+			// if new width surpasses calendar width, snap backwards
+			if( (initialSprite.width + initialSprite.x) > RigsController.CALENDAR_WIDTH) {				
+				initialSprite.width = RigsController.CALENDAR_WIDTH - initialSprite.x;
+			}
+			
+		}
+		
 		/** Redraws the graphics of the rig. Used for updating the view
 		 *  with changes to the width or height of the component **/
 		public function draw(event:Event=null):void {			
@@ -247,6 +255,11 @@ package com.etherpros.components
 			return -1;
 		}
 		
+		public function destroy():void{
+			//stage.removeEventListener(MouseEvent.MOUSE_MOVE,resize);
+			this.removeAllElements();
+		}
+		
 		
 		// -------------------
 		// Getters and Setters
@@ -258,22 +271,6 @@ package com.etherpros.components
 		
 		public function get lastRow():RigSprite {
 			return spriteRows[spriteRows.length-1];
-		}
-		
-		public function get startDay():WeekDay {
-			return _startDay;
-		}
-		
-		public function set startDay(value:WeekDay):void {
-			_startDay = value;
-		}
-		
-		public function get endDay():WeekDay {
-			return _endDay;
-		}
-		
-		public function set endDay(value:WeekDay):void {
-			_endDay = value;
 		}
 		
 		public function get nextRigView():RigView {
@@ -291,21 +288,20 @@ package com.etherpros.components
 		public function set previousRigView(value:RigView):void {
 			_previousRigView = value;
 		}
-
-		public function get rigColor():int {
-			return _rigColor;
+		
+		/** Day range that the rig covers. **/
+		public function get rigDetail():RigDetail
+		{
+			return _rigDetail;
 		}
 
-		public function set rigColor(value:int):void {
-			_rigColor = value;
+		/**
+		 * @private
+		 */
+		public function set rigDetail(value:RigDetail):void
+		{
+			_rigDetail = value;
 		}
 
-		public function get staff():Staff {
-			return _staff;
-		}
-
-		public function set staff(value:Staff):void {
-			_staff = value;
-		}
 	}
 }

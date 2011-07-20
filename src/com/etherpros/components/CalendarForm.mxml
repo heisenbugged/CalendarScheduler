@@ -14,6 +14,7 @@
 		<![CDATA[
 			import com.etherpros.controllers.RigsController;
 			import com.etherpros.events.RigCreationEvent;
+			import com.etherpros.model.RigDetail;
 			import com.etherpros.model.Staff;
 			import com.etherpros.model.Week;
 			import com.etherpros.model.WeekDay;
@@ -37,6 +38,8 @@
 			private var rigsController:RigsController;
 			[Bindable]
 			private var staffDP: ArrayCollection;
+			private var currentMonthSelected:int = -1;
+			private var currentYearSelected:int = -1;
 			private function init():void {
 				// set up controlller for rig views.
 				rigsController = new RigsController(this);
@@ -47,7 +50,6 @@
 				// create first initial month grid.
 				createDaysGrid();
 				initStaffList();
-				this.addEventListener(RigCreationEvent.REACHED_WEEK_LIMIT,reachedWeekLimit);
 				this.addEventListener(RigCreationEvent.ADD_NEW_RIG,addRigView);
 			}
 			
@@ -61,6 +63,8 @@
 				weekArray = new ArrayCollection();
 				var currentYear:int  = dtPicker.displayedYear;
 				var currentMonth:int = dtPicker.displayedMonth;
+				this.currentMonthSelected = currentMonth;
+				this.currentYearSelected = currentYear;
 				// always assume that first day of a month will have date as 1
 				// currentMonth and currentYear are supplied by main.mxml file		
 				var objDate:Date = new Date(currentYear, currentMonth, 1);
@@ -107,40 +111,65 @@
 				}
 				
 				// set week array to controller.
-				rigsController.weeks = weekArray;				
+				rigsController.weeks = weekArray;
+				initSelectedMonth();
 			}	
 			
 			protected function dtPicker_changeHandler(event:CalendarLayoutChangeEvent):void
 			{
-				createDaysGrid();
+				if ( currentMonthSelected != dtPicker.displayedMonth ){
+					clearCalendarGrid();
+					createDaysGrid();
+				}else if ( currentYearSelected != dtPicker.displayedYear ){
+					clearCalendarGrid();
+					createDaysGrid();
+				}
 				
 			}
 			
 			protected function dtPicker_clickHandler(event:MouseEvent):void
 			{
-				createDaysGrid();
+				if ( currentMonthSelected != dtPicker.displayedMonth ){
+					clearCalendarGrid();
+					createDaysGrid();
+				}else if ( currentYearSelected != dtPicker.displayedYear ){
+					clearCalendarGrid();
+					createDaysGrid();
+				}
 				
+			}
+			
+			private function  initSelectedMonth():void{
+				var monthKey:String = dtPicker.displayedYear + "" + dtPicker.displayedMonth;
+				var rigByMonth:Array =  rigsController.getRigByMonth(monthKey);
+				for each  (var _rigDetail:RigDetail in rigByMonth){
+					rigsController.reDrawRig(_rigDetail );	
+				}				
+			}
+			/**
+			 * Function for cleaning the rigs from the calendar and stores the rigs in a temp array
+			 * */
+			private function clearCalendarGrid():void{
+				var rigList:Array = new Array();
+				for each  (var _ringView:RigView in rigsController.rigViews) {
+					if ( _ringView != null ){
+						rigList.push(_ringView.rigDetail);
+						_ringView.destroy();
+						this.removeElement(_ringView);
+					}
+				}
+				var monthKey:String = currentYearSelected + "" + currentMonthSelected;
+				rigsController.addRigByMonth(monthKey, rigList);
+				rigsController.rigViews.removeAll();
 			}
 			
 			protected function addRigView(event:RigCreationEvent):void {
 				if ( event.weekDay && event.weekDay.dayNumber != -1 ){
-					rigsController.addRig(event.weekDay,event.staffRig);
+					var rigDetail:RigDetail = new RigDetail();
+					rigDetail.staff = event.staffRig;
+					rigDetail.startDay = event.weekDay;
+					rigsController.addRig(rigDetail);
 				}				
-			}
-			
-			protected function reachedWeekLimit(event:RigCreationEvent):void{
-				//var day:WeekDay = event.item[event.column.dataField] as WeekDay;
-				//rigsController.addRig(day);
-				var eventDay:WeekDay =  event.rigView.startDay;				
-				var _week:Week =  rigsController.weeks.getItemAt(eventDay.weekIndex) as Week;
-				var _nextWeek:Week =  rigsController.weeks.getItemAt(eventDay.weekIndex + 1) as Week;
-				if (  _week.saturday != null  && _nextWeek != null ){
-					var _lastWeekDay:WeekDay = _week.saturday;
-					if ( _nextWeek.sunday != null ){
-						var rigView:RigView = rigsController.addRig( _nextWeek.sunday,event.rigView.staff);
-						event.rigView.nextRigView = rigView;
-					}
-				}
 			}
 			
 			private function initStaffList():void {
