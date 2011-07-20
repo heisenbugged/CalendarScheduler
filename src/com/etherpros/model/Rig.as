@@ -3,13 +3,13 @@ package com.etherpros.model
 	/***
 	 * Class used for storing the Rig details for repainting a RigView component
  	* */
-	public class RigDetail
+	public class Rig
 	{
 		private var _startDay:WeekDay;
 		private var _endDay:WeekDay;
 		private var _staff:Staff;
 		private var _rigColor:int;
-		public function RigDetail()
+		public function Rig()
 		{
 		}
 

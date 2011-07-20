@@ -41,7 +41,7 @@ package com.etherpros.components
 		private var _previousRigView:RigView;
 		private var _nextRigView:RigView;
 		
-		private var _rigDetail:RigDetail;
+		private var _model:Rig;
 		
 		/** Selected grid row during a resize operation **/
 		private var dragTarget:RigSprite;
@@ -59,30 +59,31 @@ package com.etherpros.components
 		/** When set to false resize operations are disabled. **/
 		private var dragValid:Boolean = true;
 				
-		public function RigView(rigDetail:RigDetail, width:Number=300, height:Number=100, initialX:Number=0, initialY:Number=0) {
+		public function RigView(model:Rig, width:Number=300, height:Number=100, initialX:Number=0, initialY:Number=0) {
 			// initialize variables			
-			this._rigDetail = rigDetail;		
+			this.model = model;		
 			this.defaultWidth = width;
 			this.defaultHeight = height;
 			this.initialX = initialX;
 			this.initialY = initialY;
 			
 			// if color hasn't been set already, assign a new random color.
-			if (!this._rigDetail.rigColor) {								
-				this._rigDetail.rigColor = Math.random() * 0xFFFFFF;
+			if (!this.model.rigColor) {								
+				this.model.rigColor = Math.random() * 0xFFFFFF;
 			}
 						
 			var sprite:RigSprite = createEmptySprite();
 			sprite.x = initialX;
 			sprite.y = initialY;
 			// add first sprite row.
-			addElement(sprite);
+			addElement(sprite);			
 		}
+		
 		
 		/** Creates empty sprite and adds the sprite to the spriteRows array.
 		 *  This function is used when a rigview jumps to a new week row. **/
 		private function createEmptySprite():RigSprite {			
-			var sprite:RigSprite = new RigSprite(this._rigDetail.rigColor, this._rigDetail.staff.name);
+			var sprite:RigSprite = new RigSprite(this.model.rigColor, this.model.staff.name);
 			sprite.width = defaultWidth;
 			sprite.height = defaultHeight;
 			sprite.addEventListener(MouseEvent.MOUSE_DOWN,mouseDown);
@@ -137,10 +138,12 @@ package com.etherpros.components
 		}
 		
 		private function endDrag(event:Event=null):void {
-			dragValid = true;
-			if ( stage != null ){
-				stage.removeEventListener(MouseEvent.MOUSE_MOVE, resize);
+			dragValid = true;			
+			if ( stage != null ) {
+				stage.removeEventListener(MouseEvent.MOUSE_MOVE, resize);				
 			}
+			
+			stage.removeEventListener(MouseEvent.MOUSE_UP, endDrag);
 		
 			if(spriteRows.length > 0) {
 				// After a drag-drop operation, snap the rig to the correct day 
@@ -148,7 +151,8 @@ package com.etherpros.components
 				
 				// dispatch event marking resize has finished!
 				var resizedEvent:RigEvent = new RigEvent(RigEvent.RIG_RESIZED);
-				resizedEvent.view = this;			
+				resizedEvent.view = this;
+				resizedEvent.model = model;
 				dispatchEvent(resizedEvent);					
 			}
 			// define remove event
@@ -280,7 +284,12 @@ package com.etherpros.components
 			return -1;
 		}
 		
-		public function destroy():void{
+		public function destroy():void {
+			// clean up event listeners.
+			for each(var sprite:RigSprite in spriteRows) {
+				sprite.removeEventListener(MouseEvent.MOUSE_DOWN,mouseDown);
+			}
+			
 			//stage.removeEventListener(MouseEvent.MOUSE_MOVE,resize);
 			this.removeAllElements();
 		}
@@ -315,17 +324,17 @@ package com.etherpros.components
 		}
 		
 		/** Day range that the rig covers. **/
-		public function get rigDetail():RigDetail
+		public function get model():Rig
 		{
-			return _rigDetail;
+			return _model;
 		}
 
 		/**
 		 * @private
 		 */
-		public function set rigDetail(value:RigDetail):void
+		public function set model(value:Rig):void
 		{
-			_rigDetail = value;
+			_model = value;
 		}
 
 	}

@@ -1,12 +1,8 @@
 package com.etherpros.controllers
 {
-	import com.etherpros.components.RigSprite;
-	import com.etherpros.components.RigView;
 	import com.etherpros.events.RigEvent;
-	import com.etherpros.model.RigDetail;
-	import com.etherpros.model.Staff;
-	import com.etherpros.model.Week;
-	import com.etherpros.model.WeekDay;
+	import com.etherpros.components.*;	
+	import com.etherpros.model.*;
 	
 	import flash.geom.Point;
 	
@@ -34,12 +30,12 @@ package com.etherpros.controllers
 		private var _weeks:ArrayCollection;
 		private var _rigViewsByMonth:Array;
 
-		private var container:IVisualElementContainer;
+		private var container:CalendarForm
 		
-		public function RigsController(container:IVisualElementContainer) {
+		public function RigsController(container:CalendarForm) {
 			this.container = container;
-			_rigViewsByMonth = new Array();
-			_rigViews = new ArrayCollection();
+			rigViewsByMonth = new Array();
+			rigViews = new ArrayCollection();
 		}
 		
 		public static function setCalendarDimensions(width:int, height:int):void {
@@ -48,15 +44,14 @@ package com.etherpros.controllers
 			
 			CALENDAR_HEIGHT = height;
 			DAY_HEIGHT = CALENDAR_HEIGHT/6; //6 weeks in datagrid.
-			trace(DAY_HEIGHT);
 		}
 		
 		public function addRigByMonth(monthKey:String, rigList:Array):void{
-			_rigViewsByMonth[monthKey] = rigList;
+			rigViewsByMonth[monthKey] = rigList;
 		}
 		
 		public function getRigByMonth(monthKey:String):Array{
-			return this._rigViewsByMonth[monthKey] as Array;
+			return this.rigViewsByMonth[monthKey] as Array;
 		}
 
 		public function set weeks(arr:ArrayCollection):void {
@@ -65,23 +60,44 @@ package com.etherpros.controllers
 			// since month has changed, clear all existing rigs.
 			// clearRigs();
 		}
+		
 		public function get weeks():ArrayCollection {
 			return this._weeks;
 		}
 		
-		public function addRig(rigDetail:RigDetail = null):RigView {		
-			
-			var view:RigView = initRig(	rigDetail );
-			
+		public function addRig(rigDetail:Rig = null):RigView {					
+			var view:RigView = initRig(	rigDetail );			
 			container.addElement(view);
-			_rigViews.addItem(view);
-			
-			view.addEventListener(RigEvent.RIG_RESIZED, rigResized);
+			rigViews.addItem(view);			
+			view.addEventListener(RigEvent.RIG_RESIZED, rigResized, false, 0, true);
 			
 			return view;
 		}
 		
-		private function initRig(rigDetail:RigDetail):RigView{
+		public function clearRigs():void {			
+			var rigModels:Array = new Array();		
+			for each(var rigView:RigView in rigViews) {									
+				rigModels.push(rigView.model);
+				
+				// clear out view elements from stage
+				rigView.destroy();
+				rigView.removeEventListener(RigEvent.RIG_RESIZED, rigResized);
+				
+				container.removeElement(rigView);				
+			}
+			
+			// save rig model objects.
+			var monthKey:String = container.currentYearSelected + "-" + container.currentMonthSelected;
+			addRigByMonth(monthKey, rigModels);
+			
+			// clear out rig views array
+			rigViews = new ArrayCollection();
+		}
+		
+		
+		
+		
+		private function initRig(rigDetail:Rig):RigView{
 			var RIG_HEIGHT:Number = 15;
 			
 			// calculate view position based on day clicked.
@@ -94,15 +110,13 @@ package com.etherpros.controllers
 			view.y = yOffset
 			return view;
 		}
+		
 		/**
 		 * Draws an existing RigView
 		 * */
-		public function reDrawRig(rigDetail:RigDetail = null):void {
+		public function reDrawRig(rigDetail:Rig = null):void {			
+			var view:RigView = addRig(rigDetail);
 			
-			var view:RigView = initRig(	rigDetail );
-			container.addElement(view);
-			_rigViews.addItem(view);			
-			view.addEventListener(RigEvent.RIG_RESIZED, rigResized);
 			if ( rigDetail.startDay != null && rigDetail.startDay.dayNumber != -1 
 				&& rigDetail.endDay != null && rigDetail.endDay.dayNumber != -1 ){				
 				var dayLenght:int = rigDetail.endDay.dayNumber - rigDetail.startDay.dayNumber;
@@ -122,8 +136,9 @@ package com.etherpros.controllers
 			var endDay:WeekDay = getDayByColumnAndRow(getColumnIndex(sprite.x+sprite.width-2), getRowIndex(sprite.y));
 			
 			// set the right startDay and endDay to the view.
-			//event.view.rigDetail.startDay = startDay;
-			event.view.rigDetail.endDay = endDay;
+			// UNCOMMENT IMMEDIATELY
+			// event.model.startDay = startDay;
+			event.model.endDay = endDay;
 		}
 		
 		private function getDayByColumnAndRow(column:int, row:int):WeekDay {
@@ -143,7 +158,7 @@ package com.etherpros.controllers
 		private function getYPosition( _weekDay:WeekDay ):int{
 			var ringCounter:int = 0;
 			for each  (var _ringView:RigView in _rigViews) {
-				if ( _ringView.rigDetail.startDay.dayNumber == _weekDay.dayNumber ){
+				if ( _ringView.model.startDay.dayNumber == _weekDay.dayNumber ){
 					ringCounter++;
 				}
 			}

@@ -14,32 +14,32 @@
 		<![CDATA[
 			import com.etherpros.controllers.RigsController;
 			import com.etherpros.events.RigCreationEvent;
-			import com.etherpros.model.RigDetail;
+			import com.etherpros.model.Rig;
 			import com.etherpros.model.Staff;
 			import com.etherpros.model.Week;
 			import com.etherpros.model.WeekDay;
-			import com.etherpros.utils.CommonUtils;
-			
-			import flashx.textLayout.elements.ListItemElement;
-			
+			import com.etherpros.utils.CommonUtils;			
+			import flashx.textLayout.elements.ListItemElement;			
 			import mx.collections.ArrayCollection;
 			import mx.controls.Alert;
 			import mx.controls.Label;
 			import mx.core.DragSource;
 			import mx.events.CalendarLayoutChangeEvent;
 			import mx.events.DragEvent;
-			import mx.managers.DragManager;
-			
+			import mx.managers.DragManager;			
 			import spark.components.Label;
 			import spark.events.GridEvent;
+			
 			[Bindable]
 			private var weekArray:ArrayCollection;
 			
 			private var rigsController:RigsController;
 			[Bindable]
 			private var staffDP: ArrayCollection;
-			private var currentMonthSelected:int = -1;
-			private var currentYearSelected:int = -1;
+			
+			public var currentMonthSelected:int = -1;
+			public var currentYearSelected:int = -1;
+			
 			private function init():void {
 				// set up controlller for rig views.
 				rigsController = new RigsController(this);
@@ -140,32 +140,22 @@
 			}
 			
 			private function  initSelectedMonth():void{
-				var monthKey:String = dtPicker.displayedYear + "" + dtPicker.displayedMonth;
+				var monthKey:String = dtPicker.displayedYear + "-" + dtPicker.displayedMonth;
 				var rigByMonth:Array =  rigsController.getRigByMonth(monthKey);
-				for each  (var _rigDetail:RigDetail in rigByMonth){
+				for each  (var _rigDetail:Rig in rigByMonth){
 					rigsController.reDrawRig(_rigDetail );	
 				}				
 			}
 			/**
 			 * Function for cleaning the rigs from the calendar and stores the rigs in a temp array
 			 * */
-			private function clearCalendarGrid():void{
-				var rigList:Array = new Array();
-				for each  (var _ringView:RigView in rigsController.rigViews) {
-					if ( _ringView != null ){
-						rigList.push(_ringView.rigDetail);
-						_ringView.destroy();
-						this.removeElement(_ringView);
-					}
-				}
-				var monthKey:String = currentYearSelected + "" + currentMonthSelected;
-				rigsController.addRigByMonth(monthKey, rigList);
-				rigsController.rigViews.removeAll();
+			private function clearCalendarGrid():void {
+				rigsController.clearRigs();				
 			}
 			
 			protected function addRigView(event:RigCreationEvent):void {
 				if ( event.weekDay && event.weekDay.dayNumber != -1 ){
-					var rigDetail:RigDetail = new RigDetail();
+					var rigDetail:Rig = new Rig();
 					rigDetail.staff = event.staffRig;
 					rigDetail.startDay = event.weekDay;
 					rigsController.addRig(rigDetail);
