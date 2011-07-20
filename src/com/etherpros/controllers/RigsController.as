@@ -158,7 +158,7 @@ package com.etherpros.controllers
 		private function getYPosition( _weekDay:WeekDay ):int{
 			var ringCounter:int = 0;
 			for each  (var _ringView:RigView in _rigViews) {
-				if ( _ringView.model.startDay.dayNumber == _weekDay.dayNumber ){
+				if ( _ringView.model.startDay.weekIndex == _weekDay.weekIndex ){
 					ringCounter++;
 				}
 			}
