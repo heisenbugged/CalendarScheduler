@@ -58,9 +58,7 @@ package com.etherpros.components
 		private var mousePositionX:int = 0;			
 		/** When set to false resize operations are disabled. **/
 		private var dragValid:Boolean = true;
-		
-		private var initialSprite:RigSprite;
-		
+				
 		public function RigView(rigDetail:RigDetail, width:Number=300, height:Number=100, initialX:Number=0, initialY:Number=0) {
 			// initialize variables			
 			this._rigDetail = rigDetail;		
@@ -74,11 +72,11 @@ package com.etherpros.components
 				this._rigDetail.rigColor = Math.random() * 0xFFFFFF;
 			}
 						
-			initialSprite= createEmptySprite();
-			initialSprite.x = initialX;
-			initialSprite.y = initialY;
+			var sprite:RigSprite = createEmptySprite();
+			sprite.x = initialX;
+			sprite.y = initialY;
 			// add first sprite row.
-			addElement(initialSprite);
+			addElement(sprite);
 		}
 		
 		/** Creates empty sprite and adds the sprite to the spriteRows array.
@@ -219,13 +217,40 @@ package com.etherpros.components
 			}
 		}
 		
-		public function reDraw(dayLengt:int):void{
-			initialSprite.width = Math.ceil(initialSprite.width/RigsController.DAY_WIDTH)  * RigsController.DAY_WIDTH + (defaultWidth * dayLengt);			
+		public function reDraw(totalDay:int, startDayIndex:int):void{
+			var initialSprite:RigSprite = spriteRows.getItemAt(0) as RigSprite;
+			var dayOffset:int = Week.DAYS_BY_WEEK - (startDayIndex + 1);
+			var rigByDayWith:int; 
+			if ( totalDay > dayOffset ){
+				totalDay -= dayOffset;
+				rigByDayWith = dayOffset;
+			}else{				
+				rigByDayWith = totalDay ;
+				totalDay = 0;
+			}
+			initialSprite.width = Math.ceil(initialSprite.width/RigsController.DAY_WIDTH)  * RigsController.DAY_WIDTH + (defaultWidth * rigByDayWith);			
 			// if new width surpasses calendar width, snap backwards
 			if( (initialSprite.width + initialSprite.x) > RigsController.CALENDAR_WIDTH) {				
 				initialSprite.width = RigsController.CALENDAR_WIDTH - initialSprite.x;
 			}
 			
+			while ( totalDay > 0 ){
+				var row:UIComponent = createEmptySprite();
+				row.y = RigsController.DAY_HEIGHT * (spriteRows.length-1) + initialY;				
+				addElement(row);
+				totalDay--;//Reduces on day because the row added
+				// redraw rows.
+				draw();				
+				if (totalDay > Week.DAYS_BY_WEEK ){
+					dayOffset = Week.DAYS_BY_WEEK - 1;
+					totalDay -= dayOffset;
+					rigByDayWith = dayOffset;
+				}else{				
+					rigByDayWith = totalDay;
+					totalDay = -1;
+				}
+				row.width = Math.ceil(row.width/RigsController.DAY_WIDTH)  * RigsController.DAY_WIDTH + (defaultWidth * rigByDayWith);
+			}
 		}
 		
 		/** Redraws the graphics of the rig. Used for updating the view

@@ -104,9 +104,11 @@ package com.etherpros.controllers
 			_rigViews.addItem(view);			
 			view.addEventListener(RigEvent.RIG_RESIZED, rigResized);
 			if ( rigDetail.startDay != null && rigDetail.startDay.dayNumber != -1 
-				&& rigDetail.endDay != null && rigDetail.endDay.dayNumber != -1 ){
+				&& rigDetail.endDay != null && rigDetail.endDay.dayNumber != -1 ){				
 				var dayLenght:int = rigDetail.endDay.dayNumber - rigDetail.startDay.dayNumber;
-				view.reDraw(dayLenght);
+				var _week:Week =  this.weeks.getItemAt(rigDetail.startDay.weekIndex ) as Week;
+				var dayIndex:int = _week.getIndexByDay(rigDetail.startDay.dayName);				
+				view.reDraw(dayLenght, dayIndex);
 			}
 		}
 		
@@ -117,10 +119,10 @@ package com.etherpros.controllers
 			var startDay:WeekDay = getDayByColumnAndRow(getColumnIndex(sprite.x), getRowIndex(sprite.y));
 			sprite = event.view.lastRow;
 			// -2 to shave off a few pixels of borders and padding
-			var endDay:WeekDay = getDayByColumnAndRow(getColumnIndex(sprite.x+sprite.width-2), getRowIndex(sprite.y));
+			var endDay:WeekDay = getDayByColumnAndRow(getColumnIndex(sprite.x), getRowIndex(sprite.y));
 			
 			// set the right startDay and endDay to the view.
-			event.view.rigDetail.startDay = startDay;
+			//event.view.rigDetail.startDay = startDay;
 			event.view.rigDetail.endDay = endDay;
 		}
 		

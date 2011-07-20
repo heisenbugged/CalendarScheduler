@@ -2,6 +2,15 @@ package com.etherpros.model
 {
 	public class Week
 	{
+		public static const SUNDAY:String ="sunday";
+		public static const MONDAY:String ="monday";
+		public static const TUESDAY:String ="tuesday";
+		public static const WEDNESDAY:String ="wednesday";
+		public static const THURSDAY:String ="thursday";
+		public static const FRIDAY:String ="friday";
+		public static const SATURDAY:String ="saturday";
+		public static const DAYS_BY_WEEK:int = 7;
+
 		private var _sunday:WeekDay;
 		private var _monday:WeekDay;
 		private var _tuesday:WeekDay;
@@ -25,6 +34,19 @@ package com.etherpros.model
 				case 6: return saturday;
 			}
 			return null;
+		}
+		
+		public function getIndexByDay(dayName:String):int {
+			switch(dayName.toLowerCase()) {
+				case SUNDAY: return 0;
+				case MONDAY: return 1;
+				case TUESDAY: return 2;
+				case WEDNESDAY: return 3;
+				case THURSDAY: return 4;
+				case FRIDAY: return 5;
+				case SATURDAY: return 6;
+			}
+			return -1;
 		}
 		
 		public function get saturday():WeekDay
