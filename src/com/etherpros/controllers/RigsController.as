@@ -136,8 +136,7 @@ package com.etherpros.controllers
 			var endDay:WeekDay = getDayByColumnAndRow(getColumnIndex(sprite.x+sprite.width-2), getRowIndex(sprite.y));
 			
 			// set the right startDay and endDay to the view.
-			// UNCOMMENT IMMEDIATELY
-			// event.model.startDay = startDay;
+			event.model.startDay = startDay;
 			event.model.endDay = endDay;
 		}
 		
