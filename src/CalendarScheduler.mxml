@@ -4,9 +4,12 @@
 			   xmlns:mx="library://ns.adobe.com/flex/mx"
 			   xmlns:ns1="*"
 			   xmlns:components="com.etherpros.components.*"
-			   minWidth="955" minHeight="600" 
-			   initialize="init()">
-
+			   initialize="init()"
+			   minWidth="955" minHeight="600"
+			   backgroundColor="#eeeeee">
+	
+	<fx:Style source="assets/css/main.css" />	
+	
 	<fx:Script>
 		<![CDATA[			
 			// Static reference to main application.
@@ -19,8 +22,13 @@
 		]]>
 	</fx:Script>
 		
-	<components:CalendarForm width="100%" height="100%">
+	<!-- Main Component! -->
+	<components:CalendarForm width="100%">
 	</components:CalendarForm>
 	
+	<!-- Title -->
+	<s:SkinnableContainer width="100%" height="45" skinClass="skins.TitleBar">
+		<s:Label styleName="title" text="Calendar Scheduler" verticalCenter="0" left="10" />
+	</s:SkinnableContainer>
 	
 </s:Application>

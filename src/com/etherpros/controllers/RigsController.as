@@ -67,7 +67,7 @@ package com.etherpros.controllers
 		
 		public function addRig(rigDetail:Rig = null):RigView {					
 			var view:RigView = initRig(	rigDetail );			
-			container.addElement(view);
+			container.gridContainer.addElement(view);
 			rigViews.addItem(view);			
 			view.addEventListener(RigEvent.RIG_RESIZED, rigResized, false, 0, true);
 			
@@ -83,7 +83,7 @@ package com.etherpros.controllers
 				rigView.destroy();
 				rigView.removeEventListener(RigEvent.RIG_RESIZED, rigResized);
 				
-				container.removeElement(rigView);				
+				container.gridContainer.removeElement(rigView);				
 			}
 			
 			// save rig model objects.

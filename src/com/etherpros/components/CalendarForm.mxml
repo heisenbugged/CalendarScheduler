@@ -3,30 +3,32 @@
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
 		 xmlns:mx="library://ns.adobe.com/flex/mx"  
 		 xmlns:components="com.etherpros.components.*"
-		 creationComplete="init()" xmlns:model="com.etherpros.model.*"
-		 backgroundColor="#eeeeee" borderColor="#e3e3e3">
+		 xmlns:model="com.etherpros.model.*" creationComplete="init()"
+		 borderAlpha="0">
 	
 	<s:layout>
-		<s:BasicLayout/>
+		<s:HorizontalLayout horizontalAlign="center" />
 	</s:layout>
 	
 	<fx:Script>
 		<![CDATA[
 			import com.etherpros.controllers.RigsController;
 			import com.etherpros.events.RigCreationEvent;
-			import com.etherpros.model.Rig;
-			import com.etherpros.model.Staff;
-			import com.etherpros.model.Week;
-			import com.etherpros.model.WeekDay;
-			import com.etherpros.utils.CommonUtils;			
-			import flashx.textLayout.elements.ListItemElement;			
+			import com.etherpros.model.*;
+			import com.etherpros.utils.CommonUtils;
+			
+			import flashx.textLayout.elements.ListItemElement;
+			
 			import mx.collections.ArrayCollection;
 			import mx.controls.Alert;
 			import mx.controls.Label;
 			import mx.core.DragSource;
 			import mx.events.CalendarLayoutChangeEvent;
 			import mx.events.DragEvent;
-			import mx.managers.DragManager;			
+			import mx.managers.DragManager;
+			
+			import skins.DriversList;
+			
 			import spark.components.Label;
 			import spark.events.GridEvent;
 			
@@ -186,48 +188,59 @@
 			public static var COLUMN_WIDTH:int = 146;
 		]]>
 	</fx:Script>
+	<s:Group id="gridContainer">
+
+		<s:DataGrid id="grdCalendar" width="1024" height="766" dataProvider="{weekArray}"
+					requestedRowCount="4" rowHeight="123" selectionMode="none">			
+			<s:columns>
+				<s:ArrayList>
+					<s:GridColumn width="{COLUMN_WIDTH}" dataField="sunday" headerText="Sunday" resizable="false"
+								  sortable="false" itemRenderer="com.etherpros.components.DayView">
+					</s:GridColumn>
+					<s:GridColumn width="{COLUMN_WIDTH}" dataField="monday" headerText="Monday" resizable="false"
+								  sortable="false" itemRenderer="com.etherpros.components.DayView">
+					</s:GridColumn>
+					<s:GridColumn width="{COLUMN_WIDTH}" dataField="tuesday" headerText="Tuesday"
+								  resizable="false" sortable="false" itemRenderer="com.etherpros.components.DayView">
+					</s:GridColumn>
+					<s:GridColumn width="{COLUMN_WIDTH}" dataField="wednesday" headerText="Wednesday"
+								  resizable="false" sortable="false" itemRenderer="com.etherpros.components.DayView">
+					</s:GridColumn>
+					<s:GridColumn width="{COLUMN_WIDTH}" dataField="thursday" headerText="Thursday"
+								  resizable="false" sortable="false" itemRenderer="com.etherpros.components.DayView">
+					</s:GridColumn>
+					<s:GridColumn width="{COLUMN_WIDTH}" dataField="friday" headerText="Friday" resizable="false"
+								  sortable="false" itemRenderer="com.etherpros.components.DayView">
+					</s:GridColumn>
+					<s:GridColumn width="{COLUMN_WIDTH}" dataField="saturday" headerText="Saturday"
+								  resizable="false" sortable="false" itemRenderer="com.etherpros.components.DayView">
+					</s:GridColumn>
+				</s:ArrayList>
+			</s:columns>			
+		</s:DataGrid>
 	
-	<fx:Declarations>
-		<!-- Place non-visual elements (e.g., services, value objects) here -->
-	</fx:Declarations>
+	</s:Group>
+
+	<s:VGroup width="250" horizontalAlign="center" paddingLeft="20" paddingRight="20" paddingTop="10" gap="15">
+		<components:TitleBox label="Date Picker" />
 		
-	<s:DataGrid id="grdCalendar" width="1024" height="766" dataProvider="{weekArray}"
-				 requestedRowCount="4" rowHeight="123" selectionMode="none">
+		<mx:DateChooser id="dtPicker" height="31" enabled="true" showToday="false"
+						change="dtPicker_changeHandler(event)" click="dtPicker_clickHandler(event)" 
+						yearNavigationEnabled="true"/>
 		
-		<s:columns>
-			<s:ArrayList>
-				<s:GridColumn width="{COLUMN_WIDTH}" dataField="sunday" headerText="Sunday" resizable="false"
-							  sortable="false" itemRenderer="com.etherpros.components.DayView">
-				</s:GridColumn>
-				<s:GridColumn width="{COLUMN_WIDTH}" dataField="monday" headerText="Monday" resizable="false"
-							  sortable="false" itemRenderer="com.etherpros.components.DayView">
-				</s:GridColumn>
-				<s:GridColumn width="{COLUMN_WIDTH}" dataField="tuesday" headerText="Tuesday"
-							  resizable="false" sortable="false" itemRenderer="com.etherpros.components.DayView">
-				</s:GridColumn>
-				<s:GridColumn width="{COLUMN_WIDTH}" dataField="wednesday" headerText="Wednesday"
-							  resizable="false" sortable="false" itemRenderer="com.etherpros.components.DayView">
-				</s:GridColumn>
-				<s:GridColumn width="{COLUMN_WIDTH}" dataField="thursday" headerText="Thursday"
-							  resizable="false" sortable="false" itemRenderer="com.etherpros.components.DayView">
-				</s:GridColumn>
-				<s:GridColumn width="{COLUMN_WIDTH}" dataField="friday" headerText="Friday" resizable="false"
-							  sortable="false" itemRenderer="com.etherpros.components.DayView">
-				</s:GridColumn>
-				<s:GridColumn width="{COLUMN_WIDTH}" dataField="saturday" headerText="Saturday"
-							  resizable="false" sortable="false" itemRenderer="com.etherpros.components.DayView">
-				</s:GridColumn>
-			</s:ArrayList>
-		</s:columns>
-				
-	</s:DataGrid>
-	
-	<mx:DateChooser id="dtPicker" x="1030" height="31" change="dtPicker_changeHandler(event)"
-					click="dtPicker_clickHandler(event)" enabled="true" showToday="false"
-					yearNavigationEnabled="true"/>
-	
-	<s:List id="staffList" x="1030" y="43" dragEnabled="true" labelField="name" 
-			dropEnabled="false" width="125" height="330" >
-	</s:List>
-	
+		<s:Spacer height="30" />
+		
+		<components:TitleBox label="Drivers" />
+		<s:List id="staffList" width="100%" dragEnabled="true" 
+				dropEnabled="false" skinClass="skins.DriversList">
+			<s:itemRenderer>
+				<fx:Component>
+					<s:ItemRenderer height="35">
+						<s:Label fontFamily="Frutiger" color="#555555" fontSize="20" text="{data.name}" verticalCenter="0" horizontalCenter="0" />	
+					</s:ItemRenderer>					
+				</fx:Component>
+			</s:itemRenderer>
+		</s:List>
+	</s:VGroup>
+		
 </s:BorderContainer>

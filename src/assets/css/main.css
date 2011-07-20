@@ -1,0 +1,49 @@
+/* CSS file */
+@namespace s "library://ns.adobe.com/flex/spark";
+@namespace mx "library://ns.adobe.com/flex/mx";
+@namespace components "com.etherpros.components.*";
+
+@font-face {
+	font-family: Frutiger;
+	src: url("assets/fonts/FrutigerLTStd-Bold.otf");
+	font-weight: bold;
+}
+
+@font-face {
+	font-family: Frutiger;
+	src: url("assets/fonts/FrutigerLTStd-Roman.otf");
+	font-weight: normal;
+}
+
+@font-face {
+	font-family: FrutigerLight;
+	src: url("assets/fonts/FrutigerLtStdLight.otf");
+	font-weight: normal;
+}
+
+components|CalendarForm {
+	backgroundColor: #eeeeee;
+	bottom: 0; 
+	top: 50;	
+}
+
+.title {
+	color: #ffffff;
+	fontSize: 25px;
+	fontFamily: FrutigerLight;
+	fontWeight: normal;
+}
+
+.shaded {
+	backgroundColor: #a2a2a2; 
+	borderAlpha: 0;
+}
+
+/*
+.left-column {
+	horizontalAlign: center;
+	paddingLeft: 20; 
+	paddingRight: 20; 
+	paddingTop: 10;
+}
+*/
