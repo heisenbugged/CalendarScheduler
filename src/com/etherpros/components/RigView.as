@@ -228,7 +228,7 @@ package com.etherpros.components
 				rigByDayWith = totalDay ;
 				totalDay = 0;
 			}
-			initialSprite.width = Math.ceil(initialSprite.width/RigsController.DAY_WIDTH)  * RigsController.DAY_WIDTH + (defaultWidth * rigByDayWith);			
+			initialSprite.width = Math.ceil(initialSprite.width/RigsController.DAY_WIDTH)  * RigsController.DAY_WIDTH + (defaultWidth * rigByDayWith - 1);			
 			// if new width surpasses calendar width, snap backwards
 			if( (initialSprite.width + initialSprite.x) > RigsController.CALENDAR_WIDTH) {				
 				initialSprite.width = RigsController.CALENDAR_WIDTH - initialSprite.x;

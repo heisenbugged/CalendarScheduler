@@ -119,7 +119,7 @@ package com.etherpros.controllers
 			var startDay:WeekDay = getDayByColumnAndRow(getColumnIndex(sprite.x), getRowIndex(sprite.y));
 			sprite = event.view.lastRow;
 			// -2 to shave off a few pixels of borders and padding
-			var endDay:WeekDay = getDayByColumnAndRow(getColumnIndex(sprite.x), getRowIndex(sprite.y));
+			var endDay:WeekDay = getDayByColumnAndRow(getColumnIndex(sprite.x+sprite.width-2), getRowIndex(sprite.y));
 			
 			// set the right startDay and endDay to the view.
 			//event.view.rigDetail.startDay = startDay;
