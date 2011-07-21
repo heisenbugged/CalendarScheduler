@@ -60,8 +60,8 @@ package com.etherpros.components
 		private var dragValid:Boolean = true;
 		
 		// position on grid
-		public var startRow:int;
-		public var startColumn:int;
+		public var startPos:Point;
+		public var endPos:Point;
 		
 		// determines which sides can be dragged
 		public var leftDraggable:Boolean = true;
@@ -85,6 +85,12 @@ package com.etherpros.components
 			sprite.y = initialY;			
 		}
 		
+		/** Sets the first row of the grid to a given X and Y position **/
+		public function position(x:int, y:int):void {
+			var sprite:RigSprite = firstRow;
+			sprite.x = x;
+			sprite.y = y;
+		}
 		
 		/** Creates empty sprite and adds the sprite to the spriteRows array.
 		 *  This function is used when a rigview jumps to a new week row. **/
@@ -290,9 +296,23 @@ package com.etherpros.components
 		// -------------------
 		// Getters and Setters
 		// -------------------
+		public function get rowIndex():int {
+			if(startPos) {
+				return startPos.y;
+			}
+			return 0;
+		}
+		
+		public function get columnIndex():int {
+			if(startPos) {
+				return startPos.x;			
+			}
+			
+			return 0;
+		}
 		
 		public function get endRow():int {
-			return startRow + numRows - 1;
+			return startPos.y + numRows - 1;
 		}
 		
 		public function get numRows():int {

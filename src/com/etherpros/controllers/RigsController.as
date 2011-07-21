@@ -19,6 +19,7 @@ package com.etherpros.controllers
 		public var xOffset:int;
 		public var yOffset:int;
 		
+		public static var RIG_HEIGHT:int = 15;
 		public static var DAY_WIDTH:int;
 		public static var DAY_HEIGHT:int;
 		public static var CALENDAR_WIDTH:int;
@@ -69,85 +70,82 @@ package com.etherpros.controllers
 		private const MS_IN_DAY:Number = 86400000;
 		public function drawRigView(model:Rig = null):void {			
 			var view:RigView = addRigView(model);
-			var startPosition:Point = dayRange.getDateRowAndColumn(model.startDay.date);
-			var endPosition:Point = dayRange.getDateRowAndColumn(model.endDay.date);
-				
+			// find the difference in days between the start day and end day.
 			var dayLength:int = ( (model.endDay.date.getTime() - model.startDay.date.getTime()) / MS_IN_DAY) + 1;
+			var column:int = view.columnIndex;
 			// if rig starts outside of the viewable range
-			if(startPosition == null) {
+			if(view.startPos == null) {
 				// cut off the difference from the start day and the viewable range start day				
 				dayLength += (model.startDay.date.getTime() - dayRange.startDay.date.getTime()) / MS_IN_DAY;
 			}
 			
 			// if rig finishes outside of viewable range
-			if(endPosition == null) {
+			if(view.endPos == null) {
 				// cut off the difference from the end day and the viewable range end day
 				dayLength += (dayRange.endDay.date.getTime() - model.endDay.date.getTime() ) / MS_IN_DAY;
 			}
-
-			var week:Week =  dayRange.weeks.getItemAt(view.startRow) as Week;
-			var dayIndex:int = view.startColumn;			
-			view.paint(dayLength, dayIndex);
+			
+			view.paint(dayLength, column);
 		}
 		
+		/** Creates a new rig view, positions it and adds it to the stage **/
 		public function addRigView(model:Rig):RigView {
-			var view:RigView = initRig(	model );			
+			var view:RigView = new RigView(model, DAY_WIDTH, RIG_HEIGHT);
+			
+			// get row and column positions of the start and end day of this rig.
+			var startPos:Point = dayRange.getDateRowAndColumn(model.startDay.date);
+			var endPos:Point = dayRange.getDateRowAndColumn(model.endDay.date);
+			
+			// if the start day of this rig is outside the viewable date range.
+			if(startPos == null) {				
+				// disable dragging from left side since the
+				// true corner of the rig extends past the
+				// viewable range.
+				view.leftDraggable = false;
+			}
+			
+			if(endPos == null) {
+				// disable dragging from right side since the
+				// true corner of the rig extends past the
+				// viewable range.				
+				view.rightDraggable = false;
+			}
+			
+			// set positioning.
+			view.x = xOffset;
+			view.y = yOffset;
+			view.startPos = startPos;
+			view.endPos = endPos;			
+			positionRigView(startPos, view);
+			
+			// add to containers
 			container.gridContainer.addElement(view);
-			rigViews.addItem(view);			
+			rigViews.addItem(view);
+			
+			// add event listeners
 			view.addEventListener(RigEvent.RIG_RESIZED, rigResized, false, 0, true);
 			view.addEventListener(RigEvent.ADD_RIG_SPRITE, addRigRow, false, 0, true);
-			
+						
 			return view;			
+		}
+		
+		/** Converts a row, column point into X and Y coordinates **/
+		private function positionRigView(pos:Point, rig:RigView):void {
+			// if the position is null, use 0,0 instead.
+			if(pos == null) {
+				pos = new Point();
+			}
+			
+			var x:int = ( pos.x * DAY_WIDTH );
+			var y:int = ( pos.y * DAY_HEIGHT) + ( (RIG_HEIGHT + RIG_VERTICAL_PADDING) * getYPosition(rig.model.startDay) + 1) + 15;
+			rig.position(x, y);
 		}
 		
 		public function createRig(model:Rig = null):void {			
 			rigs.addItem(model);
 			addRigView(model);
 		}
-		
-		/** Creates a new empty rig view. Maybe should be in a factory? **/
-		private function initRig(model:Rig):RigView {
-			var RIG_HEIGHT:Number = 15;
 			
-			var startPos:Point = dayRange.getDateRowAndColumn(model.startDay.date);
-			var endPos:Point = dayRange.getDateRowAndColumn(model.endDay.date);
-			// calculate view position based on day clicked.
-			// dayIndex is column and weekIndex is row.
-			var x:int = 0;
-			var y:int = 0;
-			
-			// if the start of the rig goes outside the calendar
-			// set the start to zero instead and disable left dragging
-			// since the left side is beyond the bounds of the current
-			// viewport.
-			if(startPos) {
-				x = ( startPos.x * DAY_WIDTH );
-				y = ( startPos.y * DAY_HEIGHT  )  + ( (RIG_HEIGHT+RIG_VERTICAL_PADDING) * getYPosition(model.startDay) + 1 ) + 15;
-			} else {
-				y = ( (RIG_HEIGHT+RIG_VERTICAL_PADDING) * getYPosition(model.startDay) + 1 ) + 15;
-			}
-			
-			var view:RigView = new RigView(model, DAY_WIDTH, RIG_HEIGHT, x, y);
-			
-			if(startPos) {
-				view.startRow = startPos.y;
-				view.startColumn = startPos.x;
-			} else {
-				view.startRow = 0;
-				view.startColumn = 0;
-				view.leftDraggable = false;
-			}
-			
-			// if the view ends outside the viewable range
-			// disable dragging from right hand side.
-			if(endPos == null) {
-				view.rightDraggable = false;
-			}
-			
-			view.x = xOffset;
-			view.y = yOffset
-			return view;
-		}		
 		
 		public function clearRigViews():void {			
 			var rigModels:Array = new Array();		
@@ -161,10 +159,6 @@ package com.etherpros.controllers
 				
 				container.gridContainer.removeElement(rigView);				
 			}
-			
-			// save rig model objects.
-			// var monthKey:String = container.currentYearSelected + "-" + container.currentMonthSelected;
-			// addRigByMonth(monthKey, rigModels);
 			
 			// clear out rig views array
 			rigViews = new ArrayCollection();
@@ -221,7 +215,7 @@ package com.etherpros.controllers
 			var view:RigView = rigEvent.view;
 			var RIG_HEIGHT:Number = 15;
 			
-			var weekIndex:int = view.startRow + rigEvent.view.numRows;
+			var weekIndex:int = view.rowIndex + rigEvent.view.numRows;
 			// week that row will be added to.
 			var nextWeek:Week = dayRange.weeks[weekIndex] as Week;
 			// instantiate an empty sprite row
@@ -273,7 +267,7 @@ package com.etherpros.controllers
 						
 					// if the date is part of the same week as this rig, then
 					// we also add one to the stacking.					
-					} else if(dayPosition.y == view.startRow || dayPosition.y == view.endRow) {
+					} else if(dayPosition.y == view.rowIndex || dayPosition.y == view.endRow) {
 						rigCounter++;
 					}
 				}
