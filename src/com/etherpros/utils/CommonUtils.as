@@ -171,23 +171,13 @@ package com.etherpros.utils
 				}
 			}
 			else
-			{
-				if ( arrDays.length <= 35 ){
-					for(i=arrDays.length; i<35; i++)
-					{
-						nextDate =  new Date(objDateNext.fullYear , objDateNext.month , dayIndex);
-						dayName = CommonUtils.getDayName(nextDate.getDay());
-						arrDays.push({dayNumber:dayIndex, dayName:dayName, isOtherMonth:true,date:nextDate});
-						dayIndex++;
-					}
-				}else{
-					for(i=arrDays.length; i<42; i++)
-					{
-						nextDate =  new Date(objDateNext.fullYear , objDateNext.month , dayIndex);
-						dayName = CommonUtils.getDayName(nextDate.getDay());
-						arrDays.push({dayNumber:dayIndex, dayName:dayName, isOtherMonth:true,date:nextDate});
-						dayIndex++;
-					}
+			{			
+				for(i=arrDays.length; i<42; i++)
+				{
+					nextDate =  new Date(objDateNext.fullYear , objDateNext.month , dayIndex);
+					dayName = CommonUtils.getDayName(nextDate.getDay());
+					arrDays.push({dayNumber:dayIndex, dayName:dayName, isOtherMonth:true,date:nextDate});
+					dayIndex++;
 				}
 			}
 			return arrDays;
