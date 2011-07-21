@@ -12,8 +12,9 @@
 	<fx:Script>
 		<![CDATA[
 			import com.etherpros.events.RigCreationEvent;
-			import com.etherpros.model.Staff;
 			import com.etherpros.model.Day;
+			import com.etherpros.model.Staff;
+			import com.etherpros.utils.CommonUtils;
 			
 			import mx.controls.Alert;
 			import mx.controls.listClasses.BaseListData;
@@ -41,9 +42,9 @@
 					weekDay = value[column.dataField] as Day;
 					
 					if(weekDay) {
-						if ( weekDay.dayNumber == -1  ){
-							displayLabel.text ="";
-							displayLabel.enabled  = false;
+						if ( weekDay.isPreviousMonth  ){
+							displayLabel.text = value.toString();
+							displayLabel.text = weekDay.dayNumber.toString()  + "-" + CommonUtils.getMonthName(weekDay.date.month);
 						}else{
 							displayLabel.text = value.toString();
 							displayLabel.text = weekDay.dayNumber.toString();

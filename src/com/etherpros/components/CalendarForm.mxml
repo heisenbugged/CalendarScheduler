@@ -76,6 +76,7 @@
 				var intTotalDaysInMonth:int = CommonUtils.getDaysCount(currentMonth, currentYear);
 				var i:int;
 				var arrDays:Array =  CommonUtils.getArrayDays(objDate, currentYear, currentMonth, intTotalDaysInMonth);
+				//var arrDaysPreviousMonth:Array =  CommonUtils.getArrayDays(objDate, currentYear, currentMonth-1, intTotalDaysInMonth);
 				var weekDay:Day;
 				var currentWeek:Week;
 				
@@ -105,13 +106,8 @@
 						weekDay.dayName = arrDays[i+j].dayName as String;
 						weekDay.dayIndex = j;
 						weekDay.weekIndex = currentWeekIndex;
-						
-						if(weekDay.dayName != "none") {
-							weekDay.date = new Date(currentYear, currentMonth, weekDay.dayNumber);
-						} else {
-							weekDay.date = new Date();
-						}
-						
+						weekDay.date = arrDays[i+j].date as Date;
+						weekDay.isPreviousMonth = arrDays[i+j].isPrevious as Boolean;						
 						currentWeek[ weekDays[j] ] = weekDay;
 					}
 					

@@ -114,19 +114,36 @@ package com.etherpros.utils
 		}
 		
 		public static function getArrayDays(objDate:Date,currentYear:int,currentMonth:int, intTotalDaysInMonth:int  ):Array{
+			//Setting previous month days
+			var objDatePrevious:Date;			
+			//O for Enero month number- Validates if the previous month is december of last year
+			if ( currentMonth == 0 ){
+				//11 for december
+				objDatePrevious= new Date(currentYear -  1 , 11, 1);
+			}else{
+				objDatePrevious= new Date(currentYear , currentMonth - 1 , 1);
+			}
+			var todalDayPreviousMonth:int = CommonUtils.getDaysCount(objDatePrevious.month, objDatePrevious.fullYear);
+			
+			
 			var arrDays:Array = new Array();
 			var i:int;
+			var previousDate:Date;
 			for(i=0; i<objDate.getDay(); i++)
-			{
-				arrDays.push({dayNumber:-1, dayName:"None"});
+			{				
+				previousDate =  new Date(objDatePrevious.fullYear , objDatePrevious.month , todalDayPreviousMonth);
+				var strDayName:String = CommonUtils.getDayName(todalDayPreviousMonth);
+				arrDays.push({dayNumber:todalDayPreviousMonth, dayName:strDayName, isPrevious:true,date:previousDate});
+				todalDayPreviousMonth--;
 			}
+			arrDays.reverse();
 			
 			// now loop through total number of days in this month and save values in array
 			for(i=0; i<intTotalDaysInMonth; i++)
 			{
 				var objDate1:Date = new Date(currentYear, currentMonth, i+1);
 				var strStartDayName:String = CommonUtils.getDayName(objDate1.getDay());
-				arrDays.push({dayNumber:i+1, dayName:strStartDayName});
+				arrDays.push({dayNumber:i+1, dayName:strStartDayName, isPrevious:false,date:objDate1});
 			}
 			
 			// if first day of the month is Friday and it is not a leap year then we need to show 7 rows
@@ -147,6 +164,24 @@ package com.etherpros.utils
 				}
 			}
 			return arrDays;
+		}
+		
+		public static function getMonthName( monthNumber:int ):String{
+			var monthNameList:Array = new Array();
+			monthNameList = new Array();
+			monthNameList[0] = "January";
+			monthNameList[1] = "February";
+			monthNameList[2] = "March";
+			monthNameList[3] = "April";
+			monthNameList[4] = "May";
+			monthNameList[5] = "June";
+			monthNameList[6] = "July";
+			monthNameList[7] = "August";
+			monthNameList[8] = "September";
+			monthNameList[9] = "October";
+			monthNameList[10] = "November";
+			monthNameList[11] = "December";
+			return monthNameList[monthNumber] as String;
 		}
 	}
 }
