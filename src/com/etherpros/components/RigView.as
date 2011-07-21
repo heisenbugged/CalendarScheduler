@@ -224,7 +224,11 @@ package com.etherpros.components
 		public function paint(daySpan:int, startDayIndex:int):void {
 			var numberOfRows:int = Math.ceil( (daySpan+startDayIndex)/Week.DAYS_BY_WEEK);
 			// set the last sprite width to the remainder number of days
-			var remainder:int = daySpan - ( (numberOfRows-1) * Week.DAYS_BY_WEEK) + startDayIndex;			
+			if(numberOfRows > 1) {
+				var remainder:int = daySpan - ( (numberOfRows-1) * Week.DAYS_BY_WEEK) + startDayIndex;
+			} else {
+				var remainder:int = daySpan; 
+			}
 			
 			for(var i:int=1; i < numberOfRows; i++) {
 				var sprite:RigSprite = spriteRows[i-1];
