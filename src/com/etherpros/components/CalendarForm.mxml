@@ -107,7 +107,7 @@
 						weekDay.dayIndex = j;
 						weekDay.weekIndex = currentWeekIndex;
 						weekDay.date = arrDays[i+j].date as Date;
-						weekDay.isPreviousMonth = arrDays[i+j].isPrevious as Boolean;						
+						weekDay.isOtherMonth = arrDays[i+j].isOtherMonth as Boolean;						
 						currentWeek[ weekDays[j] ] = weekDay;
 					}
 					

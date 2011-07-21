@@ -12,11 +12,7 @@ package com.etherpros.model
 		private var _isBeginDayWeek:Boolean = false;
 		private var _isEndDayWeek:Boolean= false;
 		
-		private var _isPreviousMonth:Boolean = false;
-		private var _isNextMonth:Boolean = false;
-		
-		
- 
+		private var _isOtherMonth:Boolean = false;
 		
 		public function Day() {
 			
@@ -61,26 +57,16 @@ package com.etherpros.model
 
 		public function set isEndDayWeek(value:Boolean):void {
 			_isEndDayWeek = value;
+		}		
+
+		public function get isOtherMonth():Boolean
+		{
+			return _isOtherMonth;
 		}
 
-		public function get isPreviousMonth():Boolean
+		public function set isOtherMonth(value:Boolean):void
 		{
-			return _isPreviousMonth;
-		}
-
-		public function set isPreviousMonth(value:Boolean):void
-		{
-			_isPreviousMonth = value;
-		}
-
-		public function get isNextMonth():Boolean
-		{
-			return _isNextMonth;
-		}
-
-		public function set isNextMonth(value:Boolean):void
-		{
-			_isNextMonth = value;
+			_isOtherMonth = value;
 		}
 
 

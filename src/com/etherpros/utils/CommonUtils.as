@@ -132,8 +132,8 @@ package com.etherpros.utils
 			for(i=0; i<objDate.getDay(); i++)
 			{				
 				previousDate =  new Date(objDatePrevious.fullYear , objDatePrevious.month , todalDayPreviousMonth);
-				var strDayName:String = CommonUtils.getDayName(todalDayPreviousMonth);
-				arrDays.push({dayNumber:todalDayPreviousMonth, dayName:strDayName, isPrevious:true,date:previousDate});
+				var strDayName:String = CommonUtils.getDayName(objDatePrevious.getDay());
+				arrDays.push({dayNumber:todalDayPreviousMonth, dayName:strDayName, isOtherMonth:true,date:previousDate});
 				todalDayPreviousMonth--;
 			}
 			arrDays.reverse();
@@ -143,9 +143,20 @@ package com.etherpros.utils
 			{
 				var objDate1:Date = new Date(currentYear, currentMonth, i+1);
 				var strStartDayName:String = CommonUtils.getDayName(objDate1.getDay());
-				arrDays.push({dayNumber:i+1, dayName:strStartDayName, isPrevious:false,date:objDate1});
+				arrDays.push({dayNumber:i+1, dayName:strStartDayName, isOtherMonth:false,date:objDate1});
 			}
-			
+			//Adding next month days
+			var objDateNext:Date;
+			//Validates last month of year december
+			if ( currentMonth == 11 ){
+				//11 for december
+				objDateNext= new Date(currentYear + 1 , 1, 1);
+			}else{
+				objDateNext= new Date(currentYear , currentMonth + 1 , 1);
+			}
+			var dayIndex:int = 1;
+			var nextDate:Date;
+			var dayName:String;
 			// if first day of the month is Friday and it is not a leap year then we need to show 7 rows
 			// there could be max 42 items in a calendar grid for a month with 6 rows
 			// so add blank values in case still some cells are pending as per count of 7 cols x 6 rows = 42
@@ -153,14 +164,30 @@ package com.etherpros.utils
 			{
 				for(i=arrDays.length; i<42; i++)
 				{
-					arrDays.push({dayNumber:-1, dayName:"None"});
+					nextDate =  new Date(objDateNext.fullYear , objDateNext.month , dayIndex);
+					dayName= CommonUtils.getDayName(nextDate.getDay());
+					arrDays.push({dayNumber:dayIndex, dayName:dayName, isOtherMonth:true,date:nextDate});
+					dayIndex++;
 				}
 			}
 			else
 			{
-				for(i=arrDays.length; i<35; i++)
-				{
-					arrDays.push({dayNumber:-1, dayName:"None"});
+				if ( arrDays.length <= 35 ){
+					for(i=arrDays.length; i<35; i++)
+					{
+						nextDate =  new Date(objDateNext.fullYear , objDateNext.month , dayIndex);
+						dayName = CommonUtils.getDayName(nextDate.getDay());
+						arrDays.push({dayNumber:dayIndex, dayName:dayName, isOtherMonth:true,date:nextDate});
+						dayIndex++;
+					}
+				}else{
+					for(i=arrDays.length; i<42; i++)
+					{
+						nextDate =  new Date(objDateNext.fullYear , objDateNext.month , dayIndex);
+						dayName = CommonUtils.getDayName(nextDate.getDay());
+						arrDays.push({dayNumber:dayIndex, dayName:dayName, isOtherMonth:true,date:nextDate});
+						dayIndex++;
+					}
 				}
 			}
 			return arrDays;

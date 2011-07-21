@@ -42,7 +42,7 @@
 					weekDay = value[column.dataField] as Day;
 					
 					if(weekDay) {
-						if ( weekDay.isPreviousMonth  ){
+						if ( weekDay.isOtherMonth  ){
 							displayLabel.text = value.toString();
 							displayLabel.text = weekDay.dayNumber.toString()  + "-" + CommonUtils.getMonthName(weekDay.date.month);
 						}else{
