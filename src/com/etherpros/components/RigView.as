@@ -222,54 +222,18 @@ package com.etherpros.components
 		}
 		
 		public function reDraw(daySpan:int, startDayIndex:int):void {
-			var numberOfRows:int = Math.ceil(daySpan/Week.DAYS_BY_WEEK);
+			var numberOfRows:int = Math.ceil( (daySpan+startDayIndex)/Week.DAYS_BY_WEEK);
+			var remainder:int = daySpan % 7;			
 			
 			for(var i:int=1; i < numberOfRows; i++) {
 				var sprite:RigSprite = spriteRows[i-1];
 				// since new rows are added, all the previous rows must be max width.
 				sprite.width = RigsController.CALENDAR_WIDTH - sprite.x;
 				addRow();
-			}		
-		}
-		
-		/*
-		public function reDraw(totalDay:int, startDayIndex:int):void{
-			var initialSprite:RigSprite = spriteRows.getItemAt(0) as RigSprite;
-			var dayOffset:int = Week.DAYS_BY_WEEK - (startDayIndex + 1);
-			var rigByDayWith:int; 
-			if ( totalDay > dayOffset ){
-				totalDay -= dayOffset;
-				rigByDayWith = dayOffset;
-			}else{				
-				rigByDayWith = totalDay ;
-				totalDay = 0;
-			}
-			initialSprite.width = Math.ceil(initialSprite.width/RigsController.DAY_WIDTH)  * RigsController.DAY_WIDTH + (defaultWidth * rigByDayWith - 1);			
-			// if new width surpasses calendar width, snap backwards
-			if( (initialSprite.width + initialSprite.x) > RigsController.CALENDAR_WIDTH) {				
-				initialSprite.width = RigsController.CALENDAR_WIDTH - initialSprite.x;
 			}
 			
-			while ( totalDay > 0 ){
-				totalDay--;//Reduces on day because the row added
-				if (totalDay > Week.DAYS_BY_WEEK ){
-					dayOffset = Week.DAYS_BY_WEEK - 1;
-					totalDay -= dayOffset;
-					rigByDayWith = dayOffset;
-				}else{				
-					rigByDayWith = totalDay;
-					totalDay = -1;
-				}
-				
-				var rigEvent:RigEvent = new RigEvent(RigEvent.ADD_RIG_SPRITE,true);
-				rigEvent.view = this;
-				rigEvent.model = model;				
-				rigEvent.isRedraw = true;
-				rigEvent.rigTotalWidth = defaultWidth * rigByDayWith; 
-				dispatchEvent(rigEvent); 
-			}
-		}
-		*/
+			lastRow.width = RigsController.DAY_WIDTH * remainder;
+		}		
 		
 		/** Redraws the graphics of the rig. Used for updating the view
 		 *  with changes to the width or height of the component **/
