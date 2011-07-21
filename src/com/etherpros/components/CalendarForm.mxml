@@ -115,8 +115,9 @@
 					currentWeekIndex++;	
 				}
 				
-				// set week array to controller.
-				rigsController.weeks = weekArray;
+				var dayRange:DayRange = new DayRange(weekArray);
+				rigsController.dayRange = dayRange;
+				
 				initSelectedMonth();
 			}	
 			
@@ -144,26 +145,35 @@
 				
 			}
 			
-			private function  initSelectedMonth():void{
+			private function  initSelectedMonth():void {
+				
+				/*
+				
 				var monthKey:String = dtPicker.displayedYear + "-" + dtPicker.displayedMonth;
 				var rigByMonth:Array =  rigsController.getRigByMonth(monthKey);
 				for each  (var _rigDetail:Rig in rigByMonth){
 					rigsController.reDrawRig(_rigDetail );	
-				}				
+				}
+				
+				*/
+				
 			}
 			/**
 			 * Function for cleaning the rigs from the calendar and stores the rigs in a temp array
 			 * */
 			private function clearCalendarGrid():void {
-				rigsController.clearRigs();				
+				// rigsController.clearRigViews();				
 			}
 			
 			protected function addRigView(event:RigCreationEvent):void {
-				if ( event.weekDay && event.weekDay.dayNumber != -1 ){
-					var rigDetail:Rig = new Rig();
+				// if dragging into a valid week.
+				if ( event.weekDay && event.weekDay.dayNumber != -1 ) {
+					
+					var rigDetail:Rig = new Rig();					
 					rigDetail.staff = event.staffRig;
 					rigDetail.startDay = event.weekDay;
-					rigsController.addRig(rigDetail);
+					rigsController.createRig(rigDetail);
+					
 				}				
 			}
 					
