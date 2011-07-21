@@ -55,11 +55,8 @@ package com.etherpros.controllers
 			return this.rigViewsByMonth[monthKey] as Array;
 		}
 
-		public function set weeks(arr:ArrayCollection):void {
+		public function set weeks(arr:ArrayCollection):void {			
 			_weeks = arr;
-			
-			// since month has changed, clear all existing rigs.
-			// clearRigs();
 		}
 		
 		public function get weeks():ArrayCollection {
@@ -175,9 +172,11 @@ package com.etherpros.controllers
 			return Math.floor(x/RigsController.DAY_WIDTH);
 		}		
 		
-		/** Determines how many RingViews have been added in a particular day 
-		 *  When a rig is passed in, it is excluded from any position calculations.
-		 * **/
+		/** 
+		 * Determines how many RingViews have been added in a particular day 
+		 * When a rig is passed in, it is excluded from any position calculations.
+		 * 
+		 **/
 		
 		private function getYPosition( day:Day, rig:Rig=null):int {
 			var dayTime:Number = day.date.getTime();			

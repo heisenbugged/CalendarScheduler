@@ -223,7 +223,8 @@ package com.etherpros.components
 		
 		public function paint(daySpan:int, startDayIndex:int):void {
 			var numberOfRows:int = Math.ceil( (daySpan+startDayIndex)/Week.DAYS_BY_WEEK);
-			var remainder:int = daySpan % 7;			
+			// set the last sprite width to the remainder number of days
+			var remainder:int = daySpan - ( (numberOfRows-1) * Week.DAYS_BY_WEEK) + startDayIndex;			
 			
 			for(var i:int=1; i < numberOfRows; i++) {
 				var sprite:RigSprite = spriteRows[i-1];
@@ -231,7 +232,8 @@ package com.etherpros.components
 				sprite.width = RigsController.CALENDAR_WIDTH - sprite.x;
 				addRow();
 			}
-			
+						
+			// in the last row
 			lastRow.width = RigsController.DAY_WIDTH * remainder;
 		}		
 		
