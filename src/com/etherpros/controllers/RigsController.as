@@ -1,7 +1,7 @@
 package com.etherpros.controllers
 {
+	import com.etherpros.components.*;
 	import com.etherpros.events.RigEvent;
-	import com.etherpros.components.*;	
 	import com.etherpros.model.*;
 	
 	import flash.geom.Point;
@@ -10,6 +10,7 @@ package com.etherpros.controllers
 	import mx.core.IContainer;
 	import mx.core.IVisualElement;
 	import mx.core.IVisualElementContainer;
+	import mx.core.UIComponent;
 	
 	import spark.components.Group;
 
@@ -140,6 +141,26 @@ package com.etherpros.controllers
 			event.model.endDay = endDay;
 		}
 		
+		public function addRigSprite(rigEvent:RigEvent):void{
+			// create new row!
+			var RIG_HEIGHT:Number = 15;			
+			var row:UIComponent = rigEvent.view.createEmptySprite();
+			var _nextWeek:Week = this.weeks[rigEvent.view.model.startDay.weekIndex + 1 ] as Week ;
+			if ( _nextWeek != null ){
+				var nextDay:WeekDay  = _nextWeek.getDayByIndex(0);				
+				rigEvent.view.addElement(row);				
+				// redraw rows.
+				rigEvent.view.draw();
+				if ( rigEvent.isRedraw ){
+					row.y = ( nextDay.weekIndex * DAY_HEIGHT  )  + ( (RIG_HEIGHT+RIG_VERTICAL_PADDING) * getYPosition(nextDay)  ) + 15;
+					row.width = Math.ceil(row.width/RigsController.DAY_WIDTH)  * RigsController.DAY_WIDTH + (rigEvent.rigTotalWidth);
+				}else{
+					row.y = ( nextDay.weekIndex * DAY_HEIGHT  )  + ( (RIG_HEIGHT+RIG_VERTICAL_PADDING) * getYPosition(nextDay) + 1 ) + 15;
+				}
+			}
+			
+		}
+		
 		private function getDayByColumnAndRow(column:int, row:int):WeekDay {
 			var week:Week = weeks[row];
 			return week.getDayByIndex(column);
@@ -157,7 +178,8 @@ package com.etherpros.controllers
 		private function getYPosition( _weekDay:WeekDay ):int{
 			var ringCounter:int = 0;
 			for each  (var _ringView:RigView in _rigViews) {
-				if ( _ringView.model.startDay.weekIndex == _weekDay.weekIndex ){
+				if ( (_ringView.model.startDay != null && _ringView.model.startDay.weekIndex == _weekDay.weekIndex ) 
+					||  ( _ringView.model.endDay != null && _ringView.model.endDay.weekIndex == _weekDay.weekIndex ) ){
 					ringCounter++;
 				}
 			}

@@ -82,14 +82,13 @@ package com.etherpros.components
 		
 		/** Creates empty sprite and adds the sprite to the spriteRows array.
 		 *  This function is used when a rigview jumps to a new week row. **/
-		private function createEmptySprite():RigSprite {			
+		public function createEmptySprite():RigSprite {			
 			var sprite:RigSprite = new RigSprite(this.model.rigColor, this.model.staff.name);
 			sprite.width = defaultWidth;
 			sprite.height = defaultHeight;
 			sprite.addEventListener(MouseEvent.MOUSE_DOWN,mouseDown);
 			// add sprite to sprite rows array.
-			spriteRows.addItem(sprite);
-			
+			spriteRows.addItem(sprite);			
 			return sprite;
 		}
 					
@@ -186,13 +185,9 @@ package com.etherpros.components
 			if( (target.width + target.x) > RigsController.CALENDAR_WIDTH) {				
 				// reset width to be the same as the calendar width.
 				target.width = RigsController.CALENDAR_WIDTH - target.x;
-				
-				// create new row!
-				var row:UIComponent = createEmptySprite();
-				row.y = RigsController.DAY_HEIGHT * (spriteRows.length-1) + initialY;
-				addElement(row);				
-				// redraw rows.
-				draw();
+				var rigEvent:RigEvent = new RigEvent(RigEvent.ADD_RIG_SPRITE,true);
+				rigEvent.view = this;
+				dispatchEvent(rigEvent);
 				
 				// When resizing a rig, if the rig jumps to a new
 				// row when it is resized beyond its available width.
@@ -203,8 +198,7 @@ package com.etherpros.components
 				dragValid = false;
 				
 				// TODO: Throw row added event.
-			}
-
+			}						
 			// if the width of the rig row is 0, remove row from array
 			if(target.width <= 0) {
 				// TODO: Throw destroy event.				
@@ -239,12 +233,7 @@ package com.etherpros.components
 			}
 			
 			while ( totalDay > 0 ){
-				var row:UIComponent = createEmptySprite();
-				row.y = RigsController.DAY_HEIGHT * (spriteRows.length-1) + initialY;				
-				addElement(row);
 				totalDay--;//Reduces on day because the row added
-				// redraw rows.
-				draw();				
 				if (totalDay > Week.DAYS_BY_WEEK ){
 					dayOffset = Week.DAYS_BY_WEEK - 1;
 					totalDay -= dayOffset;
@@ -253,7 +242,12 @@ package com.etherpros.components
 					rigByDayWith = totalDay;
 					totalDay = -1;
 				}
-				row.width = Math.ceil(row.width/RigsController.DAY_WIDTH)  * RigsController.DAY_WIDTH + (defaultWidth * rigByDayWith);
+				
+				var rigEvent:RigEvent = new RigEvent(RigEvent.ADD_RIG_SPRITE,true);
+				rigEvent.view = this;
+				rigEvent.isRedraw = true;
+				rigEvent.rigTotalWidth = defaultWidth * rigByDayWith; 
+				dispatchEvent(rigEvent); 
 			}
 		}
 		

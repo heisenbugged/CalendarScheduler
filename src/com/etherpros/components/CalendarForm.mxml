@@ -14,6 +14,7 @@
 		<![CDATA[
 			import com.etherpros.controllers.RigsController;
 			import com.etherpros.events.RigCreationEvent;
+			import com.etherpros.events.RigEvent;
 			import com.etherpros.model.*;
 			import com.etherpros.utils.CommonUtils;
 			
@@ -53,6 +54,7 @@
 				createDaysGrid();
 				initStaffList();
 				this.addEventListener(RigCreationEvent.ADD_NEW_RIG,addRigView);
+				this.addEventListener(RigEvent.ADD_RIG_SPRITE,addRigSprite, false, 0, true);
 			}
 			
 			// create grid of days in current month as per current date provided
@@ -162,6 +164,10 @@
 					rigDetail.startDay = event.weekDay;
 					rigsController.addRig(rigDetail);
 				}				
+			}
+			
+			private function addRigSprite(event:RigEvent):void{
+				rigsController.addRigSprite(event);
 			}
 			
 			private function initStaffList():void {
