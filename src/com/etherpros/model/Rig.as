@@ -5,30 +5,40 @@ package com.etherpros.model
  	* */
 	public class Rig
 	{
-		private var _startDay:WeekDay;
-		private var _endDay:WeekDay;
+		private var _startDay:Day;
+		private var _endDay:Day;
 		private var _staff:Staff;
 		private var _rigColor:int;
 		public function Rig()
 		{
 		}
 
-		public function get startDay():WeekDay
+		public function get startDay():Day
 		{
 			return _startDay;
 		}
 
-		public function set startDay(value:WeekDay):void
+		public function set startDay(value:Day):void
 		{
 			_startDay = value;
 		}
 
-		public function get endDay():WeekDay
+		public function get endDay():Day
 		{
-			return _endDay;
+			if(_endDay != null) {
+				return _endDay;	
+			} else {
+				
+			// if the endDay is null, then that means that the
+			// rig is only one day long, so return start day
+			// since the start day and end day are the same.
+				
+				return _startDay;
+			}
+			
 		}
 
-		public function set endDay(value:WeekDay):void
+		public function set endDay(value:Day):void
 		{
 			_endDay = value;
 		}

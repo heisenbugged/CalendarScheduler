@@ -11,19 +11,19 @@ package com.etherpros.model
 		public static const SATURDAY:String ="saturday";
 		public static const DAYS_BY_WEEK:int = 7;
 
-		private var _sunday:WeekDay;
-		private var _monday:WeekDay;
-		private var _tuesday:WeekDay;
-		private var _wednesday:WeekDay;
-		private  var _thursday:WeekDay;
-		private var _friday:WeekDay;
-		private var _saturday:WeekDay;
+		private var _sunday:Day;
+		private var _monday:Day;
+		private var _tuesday:Day;
+		private var _wednesday:Day;
+		private  var _thursday:Day;
+		private var _friday:Day;
+		private var _saturday:Day;
 		
 		public function Week()
 		{
 		}
 		
-		public function getDayByIndex(index:int):WeekDay {
+		public function getDayByIndex(index:int):Day {
 			switch(index) {
 				case 0: return sunday;
 				case 1: return monday;
@@ -49,72 +49,72 @@ package com.etherpros.model
 			return -1;
 		}
 		
-		public function get saturday():WeekDay
+		public function get saturday():Day
 		{
 			return _saturday;
 		}
 
-		public function set saturday(value:WeekDay):void
+		public function set saturday(value:Day):void
 		{
 			_saturday = value;
 		}
 
-		public function get friday():WeekDay
+		public function get friday():Day
 		{
 			return _friday;
 		}
 
-		public function set friday(value:WeekDay):void
+		public function set friday(value:Day):void
 		{
 			_friday = value;
 		}
 
-		public function get thursday():WeekDay
+		public function get thursday():Day
 		{
 			return _thursday;
 		}
 
-		public function set thursday(value:WeekDay):void
+		public function set thursday(value:Day):void
 		{
 			_thursday = value;
 		}
 
-		public function get wednesday():WeekDay
+		public function get wednesday():Day
 		{
 			return _wednesday;
 		}
 
-		public function set wednesday(value:WeekDay):void
+		public function set wednesday(value:Day):void
 		{
 			_wednesday = value;
 		}
 
-		public function get tuesday():WeekDay
+		public function get tuesday():Day
 		{
 			return _tuesday;
 		}
 
-		public function set tuesday(value:WeekDay):void
+		public function set tuesday(value:Day):void
 		{
 			_tuesday = value;
 		}
 
-		public function get monday():WeekDay
+		public function get monday():Day
 		{
 			return _monday;
 		}
 
-		public function set monday(value:WeekDay):void
+		public function set monday(value:Day):void
 		{
 			_monday = value;
 		}
 
-		public function get sunday():WeekDay
+		public function get sunday():Day
 		{
 			return _sunday;
 		}
 
-		public function set sunday(value:WeekDay):void
+		public function set sunday(value:Day):void
 		{
 			_sunday = value;
 		}

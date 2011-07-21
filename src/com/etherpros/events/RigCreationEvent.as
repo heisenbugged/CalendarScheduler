@@ -2,7 +2,7 @@ package com.etherpros.events
 {
 	import com.etherpros.components.RigView;
 	import com.etherpros.model.Staff;
-	import com.etherpros.model.WeekDay;
+	import com.etherpros.model.Day;
 	
 	import flash.events.Event;
 	
@@ -13,7 +13,7 @@ package com.etherpros.events
 		
 		private var _rigView:RigView;
 		private var _staffRig:Staff;
-		private var _weekDay:WeekDay;
+		private var _weekDay:Day;
 		public function RigCreationEvent(type:String,rigView:RigView = null,  bubbles:Boolean=false, cancelable:Boolean=false)
 		{
 			super(type, bubbles, cancelable);
@@ -40,12 +40,12 @@ package com.etherpros.events
 			_staffRig = value;
 		}
 
-		public function get weekDay():WeekDay
+		public function get weekDay():Day
 		{
 			return _weekDay;
 		}
 
-		public function set weekDay(value:WeekDay):void
+		public function set weekDay(value:Day):void
 		{
 			_weekDay = value;
 		}

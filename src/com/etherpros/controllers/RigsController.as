@@ -66,11 +66,12 @@ package com.etherpros.controllers
 			return this._weeks;
 		}
 		
-		public function addRig(rigDetail:Rig = null):RigView {					
-			var view:RigView = initRig(	rigDetail );			
+		public function addRig(model:Rig = null):RigView {					
+			var view:RigView = initRig(	model );			
 			container.gridContainer.addElement(view);
 			rigViews.addItem(view);			
 			view.addEventListener(RigEvent.RIG_RESIZED, rigResized, false, 0, true);
+			view.addEventListener(RigEvent.ADD_RIG_SPRITE, addRigRow, false, 0, true);
 			
 			return view;
 		}
@@ -83,6 +84,7 @@ package com.etherpros.controllers
 				// clear out view elements from stage
 				rigView.destroy();
 				rigView.removeEventListener(RigEvent.RIG_RESIZED, rigResized);
+				rigView.removeEventListener(RigEvent.ADD_RIG_SPRITE, addRigRow);
 				
 				container.gridContainer.removeElement(rigView);				
 			}
@@ -97,16 +99,16 @@ package com.etherpros.controllers
 		
 		
 		
-		
-		private function initRig(rigDetail:Rig):RigView{
+		/** Creates a new empty rig. Maybe should be in a factory? **/
+		private function initRig(model:Rig):RigView {
 			var RIG_HEIGHT:Number = 15;
 			
 			// calculate view position based on day clicked.
 			// dayIndex is column and weekIndex is row.
-			var x:int = ( rigDetail.startDay.dayIndex * DAY_WIDTH );
-			var y:int = ( rigDetail.startDay.weekIndex * DAY_HEIGHT  )  + ( (RIG_HEIGHT+RIG_VERTICAL_PADDING) * getYPosition(rigDetail.startDay) + 1 ) + 15;
+			var x:int = ( model.startDay.dayIndex * DAY_WIDTH );
+			var y:int = ( model.startDay.weekIndex * DAY_HEIGHT  )  + ( (RIG_HEIGHT+RIG_VERTICAL_PADDING) * getYPosition(model.startDay) + 1 ) + 15;
 			
-			var view:RigView = new RigView(rigDetail ,DAY_WIDTH, RIG_HEIGHT, x, y);			
+			var view:RigView = new RigView(model, DAY_WIDTH, RIG_HEIGHT, x, y);			
 			view.x = xOffset;
 			view.y = yOffset
 			return view;
@@ -119,11 +121,13 @@ package com.etherpros.controllers
 			var view:RigView = addRig(rigDetail);
 			
 			if ( rigDetail.startDay != null && rigDetail.startDay.dayNumber != -1 
-				&& rigDetail.endDay != null && rigDetail.endDay.dayNumber != -1 ){				
-				var dayLenght:int = rigDetail.endDay.dayNumber - rigDetail.startDay.dayNumber;
+				&& rigDetail.endDay != null && rigDetail.endDay.dayNumber != -1 ) {
+				
+				var dayLength:int = rigDetail.endDay.dayNumber - rigDetail.startDay.dayNumber + 1; // +1 because days start with 0
 				var _week:Week =  this.weeks.getItemAt(rigDetail.startDay.weekIndex ) as Week;
 				var dayIndex:int = _week.getIndexByDay(rigDetail.startDay.dayName);				
-				view.reDraw(dayLenght, dayIndex);
+				view.reDraw(dayLength, dayIndex);
+				
 			}
 		}
 		
@@ -131,37 +135,34 @@ package com.etherpros.controllers
 			// since drag has finished, must re-compute start and end day range
 			// based on new width positions.			
 			var sprite:RigSprite = event.view.firstRow;
-			var startDay:WeekDay = getDayByColumnAndRow(getColumnIndex(sprite.x), getRowIndex(sprite.y));
+			var startDay:Day = getDayByColumnAndRow(getColumnIndex(sprite.x), getRowIndex(sprite.y));
 			sprite = event.view.lastRow;
 			// -2 to shave off a few pixels of borders and padding
-			var endDay:WeekDay = getDayByColumnAndRow(getColumnIndex(sprite.x+sprite.width-2), getRowIndex(sprite.y));
+			var endDay:Day = getDayByColumnAndRow(getColumnIndex(sprite.x+sprite.width-2), getRowIndex(sprite.y));
 			
 			// set the right startDay and endDay to the view.
 			event.model.startDay = startDay;
 			event.model.endDay = endDay;
 		}
 		
-		public function addRigSprite(rigEvent:RigEvent):void{
-			// create new row!
-			var RIG_HEIGHT:Number = 15;			
-			var row:UIComponent = rigEvent.view.createEmptySprite();
-			var _nextWeek:Week = this.weeks[rigEvent.view.model.startDay.weekIndex + 1 ] as Week ;
-			if ( _nextWeek != null ){
-				var nextDay:WeekDay  = _nextWeek.getDayByIndex(0);				
-				rigEvent.view.addElement(row);				
-				// redraw rows.
-				rigEvent.view.draw();
-				if ( rigEvent.isRedraw ){
-					row.y = ( nextDay.weekIndex * DAY_HEIGHT  )  + ( (RIG_HEIGHT+RIG_VERTICAL_PADDING) * getYPosition(nextDay)  ) + 15;
-					row.width = Math.ceil(row.width/RigsController.DAY_WIDTH)  * RigsController.DAY_WIDTH + (rigEvent.rigTotalWidth);
-				}else{
-					row.y = ( nextDay.weekIndex * DAY_HEIGHT  )  + ( (RIG_HEIGHT+RIG_VERTICAL_PADDING) * getYPosition(nextDay) + 1 ) + 15;
-				}
+		/** Adds a new sprite row. **/
+		public function addRigRow(rigEvent:RigEvent):void {
+			var RIG_HEIGHT:Number = 15;
+			// week that row will be added to.
+			var nextWeek:Week = this.weeks[rigEvent.model.startDay.weekIndex+rigEvent.view.numRows] as Week;
+			// instantiate an empty sprite row
+			var row:UIComponent = rigEvent.view.createEmptySprite();			
+			
+			
+			// if the row being added is not past the 6 week calendar limit.
+			if ( nextWeek != null ) {				
+				var nextDay:Day  = nextWeek.getDayByIndex(0);					
+				row.y = ( nextDay.weekIndex * DAY_HEIGHT  )  + ( (RIG_HEIGHT+RIG_VERTICAL_PADDING) * getYPosition(nextDay, rigEvent.model) + 1 ) + 15;				
 			}
 			
 		}
 		
-		private function getDayByColumnAndRow(column:int, row:int):WeekDay {
+		private function getDayByColumnAndRow(column:int, row:int):Day {
 			var week:Week = weeks[row];
 			return week.getDayByIndex(column);
 		}
@@ -174,16 +175,34 @@ package com.etherpros.controllers
 			return Math.floor(x/RigsController.DAY_WIDTH);
 		}		
 		
-		/** Determines how many RingViews have been added in a particular day **/		
-		private function getYPosition( _weekDay:WeekDay ):int{
-			var ringCounter:int = 0;
-			for each  (var _ringView:RigView in _rigViews) {
-				if ( (_ringView.model.startDay != null && _ringView.model.startDay.weekIndex == _weekDay.weekIndex ) 
-					||  ( _ringView.model.endDay != null && _ringView.model.endDay.weekIndex == _weekDay.weekIndex ) ){
-					ringCounter++;
+		/** Determines how many RingViews have been added in a particular day 
+		 *  When a rig is passed in, it is excluded from any position calculations.
+		 * **/
+		
+		private function getYPosition( day:Day, rig:Rig=null):int {
+			var dayTime:Number = day.date.getTime();			
+			var rigCounter:int = 0;
+			
+			for each(var view:RigView in rigViews) {
+				if(view.model != rig) {
+					// get the time range of the rig we're checking.
+					var startTime:Number = view.model.startDay.date.getTime();
+					var endTime:Number = view.model.endDay.date.getTime();
+					
+					// if our date falls within the rig of the rig being checked
+					if(startTime <= dayTime && endTime >= dayTime) {
+					// add one to the number of rigs present inside this date.
+						rigCounter++;
+						
+					// if the date is part of the same week as this rig, then
+					// we also add one to the stacking.					
+					} else if(day.weekIndex == view.model.startDay.weekIndex || day.weekIndex == view.model.endDay.weekIndex) {
+						rigCounter++;
+					}
 				}
 			}
-			return ringCounter ;
+			
+			return rigCounter;
 		}
 		
 		public function setOffset(x:int, y:int):void {

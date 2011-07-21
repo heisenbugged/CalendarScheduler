@@ -34,6 +34,9 @@ package com.etherpros.components
 			// instantate rig driver name and add to stage.
 			createNameLabel(name);
 			addElement(nameLabel);
+			
+			// draw graphics!
+			draw();
 		}
 
 		/** Creates label with name of the rig driver **/

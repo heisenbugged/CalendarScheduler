@@ -9,12 +9,12 @@ package com.etherpros.events
 	{
 		public var view:RigView;
 		public var model:Rig;
-		//Used when re-drawing a rig
+		
+		// Used when re-drawing a rig
 		public var rigTotalWidth:Number;
 		public var isRedraw:Boolean = false;
 		
-		public static const RIG_RESIZED:String = 'rigResizedEvent';
-		
+		public static const RIG_RESIZED:String = 'rigResizedEvent';		
 		public static const ADD_RIG_SPRITE:String = 'addRigSprite';	
 		
 		public function RigEvent(type:String,  bubbles:Boolean=false, cancelable:Boolean=false)

@@ -74,9 +74,7 @@ package com.etherpros.components
 						
 			var sprite:RigSprite = createEmptySprite();
 			sprite.x = initialX;
-			sprite.y = initialY;
-			// add first sprite row.
-			addElement(sprite);			
+			sprite.y = initialY;			
 		}
 		
 		
@@ -88,7 +86,8 @@ package com.etherpros.components
 			sprite.height = defaultHeight;
 			sprite.addEventListener(MouseEvent.MOUSE_DOWN,mouseDown);
 			// add sprite to sprite rows array.
-			spriteRows.addItem(sprite);			
+			spriteRows.addItem(sprite);
+			addElement(sprite);
 			return sprite;
 		}
 					
@@ -157,6 +156,13 @@ package com.etherpros.components
 			// define remove event
 		}
 				
+		private function addRow():void {
+			var rigEvent:RigEvent = new RigEvent(RigEvent.ADD_RIG_SPRITE);
+			rigEvent.view = this;
+			rigEvent.model = model;
+			dispatchEvent(rigEvent);			
+		}
+		
 		/** Resizes the width of the selected rig row based on the change in mouse position from the drag. **/
 		private function resize(event:Event=null):void {
 			var target:RigSprite = dragTarget;
@@ -185,9 +191,9 @@ package com.etherpros.components
 			if( (target.width + target.x) > RigsController.CALENDAR_WIDTH) {				
 				// reset width to be the same as the calendar width.
 				target.width = RigsController.CALENDAR_WIDTH - target.x;
-				var rigEvent:RigEvent = new RigEvent(RigEvent.ADD_RIG_SPRITE,true);
-				rigEvent.view = this;
-				dispatchEvent(rigEvent);
+				
+				// dispatch new row created event.
+				addRow();
 				
 				// When resizing a rig, if the rig jumps to a new
 				// row when it is resized beyond its available width.
@@ -215,6 +221,18 @@ package com.etherpros.components
 			}
 		}
 		
+		public function reDraw(daySpan:int, startDayIndex:int):void {
+			var numberOfRows:int = Math.ceil(daySpan/Week.DAYS_BY_WEEK);
+			
+			for(var i:int=1; i < numberOfRows; i++) {
+				var sprite:RigSprite = spriteRows[i-1];
+				// since new rows are added, all the previous rows must be max width.
+				sprite.width = RigsController.CALENDAR_WIDTH - sprite.x;
+				addRow();
+			}		
+		}
+		
+		/*
 		public function reDraw(totalDay:int, startDayIndex:int):void{
 			var initialSprite:RigSprite = spriteRows.getItemAt(0) as RigSprite;
 			var dayOffset:int = Week.DAYS_BY_WEEK - (startDayIndex + 1);
@@ -245,11 +263,13 @@ package com.etherpros.components
 				
 				var rigEvent:RigEvent = new RigEvent(RigEvent.ADD_RIG_SPRITE,true);
 				rigEvent.view = this;
+				rigEvent.model = model;				
 				rigEvent.isRedraw = true;
 				rigEvent.rigTotalWidth = defaultWidth * rigByDayWith; 
 				dispatchEvent(rigEvent); 
 			}
 		}
+		*/
 		
 		/** Redraws the graphics of the rig. Used for updating the view
 		 *  with changes to the width or height of the component **/
@@ -292,6 +312,10 @@ package com.etherpros.components
 		// -------------------
 		// Getters and Setters
 		// -------------------
+		
+		public function get numRows():int {
+			return spriteRows.length;
+		}
 		
 		public function get firstRow():RigSprite {
 			return spriteRows[0];

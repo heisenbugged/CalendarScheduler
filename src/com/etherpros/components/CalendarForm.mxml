@@ -53,8 +53,7 @@
 				// create first initial month grid.
 				createDaysGrid();
 				initStaffList();
-				this.addEventListener(RigCreationEvent.ADD_NEW_RIG,addRigView);
-				this.addEventListener(RigEvent.ADD_RIG_SPRITE,addRigSprite, false, 0, true);
+				this.addEventListener(RigCreationEvent.ADD_NEW_RIG,addRigView);				
 			}
 			
 			// create grid of days in current month as per current date provided
@@ -77,7 +76,7 @@
 				var intTotalDaysInMonth:int = CommonUtils.getDaysCount(currentMonth, currentYear);
 				var i:int;
 				var arrDays:Array =  CommonUtils.getArrayDays(objDate, currentYear, currentMonth, intTotalDaysInMonth);
-				var weekDay:WeekDay;
+				var weekDay:Day;
 				var currentWeek:Week;
 				
 				var weekDays:Array = ['sunday','monday','tuesday','wednesday','thursday','friday','saturday'];
@@ -95,7 +94,7 @@
 							continue monthloop;							
 						}
 						
-						weekDay = new WeekDay();
+						weekDay = new Day();
 						if ( weekDays[j] == 'sunday' ){
 							weekDay.isBeginDayWeek = true;							
 						}
@@ -106,6 +105,12 @@
 						weekDay.dayName = arrDays[i+j].dayName as String;
 						weekDay.dayIndex = j;
 						weekDay.weekIndex = currentWeekIndex;
+						
+						if(weekDay.dayName != "none") {
+							weekDay.date = new Date(currentYear, currentMonth, weekDay.dayNumber);
+						} else {
+							weekDay.date = new Date();
+						}
 						
 						currentWeek[ weekDays[j] ] = weekDay;
 					}
@@ -165,11 +170,7 @@
 					rigsController.addRig(rigDetail);
 				}				
 			}
-			
-			private function addRigSprite(event:RigEvent):void{
-				rigsController.addRigSprite(event);
-			}
-			
+					
 			private function initStaffList():void {
 				var staff:Staff = new Staff();				
 				staffDP = new ArrayCollection();

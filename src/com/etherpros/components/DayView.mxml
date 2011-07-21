@@ -13,7 +13,7 @@
 		<![CDATA[
 			import com.etherpros.events.RigCreationEvent;
 			import com.etherpros.model.Staff;
-			import com.etherpros.model.WeekDay;
+			import com.etherpros.model.Day;
 			
 			import mx.controls.Alert;
 			import mx.controls.listClasses.BaseListData;
@@ -22,7 +22,7 @@
 			
 			import spark.components.List;
 			
-			private var weekDay:WeekDay;
+			private var weekDay:Day;
 			
 			private function init():void {
 				CalendarScheduler.INSTANCE.addEventListener('monthChanged', clearValues);
@@ -38,7 +38,7 @@
 				if ( value != null ) {
 					
 					
-					weekDay = value[column.dataField] as WeekDay;
+					weekDay = value[column.dataField] as Day;
 					
 					if(weekDay) {
 						if ( weekDay.dayNumber == -1  ){
