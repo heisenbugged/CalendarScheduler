@@ -6,12 +6,8 @@ package com.etherpros.model
 		private var _dayName:String = "";
 		private var _date:Date;
 		
-		public var dayIndex:int;
-		public var weekIndex:int;
-		
 		private var _isBeginDayWeek:Boolean = false;
 		private var _isEndDayWeek:Boolean= false;
-		
 		private var _isOtherMonth:Boolean = false;
 		
 		public function Day() {

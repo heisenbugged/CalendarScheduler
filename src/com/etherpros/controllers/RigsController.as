@@ -47,16 +47,7 @@ package com.etherpros.controllers
 			CALENDAR_HEIGHT = height;
 			DAY_HEIGHT = CALENDAR_HEIGHT/6; //6 weeks in datagrid.
 		}
-		
-		/*
-		public function addRigByMonth(monthKey:String, rigList:Array):void{
-			rigViewsByMonth[monthKey] = rigList;
-		}
-		
-		public function getRigByMonth(monthKey:String):Array{
-			return this.rigViewsByMonth[monthKey] as Array;
-		}
-		*/
+
 		public function set dayRange(value:DayRange):void {
 			_dayRange = value;
 			
@@ -68,6 +59,35 @@ package com.etherpros.controllers
 		
 		public function get dayRange():DayRange {
 			return _dayRange;
+		}
+
+		/**
+		 * Draws an existing Rig
+		 * */
+		
+		// number of miliseconds in a day.
+		private const MS_IN_DAY:Number = 86400000;
+		public function drawRigView(model:Rig = null):void {			
+			var view:RigView = addRigView(model);
+			var startPosition:Point = dayRange.getDateRowAndColumn(model.startDay.date);
+			var endPosition:Point = dayRange.getDateRowAndColumn(model.endDay.date);
+				
+			var dayLength:int = ( (model.endDay.date.getTime() - model.startDay.date.getTime()) / MS_IN_DAY) + 1;
+			// if rig starts outside of the viewable range
+			if(startPosition == null) {
+				// cut off the difference from the start day and the viewable range start day				
+				dayLength += (model.startDay.date.getTime() - dayRange.startDay.date.getTime()) / MS_IN_DAY;
+			}
+			
+			// if rig finishes outside of viewable range
+			if(endPosition == null) {
+				// cut off the difference from the end day and the viewable range end day
+				dayLength += (dayRange.endDay.date.getTime() - model.endDay.date.getTime() ) / MS_IN_DAY;
+			}
+
+			var week:Week =  dayRange.weeks.getItemAt(view.startRow) as Week;
+			var dayIndex:int = view.startColumn;			
+			view.paint(dayLength, dayIndex);
 		}
 		
 		public function addRigView(model:Rig):RigView {
@@ -85,22 +105,49 @@ package com.etherpros.controllers
 			addRigView(model);
 		}
 		
-		
-		
-		/** Creates a new empty rig. Maybe should be in a factory? **/
+		/** Creates a new empty rig view. Maybe should be in a factory? **/
 		private function initRig(model:Rig):RigView {
 			var RIG_HEIGHT:Number = 15;
 			
+			var startPos:Point = dayRange.getDateRowAndColumn(model.startDay.date);
+			var endPos:Point = dayRange.getDateRowAndColumn(model.endDay.date);
 			// calculate view position based on day clicked.
 			// dayIndex is column and weekIndex is row.
-			var x:int = ( model.startDay.dayIndex * DAY_WIDTH );
-			var y:int = ( model.startDay.weekIndex * DAY_HEIGHT  )  + ( (RIG_HEIGHT+RIG_VERTICAL_PADDING) * getYPosition(model.startDay) + 1 ) + 15;
+			var x:int = 0;
+			var y:int = 0;
 			
-			var view:RigView = new RigView(model, DAY_WIDTH, RIG_HEIGHT, x, y);			
+			// if the start of the rig goes outside the calendar
+			// set the start to zero instead and disable left dragging
+			// since the left side is beyond the bounds of the current
+			// viewport.
+			if(startPos) {
+				x = ( startPos.x * DAY_WIDTH );
+				y = ( startPos.y * DAY_HEIGHT  )  + ( (RIG_HEIGHT+RIG_VERTICAL_PADDING) * getYPosition(model.startDay) + 1 ) + 15;
+			} else {
+				y = ( (RIG_HEIGHT+RIG_VERTICAL_PADDING) * getYPosition(model.startDay) + 1 ) + 15;
+			}
+			
+			var view:RigView = new RigView(model, DAY_WIDTH, RIG_HEIGHT, x, y);
+			
+			if(startPos) {
+				view.startRow = startPos.y;
+				view.startColumn = startPos.x;
+			} else {
+				view.startRow = 0;
+				view.startColumn = 0;
+				view.leftDraggable = false;
+			}
+			
+			// if the view ends outside the viewable range
+			// disable dragging from right hand side.
+			if(endPos == null) {
+				view.rightDraggable = false;
+			}
+			
 			view.x = xOffset;
 			view.y = yOffset
 			return view;
-		}
+		}		
 		
 		public function clearRigViews():void {			
 			var rigModels:Array = new Array();		
@@ -127,7 +174,7 @@ package com.etherpros.controllers
 		public function draw():void {
 			var rigs:ArrayCollection = getRigsInRange();
 			for each(var rig:Rig in rigs) {
-				reDrawRig(rig);
+				drawRigView(rig);
 			}
 		}
 		
@@ -149,25 +196,6 @@ package com.etherpros.controllers
 			return rigsInRange;
 		}
 		
-		/**
-		 * Draws an existing RigView
-		 * */
-		
-		// number of miliseconds in a day.
-		private const MS_IN_DAY:Number = 86400000;
-		public function reDrawRig(rigDetail:Rig = null):void {			
-			var view:RigView = addRigView(rigDetail);
-			
-			if ( rigDetail.startDay != null && rigDetail.startDay.dayNumber != -1 
-				&& rigDetail.endDay != null && rigDetail.endDay.dayNumber != -1 ) {
-				
-				var dayLength:int = ( (rigDetail.endDay.date.getTime() - rigDetail.startDay.date.getTime()) / MS_IN_DAY) + 1;
-				var _week:Week =  dayRange.weeks.getItemAt(rigDetail.startDay.weekIndex ) as Week;
-				var dayIndex:int = _week.getIndexByDay(rigDetail.startDay.dayName);				
-				view.paint(dayLength, dayIndex);
-				
-			}
-		}
 		
 		private function rigResized(event:RigEvent):void {
 			// since drag has finished, must re-compute start and end day range
@@ -179,23 +207,31 @@ package com.etherpros.controllers
 			var endDay:Day = getDayByColumnAndRow(getColumnIndex(sprite.x+sprite.width-2), getRowIndex(sprite.y));
 			
 			// set the right startDay and endDay to the view.
-			event.model.startDay = startDay;
-			event.model.endDay = endDay;
+			if(event.view.leftDraggable) {
+				event.model.startDay = startDay;
+			}
+			
+			if(event.view.rightDraggable) {
+				event.model.endDay = endDay;
+			}
 		}
 		
 		/** Adds a new sprite row. **/
 		public function addRigRow(rigEvent:RigEvent):void {
+			var view:RigView = rigEvent.view;
 			var RIG_HEIGHT:Number = 15;
+			
+			var weekIndex:int = view.startRow + rigEvent.view.numRows;
 			// week that row will be added to.
-			var nextWeek:Week = dayRange.weeks[rigEvent.model.startDay.weekIndex+rigEvent.view.numRows] as Week;
+			var nextWeek:Week = dayRange.weeks[weekIndex] as Week;
 			// instantiate an empty sprite row
-			var row:UIComponent = rigEvent.view.createEmptySprite();			
+			var row:UIComponent = view.createEmptySprite();			
 			
 			
 			// if the row being added is not past the 6 week calendar limit.
 			if ( nextWeek != null ) {				
 				var nextDay:Day  = nextWeek.getDayByIndex(0);					
-				row.y = ( nextDay.weekIndex * DAY_HEIGHT  )  + ( (RIG_HEIGHT+RIG_VERTICAL_PADDING) * getYPosition(nextDay, rigEvent.model) + 1 ) + 15;				
+				row.y = ( weekIndex * DAY_HEIGHT  )  + ( (RIG_HEIGHT+RIG_VERTICAL_PADDING) * getYPosition(nextDay, rigEvent.model) + 1 ) + 15;				
 			}
 			
 		}
@@ -220,6 +256,7 @@ package com.etherpros.controllers
 		 **/
 		
 		private function getYPosition( day:Day, rig:Rig=null):int {
+			var dayPosition:Point = dayRange.getDateRowAndColumn(day.date);
 			var dayTime:Number = day.date.getTime();			
 			var rigCounter:int = 0;
 			
@@ -236,7 +273,7 @@ package com.etherpros.controllers
 						
 					// if the date is part of the same week as this rig, then
 					// we also add one to the stacking.					
-					} else if(day.weekIndex == view.model.startDay.weekIndex || day.weekIndex == view.model.endDay.weekIndex) {
+					} else if(dayPosition.y == view.startRow || dayPosition.y == view.endRow) {
 						rigCounter++;
 					}
 				}

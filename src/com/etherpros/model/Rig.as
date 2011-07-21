@@ -9,6 +9,7 @@ package com.etherpros.model
 		private var _endDay:Day;
 		private var _staff:Staff;
 		private var _rigColor:int;
+			
 		public function Rig()
 		{
 		}

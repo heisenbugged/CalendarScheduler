@@ -58,6 +58,14 @@ package com.etherpros.components
 		private var mousePositionX:int = 0;			
 		/** When set to false resize operations are disabled. **/
 		private var dragValid:Boolean = true;
+		
+		// position on grid
+		public var startRow:int;
+		public var startColumn:int;
+		
+		// determines which sides can be dragged
+		public var leftDraggable:Boolean = true;
+		public var rightDraggable:Boolean = true;
 				
 		public function RigView(model:Rig, width:Number=300, height:Number=100, initialX:Number=0, initialY:Number=0) {
 			// initialize variables			
@@ -110,11 +118,11 @@ package com.etherpros.components
 			var mouseY:Number = target.mouseY;
 			
 			// left-drag. Only permit left drag if the first sprite row was grabbed.
-			if(mouseX < 15 && index == 0) {
+			if(mouseX < 15 && index == 0 && leftDraggable) {
 				dragDirection = LEFT;
 				beginDrag(target);
 			// right-drag. Only permit right drag if the last sprite row was grabbed.	
-			}else if(mouseX > target.width-15 && index == spriteRows.length-1) {
+			}else if(mouseX > target.width-15 && index == spriteRows.length-1 && rightDraggable) {
 				dragDirection = RIGHT;				
 				beginDrag(target);
 			} else { 				
@@ -282,6 +290,10 @@ package com.etherpros.components
 		// -------------------
 		// Getters and Setters
 		// -------------------
+		
+		public function get endRow():int {
+			return startRow + numRows - 1;
+		}
 		
 		public function get numRows():int {
 			return spriteRows.length;

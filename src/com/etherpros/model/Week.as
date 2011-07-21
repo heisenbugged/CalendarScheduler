@@ -49,6 +49,10 @@ package com.etherpros.model
 			return -1;
 		}
 		
+		public function get days():Array {
+			return [sunday, monday, tuesday, wednesday, thursday, friday, saturday];
+		}
+		
 		public function get saturday():Day
 		{
 			return _saturday;
