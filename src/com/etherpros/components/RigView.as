@@ -221,7 +221,7 @@ package com.etherpros.components
 			}
 		}
 		
-		public function reDraw(daySpan:int, startDayIndex:int):void {
+		public function paint(daySpan:int, startDayIndex:int):void {
 			var numberOfRows:int = Math.ceil( (daySpan+startDayIndex)/Week.DAYS_BY_WEEK);
 			var remainder:int = daySpan % 7;			
 			

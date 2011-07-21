@@ -126,7 +126,7 @@ package com.etherpros.controllers
 				var dayLength:int = rigDetail.endDay.dayNumber - rigDetail.startDay.dayNumber + 1; // +1 because days start with 0
 				var _week:Week =  this.weeks.getItemAt(rigDetail.startDay.weekIndex ) as Week;
 				var dayIndex:int = _week.getIndexByDay(rigDetail.startDay.dayName);				
-				view.reDraw(dayLength, dayIndex);
+				view.paint(dayLength, dayIndex);
 				
 			}
 		}
