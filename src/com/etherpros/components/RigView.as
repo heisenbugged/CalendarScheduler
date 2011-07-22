@@ -95,7 +95,7 @@ package com.etherpros.components
 		/** Creates empty sprite and adds the sprite to the spriteRows array.
 		 *  This function is used when a rigview jumps to a new week row. **/
 		public function createEmptySprite():RigSprite {			
-			var sprite:RigSprite = new RigSprite(this.model.rigColor, this.model.staff.name);
+			var sprite:RigSprite = new RigSprite(this.model.rigColor, this.model.contractor.FullName);
 			sprite.width = defaultWidth;
 			sprite.height = defaultHeight;
 			sprite.addEventListener(MouseEvent.MOUSE_DOWN,mouseDown);

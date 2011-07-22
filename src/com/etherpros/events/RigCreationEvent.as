@@ -1,7 +1,7 @@
 package com.etherpros.events
 {
 	import com.etherpros.components.RigView;
-	import com.etherpros.model.Staff;
+	import com.etherpros.model.Contractor;
 	import com.etherpros.model.Day;
 	
 	import flash.events.Event;
@@ -12,7 +12,7 @@ package com.etherpros.events
 		public static const ADD_NEW_RIG:String ="addNewRig";
 		
 		private var _rigView:RigView;
-		private var _staffRig:Staff;
+		private var _contractorRig:Contractor;
 		private var _weekDay:Day;
 		public function RigCreationEvent(type:String,rigView:RigView = null,  bubbles:Boolean=false, cancelable:Boolean=false)
 		{
@@ -30,16 +30,6 @@ package com.etherpros.events
 			_rigView = value;
 		}
 
-		public function get staffRig():Staff
-		{
-			return _staffRig;
-		}
-
-		public function set staffRig(value:Staff):void
-		{
-			_staffRig = value;
-		}
-
 		public function get weekDay():Day
 		{
 			return _weekDay;
@@ -48,6 +38,16 @@ package com.etherpros.events
 		public function set weekDay(value:Day):void
 		{
 			_weekDay = value;
+		}
+
+		public function get contractorRig():Contractor
+		{
+			return _contractorRig;
+		}
+
+		public function set contractorRig(value:Contractor):void
+		{
+			_contractorRig = value;
 		}
 
 

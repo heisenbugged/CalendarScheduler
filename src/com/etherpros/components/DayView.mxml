@@ -12,12 +12,10 @@
 	<fx:Script>
 		<![CDATA[
 			import com.etherpros.events.RigCreationEvent;
+			import com.etherpros.model.Contractor;
 			import com.etherpros.model.Day;
-			import com.etherpros.model.Staff;
 			import com.etherpros.utils.CommonUtils;
 			
-			import mx.controls.Alert;
-			import mx.controls.listClasses.BaseListData;
 			import mx.events.DragEvent;
 			import mx.managers.DragManager;
 			
@@ -67,9 +65,9 @@
 			protected function dragDropHandler(event:DragEvent):void
 			{	
 				var _staffList:List = event.dragInitiator as List;
-				var staffSelected:Staff =  _staffList.selectedItem as Staff;
+				var staffContractor:Contractor =  _staffList.selectedItem as Contractor;
 				var  rigCreationEvent:RigCreationEvent = new RigCreationEvent(RigCreationEvent.ADD_NEW_RIG, null, true);
-				rigCreationEvent.staffRig = staffSelected;
+				rigCreationEvent.contractorRig = staffContractor;
 				rigCreationEvent.weekDay = this.weekDay;
 				dispatchEvent(rigCreationEvent);		
 			}

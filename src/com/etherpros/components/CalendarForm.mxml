@@ -12,7 +12,9 @@
 	
 	<fx:Script>
 		<![CDATA[
+			import com.etherpros.business.ContractorDAO;
 			import com.etherpros.controllers.RigsController;
+			import com.etherpros.events.ContractorEvent;
 			import com.etherpros.events.RigCreationEvent;
 			import com.etherpros.events.RigEvent;
 			import com.etherpros.model.*;
@@ -52,8 +54,10 @@
 			
 				// create first initial month grid.
 				createDaysGrid();
-				initStaffList();
+				var contractorDAO:ContractorDAO = new ContractorDAO();
+				contractorDAO.findAll();
 				this.addEventListener(RigCreationEvent.ADD_NEW_RIG,addRigView);				
+				this.addEventListener(ContractorEvent.FIND_ALL_DONE,initContractorList);
 			}
 			
 			// create grid of days in current month as per current date provided
@@ -168,31 +172,15 @@
 				if ( event.weekDay && event.weekDay.dayNumber != -1 ) {
 					
 					var rigDetail:Rig = new Rig();					
-					rigDetail.staff = event.staffRig;
+					rigDetail.contractor = event.contractorRig;
 					rigDetail.startDay = event.weekDay;
 					rigsController.createRig(rigDetail);
 					
 				}				
 			}
 					
-			private function initStaffList():void {
-				var staff:Staff = new Staff();				
-				staffDP = new ArrayCollection();
-				staff.name ="Andrew Dimon";
-				staffDP.addItem(staff);
-				staff = new Staff();
-				staff.name ="Bob Evers";
-				staffDP.addItem(staff);
-				staff = new Staff();
-				staff.name ="Bruce Dejardine";
-				staffDP.addItem(staff);
-				staff = new Staff();
-				staff.name ="Carl Dejardine";
-				staffDP.addItem(staff);
-				staff = new Staff();
-				staff.name ="Chris Martin";
-				staffDP.addItem(staff);				
-				staffList.dataProvider = staffDP;
+			protected function initContractorList(event:ContractorEvent):void {					
+				staffList.dataProvider = event.contractorList;
 			}
 			
 			[Bindable]
@@ -247,7 +235,7 @@
 			<s:itemRenderer>
 				<fx:Component>
 					<s:ItemRenderer height="35">
-						<s:Label fontFamily="Frutiger" color="#555555" fontSize="20" text="{data.name}" verticalCenter="0" horizontalCenter="0" />	
+						<s:Label fontFamily="Frutiger" color="#555555" fontSize="20" text="{data.FullName}" verticalCenter="0" horizontalCenter="0" />	
 					</s:ItemRenderer>					
 				</fx:Component>
 			</s:itemRenderer>

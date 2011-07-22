@@ -7,7 +7,7 @@ package com.etherpros.model
 	{
 		private var _startDay:Day;
 		private var _endDay:Day;
-		private var _staff:Staff;
+		private var _contractor:Contractor;
 		private var _rigColor:int;
 			
 		public function Rig()
@@ -44,16 +44,6 @@ package com.etherpros.model
 			_endDay = value;
 		}
 
-		public function get staff():Staff
-		{
-			return _staff;
-		}
-
-		public function set staff(value:Staff):void
-		{
-			_staff = value;
-		}
-
 		public function get rigColor():int
 		{
 			return _rigColor;
@@ -62,6 +52,16 @@ package com.etherpros.model
 		public function set rigColor(value:int):void
 		{
 			_rigColor = value;
+		}
+
+		public function get contractor():Contractor
+		{
+			return _contractor;
+		}
+
+		public function set contractor(value:Contractor):void
+		{
+			_contractor = value;
 		}
 
 
