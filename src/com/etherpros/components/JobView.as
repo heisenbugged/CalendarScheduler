@@ -7,6 +7,7 @@ package com.etherpros.components
 	import flash.display.*;
 	import flash.events.*;
 	import flash.geom.Point;
+	import flash.utils.Timer;
 	
 	import mx.collections.ArrayCollection;
 	import mx.controls.Alert;
@@ -14,25 +15,27 @@ package com.etherpros.components
 	import mx.core.UIComponent;
 	import mx.graphics.GradientBase;
 	
+	import org.osmf.events.TimeEvent;
+	
 	import spark.components.Group;
 	
 	/** 
 	 * =======
 	 * JobView
 	 * =======
-	 *   Could also be called JobViewController,
-	 *   this class manages the individual rows, resizing
-	 *   painting of those rows.
+	 *   Could also be called JobViewController.
+	 *   This class manages rows, resizing
+	 *   and communication to the job's parent CalendarController.
 	 * 
-	 *   Any visible Job on the stage is composed of one JobView
-	 *   and a JobSprite per each row the spans across.
+	 *   Any visible job on the stage is composed of one JobView
+	 *   and a JobSprite per each row the job spans across.
 	 */
 	
 	public class JobView extends Group { 
 		private const X_PADDING:Number = 8;		
 		private const LEFT:Number = 0;
 		private const RIGHT:Number = 1;
-		
+		private const NONE:Number = -1;
 		
 		/** 
 		 * width and height of new empty sprites.
@@ -60,7 +63,7 @@ package com.etherpros.components
 		
 		/** Can either be LEFT or RIGHT.
 		 *  Is used when resizing a component to determine how it is being resized. **/			
-		private var dragDirection:Number;
+		private var dragDirection:Number = NONE;
 		/** Limit used for the drag and drop functionallity, the limit is related with the grid with **/
 		private var dragAndDropLimit:Number = -1;		
 		private var originalWidth:Number = 0;		
@@ -95,6 +98,8 @@ package com.etherpros.components
 		// determines which sides can be dragged
 		public var leftDraggable:Boolean = true;
 		public var rightDraggable:Boolean = true;
+		
+		private var mouseOver:Boolean = false;
 				
 		public function JobView(model:Job, width:Number=300, height:Number=100, initialX:Number=0, initialY:Number=0) {
 			// initialize variables			
@@ -131,13 +136,62 @@ package com.etherpros.components
 			var sprite:JobSprite = new JobSprite(this.model.jobColor, this.model.contractor.FullName);
 			sprite.width = defaultWidth;
 			sprite.height = defaultHeight;
-			sprite.addEventListener(MouseEvent.MOUSE_DOWN,mouseDown);
+			sprite.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
+			sprite.addEventListener(MouseEvent.ROLL_OVER, highlight);
+			sprite.addEventListener(MouseEvent.ROLL_OUT, unhighlight);
+			
 			// add sprite to sprite rows array.
 			spriteRows.addItem(sprite);
 			addElement(sprite);
 			return sprite;
 		}
-					
+		
+		private function unhighlight(event:Event=null):void {
+			mouseOver = false;
+			
+			if(dragDirection == NONE) {
+				var unhighlightEvent:JobEvent = new JobEvent(JobEvent.UNHIGHLIGHT);
+				unhighlightEvent.view = this;
+				dispatchEvent(unhighlightEvent);
+			}
+		}
+		
+		private function highlight(event:Event=null):void {
+			mouseOver = true;
+			
+			// only listen to highlighting if a drag operation is not underway
+			if(dragDirection == NONE) {
+				// we only want to higlight if the mouse stays over the job view
+				// for at least 800 ms, this avoid flicker effects.
+				var timer:Timer = new Timer(800, 1);
+				timer.addEventListener(TimerEvent.TIMER_COMPLETE, highlightTimerComplete, false, 0, true);
+				timer.start();
+
+			}			
+		}
+		
+		private function highlightTimerComplete(event:Event=null):void {
+			// if the mouse is still over even after waiting,
+			// then throw highlight event
+			if(mouseOver) {
+				var highlightEvent:JobEvent = new JobEvent(JobEvent.HIGHLIGHT);
+				highlightEvent.view = this;
+				dispatchEvent(highlightEvent);
+			}
+		}
+
+		public function fade():void {
+			for each(var sprite:JobSprite in spriteRows) {
+				sprite.fade();
+			}
+		}
+		
+		public function unfade():void {
+			for each(var sprite:JobSprite in spriteRows) {
+				sprite.unfade();
+			}
+		}
+		
 		/** 
 		 * Causes job to 'snap' to a day based on it's x position and width. 
 		 */
@@ -170,7 +224,7 @@ package com.etherpros.components
 				beginDrag(target);
 			} else { 				
 				// no drag direction.
-				dragDirection = -1;
+				dragDirection = NONE;
 			}
 		}
 		
@@ -188,6 +242,8 @@ package com.etherpros.components
 		
 		private function endDrag(event:Event=null):void {
 			dragValid = true;
+			dragDirection = NONE;
+			
 			// remove old drag event listeners.
 			stage.removeEventListener(MouseEvent.MOUSE_MOVE, resize);							
 			stage.removeEventListener(MouseEvent.MOUSE_UP, endDrag);
@@ -201,6 +257,11 @@ package com.etherpros.components
 				resizedEvent.view = this;
 				resizedEvent.model = model;
 				dispatchEvent(resizedEvent);					
+			}
+			
+			// if the mouse is out after the drag, unhighlight
+			if(mouseOver == false) {
+				unhighlight();
 			}
 			
 		}
@@ -357,7 +418,6 @@ package com.etherpros.components
 				sprite.removeEventListener(MouseEvent.MOUSE_DOWN,mouseDown);
 			}
 			
-			//stage.removeEventListener(MouseEvent.MOUSE_MOVE,resize);
 			this.removeAllElements();
 		}
 		

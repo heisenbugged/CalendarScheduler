@@ -135,8 +135,26 @@ package com.etherpros.controllers
 			// add event listeners
 			view.addEventListener(JobEvent.JOB_RESIZED, jobResized, false, 0, true);
 			view.addEventListener(JobEvent.ADD_JOB_SPRITE, addJobRow, false, 0, true);
+			view.addEventListener(JobEvent.HIGHLIGHT, jobHighlighted, false, 0, true);
+			view.addEventListener(JobEvent.UNHIGHLIGHT, jobUnhighlighted, false, 0, true);
 						
 			return view;			
+		}
+
+		private function jobUnhighlighted(event:JobEvent):void {
+			for each(var view:JobView in jobViews) {
+				if(view != event.view) {
+					view.unfade();
+				}
+			}
+		}
+		
+		private function jobHighlighted(event:JobEvent):void {
+			for each(var view:JobView in jobViews) {
+				if(view != event.view) {
+					view.fade();
+				}
+			}
 		}
 		
 		/** 

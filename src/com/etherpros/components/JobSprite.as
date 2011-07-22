@@ -1,9 +1,11 @@
 package com.etherpros.components
 {
 	import flash.display.Graphics;
-	import flash.display.Sprite;	
+	import flash.display.Sprite;
+	
 	import mx.controls.Label;
-	import mx.core.UIComponent;	
+	import mx.core.UIComponent;
+	
 	import spark.components.Group;
 	
 	/**
@@ -17,6 +19,7 @@ package com.etherpros.components
 		private const LABEL_PADDING:Number = 10;
 		
 		private var s:Sprite = new Sprite();
+		private var highlightContainer:UIComponent = new UIComponent;
 		private var g:Graphics;		
 		private var _width:int;
 		private var _height:int;
@@ -63,11 +66,32 @@ package com.etherpros.components
 		public function draw():void {			
 			// clear out old graphics.			
 			g.clear();
-			
+
 			//re-paint
 			g.beginFill(color);
 			g.drawRoundRect(0,0, width, height, 15);
-			g.endFill();	
+			g.endFill();					
+		}
+		
+		public function fade():void {			
+			var highlightS:Sprite = new Sprite();
+			highlightS.graphics.beginFill(0xFFFFFF, .5);
+			highlightS.graphics.drawRoundRect(0,0, width, height, 15);
+			highlightS.graphics.endFill();		
+			
+			highlightContainer.addChild(highlightS);
+			addElement(highlightContainer);
+		}
+		
+		public function unfade():void {
+			
+			if(highlightContainer.numChildren > 0) {
+				highlightContainer.removeChildAt(0);
+			}
+			
+			if(this.contains(highlightContainer)) {
+				removeElement(highlightContainer);
+			}
 		}
 		
 		override public function set width(value:Number):void {
