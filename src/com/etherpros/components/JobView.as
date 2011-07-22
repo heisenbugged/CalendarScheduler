@@ -21,7 +21,7 @@ package com.etherpros.components
 		private const X_PADDING:Number = 8;
 		
 		private const LEFT:Number = 0;
-		private const JOBHT:Number = 1;
+		private const RIGHT:Number = 1;
 		
 		
 		/** width and height of new empty sprites.
@@ -46,15 +46,15 @@ package com.etherpros.components
 		/** Selected grid row during a resize operation **/
 		private var dragTarget:JobSprite;
 		
-		/** Can either be LEFT or JOBHT.
+		/** Can either be LEFT or RIGHT.
 		 *  Is used when resizing a component to determine how it is being resized. **/			
 		private var dragDirection:Number;
 		/** Limit used for the drag and drop functionallity, the limit is related with the grid with **/
 		private var dragAndDropLimit:Number = -1;
 		
-		private var ojobinalWidth:Number = 0;		
+		private var originalWidth:Number = 0;		
 		/** Used for determining the difference in mouse position when dragging. **/
-		private var ojobinalMousePos:Point;		
+		private var originalMousePos:Point;		
 		private var mousePositionX:int = 0;			
 		/** When set to false resize operations are disabled. **/
 		private var dragValid:Boolean = true;
@@ -65,7 +65,7 @@ package com.etherpros.components
 		
 		// determines which sides can be dragged
 		public var leftDraggable:Boolean = true;
-		public var jobhtDraggable:Boolean = true;
+		public var rightDraggable:Boolean = true;
 				
 		public function JobView(model:Job, width:Number=300, height:Number=100, initialX:Number=0, initialY:Number=0) {
 			// initialize variables			
@@ -116,7 +116,7 @@ package com.etherpros.components
 		}
 		
 		/** Used for starting a drag operation when either 
-		 *  the left or jobht corner of the component is clicked **/		
+		 *  the left or right corner of the component is clicked **/		
 		private function mouseDown(event:Event):void {
 			var target:JobSprite = event.currentTarget as JobSprite;			
 			var index:int = findSpriteIndex(target);
@@ -127,9 +127,9 @@ package com.etherpros.components
 			if(mouseX < 15 && index == 0 && leftDraggable) {
 				dragDirection = LEFT;
 				beginDrag(target);
-			// jobht-drag. Only permit jobht drag if the last sprite row was grabbed.	
-			}else if(mouseX > target.width-15 && index == spriteRows.length-1 && jobhtDraggable) {
-				dragDirection = JOBHT;				
+			// right-drag. Only permit right drag if the last sprite row was grabbed.	
+			}else if(mouseX > target.width-15 && index == spriteRows.length-1 && rightDraggable) {
+				dragDirection = RIGHT;				
 				beginDrag(target);
 			} else { 				
 				// no drag direction.
@@ -141,7 +141,7 @@ package com.etherpros.components
 			dragTarget = target;
 			
 			// record position of mouse before drag to determine differences
-			ojobinalMousePos = new Point(stage.mouseX, stage.mouseY);
+			originalMousePos = new Point(stage.mouseX, stage.mouseY);
 			
 			// create event listener that listens for mouse movements to 
 			// determine when to resize the component.
@@ -185,7 +185,7 @@ package com.etherpros.components
 			if(!dragValid) { return; }
 			
 			var mousePos:Point = new Point(this.stage.mouseX, this.stage.mouseY);			
-			var widthChange:int = mousePos.x - ojobinalMousePos.x; 
+			var widthChange:int = mousePos.x - originalMousePos.x; 
 			mousePositionX  = 	mousePos.x;			
 			if(dragDirection == LEFT) {
 				// change width based on new difference between the ojobinal mouse
@@ -198,7 +198,7 @@ package com.etherpros.components
 			} else {				
 				target.width += widthChange;				
 			}				
-			ojobinalMousePos = mousePos;
+			originalMousePos = mousePos;
 			
 			// if the width of the job row has surpassed that of our calendar
 			// break the job into a new row.					

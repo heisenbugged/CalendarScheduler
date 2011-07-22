@@ -79,22 +79,10 @@ package com.etherpros.controllers
 			
 			view.paint(dayLength, column);
 		}
-
-		/*
-		protected function addJobView(event:JobCreationEvent):void {
-			// if dragging into a valid week.
-			if ( event.weekDay && event.weekDay.dayNumber != -1 ) {
-				
-				var jobDetail:Job = new Job();					
-				jobDetail.contractor = event.contractorJob;
-				jobDetail.startDay = event.weekDay;
-				jobsController.createJob(jobDetail);
-				
-			}				
-		}
-		*/
 		
-		/** Creates a new job, traditionally done on drag and drop to the calendar. **/
+		/** 
+		 * Creates a new job, traditionally done on drag and drop to the calendar. 
+		 */
 		public function createJob(event:JobCreationEvent):void {
 			// if dragging into a valid week
 			if(event.weekDay && event.weekDay.dayNumber != -1) {
@@ -107,7 +95,9 @@ package com.etherpros.controllers
 			}			
 		}		
 		
-		/** Creates a new job view, positions it and adds it to the stage **/
+		/** 
+		 * Creates a new job view, positions it and adds it to the stage.
+		 */
 		public function addJobView(model:Job):JobView {
 			var view:JobView = new JobView(model, DAY_WIDTH, JOB_HEIGHT);
 			
@@ -124,10 +114,10 @@ package com.etherpros.controllers
 			}
 			
 			if(endPos == null) {
-				// disable dragging from jobht side since the
+				// disable dragging from right side since the
 				// true corner of the job extends past the
 				// viewable range.				
-				view.jobhtDraggable = false;
+				view.rightDraggable = false;
 			}
 			
 			// set positioning.
@@ -148,8 +138,10 @@ package com.etherpros.controllers
 			return view;			
 		}
 		
-		/** Converts a row/column point into X and Y coordinates.
-		 *  On the calendar. **/
+		/** 
+		 * Converts a row/column point into X and Y coordinates
+		 * on the calendar. 
+		 */
 		private function positionJobView(pos:Point, job:JobView):void {
 			// if the position is null, use 0,0 instead.
 			if(pos == null) {
@@ -161,7 +153,10 @@ package com.etherpros.controllers
 			job.position(x, y);
 		}
 			
-		
+		/**
+		 * Removes all JobViews from their stage and destroyes
+		 * their respective listeners.
+		 */
 		public function clearJobViews():void {			
 			var jobModels:Array = new Array();		
 			for each(var jobView:JobView in jobViews) {									
@@ -179,7 +174,9 @@ package com.etherpros.controllers
 			jobViews = new ArrayCollection();
 		}
 		
-		/** Draws all jobs based on the current dayRange **/
+		/** 
+		 * Draws all jobs based on the current dayRange 
+		 */
 		public function draw():void {
 			var jobs:ArrayCollection = getJobsInRange();
 			for each(var job:Job in jobs) {
@@ -187,7 +184,9 @@ package com.etherpros.controllers
 			}
 		}
 		
-		/** Gets all job models that enter the active dayRange. **/
+		/** 
+		 * Gets all job models that enter the active dayRange. 
+		 */
 		public function getJobsInRange():ArrayCollection {
 			
 			var jobsInRange:ArrayCollection = new ArrayCollection();
@@ -205,7 +204,9 @@ package com.etherpros.controllers
 			return jobsInRange;
 		}
 		
-		
+		/** 
+		 * Recalculates start and end day variables of a Job based on the new size 
+		 */
 		private function jobResized(event:JobEvent):void {
 			// since drag has finished, must re-compute start and end day range
 			// based on new width positions.			
@@ -215,17 +216,27 @@ package com.etherpros.controllers
 			// -2 to shave off a few pixels of borders and padding
 			var endDay:Day = getDayByColumnAndRow(getColumnIndex(sprite.x+sprite.width-2), getRowIndex(sprite.y));
 			
-			// set the jobht startDay and endDay to the view.
+			// set the right startDay and endDay to the view.
 			if(event.view.leftDraggable) {
 				event.model.startDay = startDay;
 			}
 			
-			if(event.view.jobhtDraggable) {
+			if(event.view.rightDraggable) {
 				event.model.endDay = endDay;
 			}
 		}
 		
-		/** Adds a new sprite row. **/
+		
+		// NOTE: Encapsulation problem. The function below shouldn't actually
+		// create the sprite on the view, that should be handled internally
+		// by the view component itself. All this function should do
+		// is POSITION the new row since the positioning of the row
+		// is dependant on the positioning of other elements on the calendar.
+		
+		/** 
+		 * Adds a new sprite row to the corresponding job container
+		 * and positions the row with proper stacking. 
+		 */
 		public function addJobRow(jobEvent:JobEvent):void {
 			var view:JobView = jobEvent.view;
 			var JOB_HEIGHT:Number = 15;
@@ -245,25 +256,10 @@ package com.etherpros.controllers
 			
 		}
 		
-		private function getDayByColumnAndRow(column:int, row:int):Day {
-			var week:Week = dayRange.weeks[row];
-			return week.getDayByIndex(column);
-		}
-		
-		private function getRowIndex(y:int):int {
-			return Math.floor(y/CalendarController.DAY_HEIGHT);
-		}
-		
-		private function getColumnIndex(x:int):int {
-			return Math.floor(x/CalendarController.DAY_WIDTH);
-		}		
-		
 		/** 
-		 * Determines how many RingViews have been added in a particular day 
+		 * Determines how many JobViews have been added in a particular day 
 		 * When a job is passed in, it is excluded from any position calculations.
-		 * 
-		 **/
-		
+		 */		
 		private function getYPosition( day:Day, job:Job=null):int {
 			var dayPosition:Point = dayRange.getDateRowAndColumn(day.date);
 			var dayTime:Number = day.date.getTime();			
@@ -291,14 +287,29 @@ package com.etherpros.controllers
 			return jobCounter;
 		}
 		
+
+		// -------------------
+		// Getters and Setters
+		// -------------------
+		
+		private function getDayByColumnAndRow(column:int, row:int):Day {
+			var week:Week = dayRange.weeks[row];
+			return week.getDayByIndex(column);
+		}
+		
+		private function getRowIndex(y:int):int {
+			return Math.floor(y/CalendarController.DAY_HEIGHT);
+		}
+		
+		private function getColumnIndex(x:int):int {
+			return Math.floor(x/CalendarController.DAY_WIDTH);
+		}		
+
 		public function setOffset(x:int, y:int):void {
 			xOffset = x;
 			yOffset = y;
 		}
 		
-		// -------------------
-		// Getters and Setters
-		// -------------------
 		
 		public function set dayRange(value:DayRange):void {
 			_dayRange = value;			
