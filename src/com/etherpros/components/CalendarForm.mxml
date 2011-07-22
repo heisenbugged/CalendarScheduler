@@ -62,65 +62,22 @@
 			}
 			
 			// create grid of days in current month as per current date provided
-			private function createDaysGrid():void
-			{
+			private function createDaysGrid():void {				
 				// Dispatch monthChanged event which tell item renderers
 				// to clear their values.
 				dispatchEvent(new Event('monthChanged', true));
 				
+				// clear out old weeks
 				weekArray = new ArrayCollection();
+								
 				var currentYear:int  = dtPicker.displayedYear;
 				var currentMonth:int = dtPicker.displayedMonth;
+				var range:DayRange = DayRange.createFromMonth(currentMonth, currentYear);
+				
 				this.currentMonthSelected = currentMonth;
 				this.currentYearSelected = currentYear;
-				// always assume that first day of a month will have date as 1
-				// currentMonth and currentYear are supplied by main.mxml file		
-				var objDate:Date = new Date(currentYear, currentMonth, 1);
-				
-				// get total days count for currentMonth in currentYear
-				var intTotalDaysInMonth:int = CommonUtils.getDaysCount(currentMonth, currentYear);
-				var i:int;
-				var arrDays:Array =  CommonUtils.getArrayDays(objDate, currentYear, currentMonth, intTotalDaysInMonth);
-				//var arrDaysPreviousMonth:Array =  CommonUtils.getArrayDays(objDate, currentYear, currentMonth-1, intTotalDaysInMonth);
-				var weekDay:Day;
-				var currentWeek:Week;
-				
-				var weekDays:Array = ['sunday','monday','tuesday','wednesday','thursday','friday','saturday'];
-				var currentWeekIndex:int = 0;
-				monthloop:
-				for(i=0; i<arrDays.length; i = i + 7)
-				{
-					if(i % 7 == 0){
-						currentWeek = new Week();
-					}				
-					
-					for(var j:int=0; j < weekDays.length; j++) {
-						if(arrDays[i+j] == null) {
-							weekArray.addItem(currentWeek);
-							continue monthloop;							
-						}
-						
-						weekDay = new Day();
-						if ( weekDays[j] == 'sunday' ){
-							weekDay.isBeginDayWeek = true;							
-						}
-						if ( weekDays[j] == 'saturday' ){
-							weekDay.isEndDayWeek = true;							
-						}
-						weekDay.dayNumber = arrDays[i+j].dayNumber as int;
-						weekDay.dayName = arrDays[i+j].dayName as String;
-						weekDay.date = arrDays[i+j].date as Date;
-						weekDay.isOtherMonth = arrDays[i+j].isOtherMonth as Boolean;						
-						currentWeek[ weekDays[j] ] = weekDay;
-					}
-					
-					weekArray.addItem(currentWeek);
-					currentWeekIndex++;	
-				}
-				
-				var dayRange:DayRange = new DayRange(weekArray);
-				rigsController.dayRange = dayRange;
-
+				weekArray = range.weeks;
+				rigsController.dayRange = range;
 			}	
 			
 			protected function dtPicker_changeHandler(event:CalendarLayoutChangeEvent):void

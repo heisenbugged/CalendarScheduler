@@ -1,6 +1,8 @@
 package com.etherpros.model
 {
-	public class Contractor
+	import flash.events.EventDispatcher;
+
+	public class Contractor extends EventDispatcher
 	{
 		private var _ContractorID:String;
 		private var _FirstName:String;
@@ -10,7 +12,7 @@ package com.etherpros.model
 		{
 		}
 		
-		public function get FullName():String{
+		public function get FullName():String {
 			return this.FirstName + " " + this.LastName;
 		}
 
