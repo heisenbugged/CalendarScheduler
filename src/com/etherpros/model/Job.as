@@ -1,16 +1,16 @@
 package com.etherpros.model
 {
 	/***
-	 * Class used for storing the Rig details for repainting a RigView component
+	 * Class used for storing the Job details for repainting a JobView component
  	* */
-	public class Rig
+	public class Job
 	{
 		private var _startDay:Day;
 		private var _endDay:Day;
 		private var _contractor:Contractor;
-		private var _rigColor:int;
+		private var _jobColor:int;
 			
-		public function Rig()
+		public function Job()
 		{
 		}
 
@@ -31,7 +31,7 @@ package com.etherpros.model
 			} else {
 				
 			// if the endDay is null, then that means that the
-			// rig is only one day long, so return start day
+			// job is only one day long, so return start day
 			// since the start day and end day are the same.
 				
 				return _startDay;
@@ -44,14 +44,14 @@ package com.etherpros.model
 			_endDay = value;
 		}
 
-		public function get rigColor():int
+		public function get jobColor():int
 		{
-			return _rigColor;
+			return _jobColor;
 		}
 
-		public function set rigColor(value:int):void
+		public function set jobColor(value:int):void
 		{
-			_rigColor = value;
+			_jobColor = value;
 		}
 
 		public function get contractor():Contractor

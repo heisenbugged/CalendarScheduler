@@ -1,7 +1,7 @@
 package com.etherpros.components
 {
 	import com.etherpros.controllers.*;
-	import com.etherpros.events.RigEvent;
+	import com.etherpros.events.JobEvent;
 	import com.etherpros.model.*;
 	
 	import flash.display.*;
@@ -16,12 +16,12 @@ package com.etherpros.components
 	
 	import spark.components.Group;
 	
-	public class RigView extends Group
+	public class JobView extends Group
 	{ 
 		private const X_PADDING:Number = 8;
 		
 		private const LEFT:Number = 0;
-		private const RIGHT:Number = 1;
+		private const JOBHT:Number = 1;
 		
 		
 		/** width and height of new empty sprites.
@@ -37,24 +37,24 @@ package com.etherpros.components
 		/** contains all the rounded corner sprites per week (a week is a row). **/
 		private var spriteRows:ArrayCollection = new ArrayCollection();
 						
-		// DEPRECATED Previews and next Rig bar for making a linked list
-		private var _previousRigView:RigView;
-		private var _nextRigView:RigView;
+		// DEPRECATED Previews and next Job bar for making a linked list
+		private var _previousJobView:JobView;
+		private var _nextJobView:JobView;
 		
-		private var _model:Rig;
+		private var _model:Job;
 		
 		/** Selected grid row during a resize operation **/
-		private var dragTarget:RigSprite;
+		private var dragTarget:JobSprite;
 		
-		/** Can either be LEFT or RIGHT.
+		/** Can either be LEFT or JOBHT.
 		 *  Is used when resizing a component to determine how it is being resized. **/			
 		private var dragDirection:Number;
 		/** Limit used for the drag and drop functionallity, the limit is related with the grid with **/
 		private var dragAndDropLimit:Number = -1;
 		
-		private var originalWidth:Number = 0;		
+		private var ojobinalWidth:Number = 0;		
 		/** Used for determining the difference in mouse position when dragging. **/
-		private var originalMousePos:Point;		
+		private var ojobinalMousePos:Point;		
 		private var mousePositionX:int = 0;			
 		/** When set to false resize operations are disabled. **/
 		private var dragValid:Boolean = true;
@@ -65,9 +65,9 @@ package com.etherpros.components
 		
 		// determines which sides can be dragged
 		public var leftDraggable:Boolean = true;
-		public var rightDraggable:Boolean = true;
+		public var jobhtDraggable:Boolean = true;
 				
-		public function RigView(model:Rig, width:Number=300, height:Number=100, initialX:Number=0, initialY:Number=0) {
+		public function JobView(model:Job, width:Number=300, height:Number=100, initialX:Number=0, initialY:Number=0) {
 			// initialize variables			
 			this.model = model;		
 			this.defaultWidth = width;
@@ -76,26 +76,26 @@ package com.etherpros.components
 			this.initialY = initialY;
 			
 			// if color hasn't been set already, assign a new random color.
-			if (!this.model.rigColor) {								
-				this.model.rigColor = Math.random() * 0xFFFFFF;
+			if (!this.model.jobColor) {								
+				this.model.jobColor = Math.random() * 0xFFFFFF;
 			}
 						
-			var sprite:RigSprite = createEmptySprite();
+			var sprite:JobSprite = createEmptySprite();
 			sprite.x = initialX;
 			sprite.y = initialY;			
 		}
 		
 		/** Sets the first row of the grid to a given X and Y position **/
 		public function position(x:int, y:int):void {
-			var sprite:RigSprite = firstRow;
+			var sprite:JobSprite = firstRow;
 			sprite.x = x;
 			sprite.y = y;
 		}
 		
 		/** Creates empty sprite and adds the sprite to the spriteRows array.
-		 *  This function is used when a rigview jumps to a new week row. **/
-		public function createEmptySprite():RigSprite {			
-			var sprite:RigSprite = new RigSprite(this.model.rigColor, this.model.contractor.FullName);
+		 *  This function is used when a jobview jumps to a new week row. **/
+		public function createEmptySprite():JobSprite {			
+			var sprite:JobSprite = new JobSprite(this.model.jobColor, this.model.contractor.FullName);
 			sprite.width = defaultWidth;
 			sprite.height = defaultHeight;
 			sprite.addEventListener(MouseEvent.MOUSE_DOWN,mouseDown);
@@ -105,20 +105,20 @@ package com.etherpros.components
 			return sprite;
 		}
 					
-		/** Causes rig to 'snap' to a day based on it's x position and width **/
+		/** Causes job to 'snap' to a day based on it's x position and width **/
 		private function snap():void {				
-			dragTarget.x = Math.floor(dragTarget.x/RigsController.DAY_WIDTH) * RigsController.DAY_WIDTH;			
-			dragTarget.width = Math.ceil(dragTarget.width/RigsController.DAY_WIDTH)  * RigsController.DAY_WIDTH;			
+			dragTarget.x = Math.floor(dragTarget.x/JobsController.DAY_WIDTH) * JobsController.DAY_WIDTH;			
+			dragTarget.width = Math.ceil(dragTarget.width/JobsController.DAY_WIDTH)  * JobsController.DAY_WIDTH;			
 			// if new width surpasses calendar width, snap backwards
-			if( (dragTarget.width + dragTarget.x) > RigsController.CALENDAR_WIDTH) {				
-				dragTarget.width = RigsController.CALENDAR_WIDTH - dragTarget.x;
+			if( (dragTarget.width + dragTarget.x) > JobsController.CALENDAR_WIDTH) {				
+				dragTarget.width = JobsController.CALENDAR_WIDTH - dragTarget.x;
 			}
 		}
 		
 		/** Used for starting a drag operation when either 
-		 *  the left or right corner of the component is clicked **/		
+		 *  the left or jobht corner of the component is clicked **/		
 		private function mouseDown(event:Event):void {
-			var target:RigSprite = event.currentTarget as RigSprite;			
+			var target:JobSprite = event.currentTarget as JobSprite;			
 			var index:int = findSpriteIndex(target);
 			var mouseX:Number = target.mouseX;
 			var mouseY:Number = target.mouseY;
@@ -127,9 +127,9 @@ package com.etherpros.components
 			if(mouseX < 15 && index == 0 && leftDraggable) {
 				dragDirection = LEFT;
 				beginDrag(target);
-			// right-drag. Only permit right drag if the last sprite row was grabbed.	
-			}else if(mouseX > target.width-15 && index == spriteRows.length-1 && rightDraggable) {
-				dragDirection = RIGHT;				
+			// jobht-drag. Only permit jobht drag if the last sprite row was grabbed.	
+			}else if(mouseX > target.width-15 && index == spriteRows.length-1 && jobhtDraggable) {
+				dragDirection = JOBHT;				
 				beginDrag(target);
 			} else { 				
 				// no drag direction.
@@ -137,11 +137,11 @@ package com.etherpros.components
 			}
 		}
 		
-		private function beginDrag(target:RigSprite):void {			
+		private function beginDrag(target:JobSprite):void {			
 			dragTarget = target;
 			
 			// record position of mouse before drag to determine differences
-			originalMousePos = new Point(stage.mouseX, stage.mouseY);
+			ojobinalMousePos = new Point(stage.mouseX, stage.mouseY);
 			
 			// create event listener that listens for mouse movements to 
 			// determine when to resize the component.
@@ -158,11 +158,11 @@ package com.etherpros.components
 			stage.removeEventListener(MouseEvent.MOUSE_UP, endDrag);
 		
 			if(spriteRows.length > 0) {
-				// After a drag-drop operation, snap the rig to the correct day 
+				// After a drag-drop operation, snap the job to the correct day 
 				snap();
 				
 				// dispatch event marking resize has finished!
-				var resizedEvent:RigEvent = new RigEvent(RigEvent.RIG_RESIZED);
+				var resizedEvent:JobEvent = new JobEvent(JobEvent.JOB_RESIZED);
 				resizedEvent.view = this;
 				resizedEvent.model = model;
 				dispatchEvent(resizedEvent);					
@@ -171,24 +171,24 @@ package com.etherpros.components
 		}
 				
 		private function addRow():void {
-			var rigEvent:RigEvent = new RigEvent(RigEvent.ADD_RIG_SPRITE);
-			rigEvent.view = this;
-			rigEvent.model = model;
-			dispatchEvent(rigEvent);			
+			var jobEvent:JobEvent = new JobEvent(JobEvent.ADD_JOB_SPRITE);
+			jobEvent.view = this;
+			jobEvent.model = model;
+			dispatchEvent(jobEvent);			
 		}
 		
-		/** Resizes the width of the selected rig row based on the change in mouse position from the drag. **/
+		/** Resizes the width of the selected job row based on the change in mouse position from the drag. **/
 		private function resize(event:Event=null):void {
-			var target:RigSprite = dragTarget;
+			var target:JobSprite = dragTarget;
 			
 			// exit out of function if drag has been invalidated.			
 			if(!dragValid) { return; }
 			
 			var mousePos:Point = new Point(this.stage.mouseX, this.stage.mouseY);			
-			var widthChange:int = mousePos.x - originalMousePos.x; 
+			var widthChange:int = mousePos.x - ojobinalMousePos.x; 
 			mousePositionX  = 	mousePos.x;			
 			if(dragDirection == LEFT) {
-				// change width based on new difference between the original mouse
+				// change width based on new difference between the ojobinal mouse
 				// position recorded before drag and the new mouse position.
 				target.width -= widthChange;	
 				
@@ -198,31 +198,31 @@ package com.etherpros.components
 			} else {				
 				target.width += widthChange;				
 			}				
-			originalMousePos = mousePos;
+			ojobinalMousePos = mousePos;
 			
-			// if the width of the rig row has surpassed that of our calendar
-			// break the rig into a new row.					
-			if( (target.width + target.x) > RigsController.CALENDAR_WIDTH) {				
+			// if the width of the job row has surpassed that of our calendar
+			// break the job into a new row.					
+			if( (target.width + target.x) > JobsController.CALENDAR_WIDTH) {				
 				// reset width to be the same as the calendar width.
-				target.width = RigsController.CALENDAR_WIDTH - target.x;
+				target.width = JobsController.CALENDAR_WIDTH - target.x;
 				
 				// dispatch new row created event.
 				addRow();
 				
-				// When resizing a rig, if the rig jumps to a new
+				// When resizing a job, if the job jumps to a new
 				// row when it is resized beyond its available width.
 				// the current resize operation that is taking place
-				// becomes no longer valid, since the rig is now placed into a new row.
+				// becomes no longer valid, since the job is now placed into a new row.
 				// So we invalidate the current drag-drop operation to force the user
 				// to start dragging from the new row.
 				dragValid = false;
 				
 				// TODO: Throw row added event.
 			}						
-			// if the width of the rig row is 0, remove row from array
+			// if the width of the job row is 0, remove row from array
 			if(target.width <= 0) {
 				// TODO: Throw destroy event.				
-				// remove rig row from rows array.
+				// remove job row from rows array.
 				var index:int = spriteRows.getItemIndex(target);
 				// only remove sprite if it was found in the array
 				if(index != -1) {
@@ -245,22 +245,22 @@ package com.etherpros.components
 			}
 			
 			for(var i:int=1; i < numberOfRows; i++) {
-				var sprite:RigSprite = spriteRows[i-1];
+				var sprite:JobSprite = spriteRows[i-1];
 				// since new rows are added, all the previous rows must be max width.
-				sprite.width = RigsController.CALENDAR_WIDTH - sprite.x;
+				sprite.width = JobsController.CALENDAR_WIDTH - sprite.x;
 				addRow();
 			}
 						
 			// in the last row
-			lastRow.width = RigsController.DAY_WIDTH * remainder;
+			lastRow.width = JobsController.DAY_WIDTH * remainder;
 		}		
 		
-		/** Redraws the graphics of the rig. Used for updating the view
+		/** Redraws the graphics of the job. Used for updating the view
 		 *  with changes to the width or height of the component **/
 		public function draw(event:Event=null):void {			
 			// loop through all sprites in sprites array
 			// and redraw their graphics.
-			for each(var sprite:RigSprite in spriteRows) {
+			for each(var sprite:JobSprite in spriteRows) {
 				sprite.draw();		
 			}
 		}
@@ -269,9 +269,9 @@ package com.etherpros.components
 		 *  array and returns the corresponding index.
 		 *  If the sprite is not found in the array, -1
 		 *  is returned **/
-		private function findSpriteIndex(sprite:RigSprite):int {
+		private function findSpriteIndex(sprite:JobSprite):int {
 			var i:int = 0;
-			for each(var currentSprite:RigSprite in spriteRows) {
+			for each(var currentSprite:JobSprite in spriteRows) {
 				// match found
 				if(sprite == currentSprite) {
 					return i;
@@ -284,7 +284,7 @@ package com.etherpros.components
 		
 		public function destroy():void {
 			// clean up event listeners.
-			for each(var sprite:RigSprite in spriteRows) {
+			for each(var sprite:JobSprite in spriteRows) {
 				sprite.removeEventListener(MouseEvent.MOUSE_DOWN,mouseDown);
 			}
 			
@@ -319,32 +319,32 @@ package com.etherpros.components
 			return spriteRows.length;
 		}
 		
-		public function get firstRow():RigSprite {
+		public function get firstRow():JobSprite {
 			return spriteRows[0];
 		}
 		
-		public function get lastRow():RigSprite {
+		public function get lastRow():JobSprite {
 			return spriteRows[spriteRows.length-1];
 		}
 		
-		public function get nextRigView():RigView {
-			return _nextRigView;
+		public function get nextJobView():JobView {
+			return _nextJobView;
 		}
 
-		public function set nextRigView(value:RigView):void {
-			_nextRigView = value;
+		public function set nextJobView(value:JobView):void {
+			_nextJobView = value;
 		}
 
-		public function get previousRigView():RigView {
-			return _previousRigView;
+		public function get previousJobView():JobView {
+			return _previousJobView;
 		}
 
-		public function set previousRigView(value:RigView):void {
-			_previousRigView = value;
+		public function set previousJobView(value:JobView):void {
+			_previousJobView = value;
 		}
 		
-		/** Day range that the rig covers. **/
-		public function get model():Rig
+		/** Day range that the job covers. **/
+		public function get model():Job
 		{
 			return _model;
 		}
@@ -352,7 +352,7 @@ package com.etherpros.components
 		/**
 		 * @private
 		 */
-		public function set model(value:Rig):void
+		public function set model(value:Job):void
 		{
 			_model = value;
 		}

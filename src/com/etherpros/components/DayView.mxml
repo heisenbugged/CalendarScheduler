@@ -11,7 +11,7 @@
 	</fx:Declarations>
 	<fx:Script>
 		<![CDATA[
-			import com.etherpros.events.RigCreationEvent;
+			import com.etherpros.events.JobCreationEvent;
 			import com.etherpros.model.Contractor;
 			import com.etherpros.model.Day;
 			import com.etherpros.utils.CommonUtils;
@@ -66,8 +66,8 @@
 			{	
 				var _staffList:List = event.dragInitiator as List;
 				var staffContractor:Contractor =  _staffList.selectedItem as Contractor;
-				var  rigCreationEvent:RigCreationEvent = new RigCreationEvent(RigCreationEvent.ADD_NEW_RIG, null, true);
-				rigCreationEvent.contractorRig = staffContractor;
+				var  rigCreationEvent:JobCreationEvent = new JobCreationEvent(JobCreationEvent.ADD_NEW_JOB, null, true);
+				rigCreationEvent.contractorJob = staffContractor;
 				rigCreationEvent.weekDay = this.weekDay;
 				dispatchEvent(rigCreationEvent);		
 			}

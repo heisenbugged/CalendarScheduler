@@ -13,32 +13,21 @@
 	<fx:Script>
 		<![CDATA[
 			import com.etherpros.business.ContractorDAO;
-			import com.etherpros.controllers.RigsController;
+			import com.etherpros.controllers.JobsController;
 			import com.etherpros.events.ContractorEvent;
-			import com.etherpros.events.RigCreationEvent;
-			import com.etherpros.events.RigEvent;
 			import com.etherpros.model.*;
-			import com.etherpros.utils.CommonUtils;
-			
-			import flashx.textLayout.elements.ListItemElement;
 			
 			import mx.collections.ArrayCollection;
-			import mx.controls.Alert;
-			import mx.controls.Label;
-			import mx.core.DragSource;
 			import mx.events.CalendarLayoutChangeEvent;
-			import mx.events.DragEvent;
-			import mx.managers.DragManager;
 			
 			import skins.DriversList;
 			
 			import spark.components.Label;
-			import spark.events.GridEvent;
 			
 			[Bindable]
 			private var weekArray:ArrayCollection;
 			
-			private var rigsController:RigsController;
+			private var jobsController:JobsController;
 			[Bindable]
 			private var staffDP: ArrayCollection;
 			
@@ -47,10 +36,10 @@
 			
 			private function init():void {
 				// set up controlller for rig views.
-				rigsController = new RigsController(this);
+				jobsController = new JobsController(this);
 				// set the offset based on the position of the first day.
-				rigsController.setOffset(grdCalendar.x + 2, grdCalendar.y + grdCalendar.columnHeaderGroup.height);
-				RigsController.setCalendarDimensions(grdCalendar.width, grdCalendar.height - grdCalendar.columnHeaderGroup.height);
+				jobsController.setOffset(grdCalendar.x + 2, grdCalendar.y + grdCalendar.columnHeaderGroup.height);
+				JobsController.setCalendarDimensions(grdCalendar.width, grdCalendar.height - grdCalendar.columnHeaderGroup.height);
 			
 				// create first initial month grid.
 				createDaysGrid();
@@ -77,7 +66,7 @@
 				this.currentMonthSelected = currentMonth;
 				this.currentYearSelected = currentYear;
 				weekArray = range.weeks;
-				rigsController.dayRange = range;
+				jobsController.dayRange = range;
 			}	
 			
 			protected function dtPicker_changeHandler(event:CalendarLayoutChangeEvent):void

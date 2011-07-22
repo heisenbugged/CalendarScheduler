@@ -8,7 +8,7 @@ package com.etherpros.components
 	
 	import spark.components.Group;
 	
-	public class RigSprite extends Group
+	public class JobSprite extends Group
 	{
 		private const LABEL_PADDING:Number = 10;
 		
@@ -21,7 +21,7 @@ package com.etherpros.components
 		public var nameLabel:Label;
 		
 		
-		public function RigSprite(color:int, name:String) {
+		public function JobSprite(color:int, name:String) {
 			super();			
 			this.color = color;			
 			this.g = s.graphics;
@@ -31,7 +31,7 @@ package com.etherpros.components
 			container.addChild(s);
 			addElement(container);
 			
-			// instantate rig driver name and add to stage.
+			// instantate job driver name and add to stage.
 			createNameLabel(name);
 			addElement(nameLabel);
 			
@@ -39,7 +39,7 @@ package com.etherpros.components
 			draw();
 		}
 
-		/** Creates label with name of the rig driver **/
+		/** Creates label with name of the job driver **/
 		private function createNameLabel(name:String):void {
 			nameLabel = new Label();
 			nameLabel.setStyle('color', '#ffffff');
@@ -50,7 +50,7 @@ package com.etherpros.components
 			nameLabel.text = name;	
 		}
 		
-		/** Redraws the graphics of the rig sprite. Used for updating the view
+		/** Redraws the graphics of the job sprite. Used for updating the view
 		 *  with changes to the width or height of the component **/		
 		public function draw():void {			
 			// clear out old graphics.			

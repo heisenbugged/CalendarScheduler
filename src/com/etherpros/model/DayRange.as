@@ -15,7 +15,7 @@ package com.etherpros.model {
 		}
 		
 		/** Returns row, column index values for a particular date.
-		 *  Used for positioning rigs on the calendar. **/
+		 *  Used for positioning jobs on the calendar. **/
 		public function getDateRowAndColumn(date:Date):Point {
 			var pos:Point = new Point();
 			var time:Number = date.getTime();

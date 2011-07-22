@@ -1,8 +1,8 @@
 package com.etherpros.controllers
 {
 	import com.etherpros.components.*;
-	import com.etherpros.events.RigCreationEvent;
-	import com.etherpros.events.RigEvent;
+	import com.etherpros.events.JobCreationEvent;
+	import com.etherpros.events.JobEvent;
 	import com.etherpros.model.*;
 	
 	import flash.geom.Point;
@@ -15,36 +15,36 @@ package com.etherpros.controllers
 	
 	import spark.components.Group;
 
-	public class RigsController
+	public class JobsController
 	{
 		public var xOffset:int;
 		public var yOffset:int;
 		
-		public static var RIG_HEIGHT:int = 15;
+		public static var JOB_HEIGHT:int = 15;
 		public static var DAY_WIDTH:int;
 		public static var DAY_HEIGHT:int;
 		public static var CALENDAR_WIDTH:int;
 		public static var CALENDAR_HEIGHT:int;
-		public static const RIG_VERTICAL_PADDING:int = 5;		
+		public static const JOB_VERTICAL_PADDING:int = 5;		
 		// number of miliseconds in a day.
 		private const MS_IN_DAY:Number = 86400000;
 		
 		// day range being viewed on the calendar.
 		private var _dayRange:DayRange;
-		// list of rig views.
-		private var _rigViews:ArrayCollection;
-		// all rig models loaded
-		public var rigs:ArrayCollection;
+		// list of job views.
+		private var _jobViews:ArrayCollection;
+		// all job models loaded
+		public var jobs:ArrayCollection;
 		
 		private var container:CalendarForm
 		
-		public function RigsController(container:CalendarForm) {
+		public function JobsController(container:CalendarForm) {
 			this.container = container;
-			rigViews = new ArrayCollection();
-			rigs = new ArrayCollection();
+			jobViews = new ArrayCollection();
+			jobs = new ArrayCollection();
 			
 			// view event listeners
-			container.addEventListener(RigCreationEvent.ADD_NEW_RIG, createRig);
+			container.addEventListener(JobCreationEvent.ADD_NEW_JOB, createJob);
 		}
 		
 		public static function setCalendarDimensions(width:int, height:int):void {
@@ -58,20 +58,20 @@ package com.etherpros.controllers
 		
 
 		/**
-		 * Draws an existing Rig and positions it on the stage.
+		 * Draws an existing Job and positions it on the stage.
 		 */
-		public function drawRigView(model:Rig = null):void {			
-			var view:RigView = addRigView(model);
+		public function drawJobView(model:Job = null):void {			
+			var view:JobView = addJobView(model);
 			// find the difference in days between the start day and end day.
 			var dayLength:int = ( (model.endDay.date.getTime() - model.startDay.date.getTime()) / MS_IN_DAY) + 1;
 			var column:int = view.columnIndex;
-			// if rig starts outside of the viewable range
+			// if job starts outside of the viewable range
 			if(view.startPos == null) {
 				// cut off the difference from the start day and the viewable range start day				
 				dayLength += (model.startDay.date.getTime() - dayRange.startDay.date.getTime()) / MS_IN_DAY;
 			}
 			
-			// if rig finishes outside of viewable range
+			// if job finishes outside of viewable range
 			if(view.endPos == null) {
 				// cut off the difference from the end day and the viewable range end day
 				dayLength += (dayRange.endDay.date.getTime() - model.endDay.date.getTime() ) / MS_IN_DAY;
@@ -81,53 +81,53 @@ package com.etherpros.controllers
 		}
 
 		/*
-		protected function addRigView(event:RigCreationEvent):void {
+		protected function addJobView(event:JobCreationEvent):void {
 			// if dragging into a valid week.
 			if ( event.weekDay && event.weekDay.dayNumber != -1 ) {
 				
-				var rigDetail:Rig = new Rig();					
-				rigDetail.contractor = event.contractorRig;
-				rigDetail.startDay = event.weekDay;
-				rigsController.createRig(rigDetail);
+				var jobDetail:Job = new Job();					
+				jobDetail.contractor = event.contractorJob;
+				jobDetail.startDay = event.weekDay;
+				jobsController.createJob(jobDetail);
 				
 			}				
 		}
 		*/
 		
-		/** Creates a new rig, traditionally done on drag and drop to the calendar. **/
-		public function createRig(event:RigCreationEvent):void {
+		/** Creates a new job, traditionally done on drag and drop to the calendar. **/
+		public function createJob(event:JobCreationEvent):void {
 			// if dragging into a valid week
 			if(event.weekDay && event.weekDay.dayNumber != -1) {
-				var model:Rig = new Rig();
-				model.contractor = event.contractorRig;
+				var model:Job = new Job();
+				model.contractor = event.contractorJob;
 				model.startDay = event.weekDay;
-				rigs.addItem(model);
+				jobs.addItem(model);
 				
-				addRigView(model);
+				addJobView(model);
 			}			
 		}		
 		
-		/** Creates a new rig view, positions it and adds it to the stage **/
-		public function addRigView(model:Rig):RigView {
-			var view:RigView = new RigView(model, DAY_WIDTH, RIG_HEIGHT);
+		/** Creates a new job view, positions it and adds it to the stage **/
+		public function addJobView(model:Job):JobView {
+			var view:JobView = new JobView(model, DAY_WIDTH, JOB_HEIGHT);
 			
-			// get row and column positions of the start and end day of this rig.
+			// get row and column positions of the start and end day of this job.
 			var startPos:Point = dayRange.getDateRowAndColumn(model.startDay.date);
 			var endPos:Point = dayRange.getDateRowAndColumn(model.endDay.date);
 			
-			// if the start day of this rig is outside the viewable date range.
+			// if the start day of this job is outside the viewable date range.
 			if(startPos == null) {				
 				// disable dragging from left side since the
-				// true corner of the rig extends past the
+				// true corner of the job extends past the
 				// viewable range.
 				view.leftDraggable = false;
 			}
 			
 			if(endPos == null) {
-				// disable dragging from right side since the
-				// true corner of the rig extends past the
+				// disable dragging from jobht side since the
+				// true corner of the job extends past the
 				// viewable range.				
-				view.rightDraggable = false;
+				view.jobhtDraggable = false;
 			}
 			
 			// set positioning.
@@ -135,102 +135,102 @@ package com.etherpros.controllers
 			view.y = yOffset;
 			view.startPos = startPos;
 			view.endPos = endPos;			
-			positionRigView(startPos, view);
+			positionJobView(startPos, view);
 			
 			// add to containers
 			container.gridContainer.addElement(view);
-			rigViews.addItem(view);
+			jobViews.addItem(view);
 			
 			// add event listeners
-			view.addEventListener(RigEvent.RIG_RESIZED, rigResized, false, 0, true);
-			view.addEventListener(RigEvent.ADD_RIG_SPRITE, addRigRow, false, 0, true);
+			view.addEventListener(JobEvent.JOB_RESIZED, jobResized, false, 0, true);
+			view.addEventListener(JobEvent.ADD_JOB_SPRITE, addJobRow, false, 0, true);
 						
 			return view;			
 		}
 		
 		/** Converts a row/column point into X and Y coordinates.
 		 *  On the calendar. **/
-		private function positionRigView(pos:Point, rig:RigView):void {
+		private function positionJobView(pos:Point, job:JobView):void {
 			// if the position is null, use 0,0 instead.
 			if(pos == null) {
 				pos = new Point();
 			}
 			
 			var x:int = ( pos.x * DAY_WIDTH );
-			var y:int = ( pos.y * DAY_HEIGHT) + ( (RIG_HEIGHT + RIG_VERTICAL_PADDING) * getYPosition(rig.model.startDay) + 1) + 15;
-			rig.position(x, y);
+			var y:int = ( pos.y * DAY_HEIGHT) + ( (JOB_HEIGHT + JOB_VERTICAL_PADDING) * getYPosition(job.model.startDay) + 1) + 15;
+			job.position(x, y);
 		}
 			
 		
-		public function clearRigViews():void {			
-			var rigModels:Array = new Array();		
-			for each(var rigView:RigView in rigViews) {									
-				rigModels.push(rigView.model);
+		public function clearJobViews():void {			
+			var jobModels:Array = new Array();		
+			for each(var jobView:JobView in jobViews) {									
+				jobModels.push(jobView.model);
 				
 				// clear out view elements from stage
-				rigView.destroy();
-				rigView.removeEventListener(RigEvent.RIG_RESIZED, rigResized);
-				rigView.removeEventListener(RigEvent.ADD_RIG_SPRITE, addRigRow);
+				jobView.destroy();
+				jobView.removeEventListener(JobEvent.JOB_RESIZED, jobResized);
+				jobView.removeEventListener(JobEvent.ADD_JOB_SPRITE, addJobRow);
 				
-				container.gridContainer.removeElement(rigView);				
+				container.gridContainer.removeElement(jobView);				
 			}
 			
-			// clear out rig views array
-			rigViews = new ArrayCollection();
+			// clear out job views array
+			jobViews = new ArrayCollection();
 		}
 		
-		/** Draws all rigs based on the current dayRange **/
+		/** Draws all jobs based on the current dayRange **/
 		public function draw():void {
-			var rigs:ArrayCollection = getRigsInRange();
-			for each(var rig:Rig in rigs) {
-				drawRigView(rig);
+			var jobs:ArrayCollection = getJobsInRange();
+			for each(var job:Job in jobs) {
+				drawJobView(job);
 			}
 		}
 		
-		/** Gets all rig models that enter the active dayRange. **/
-		public function getRigsInRange():ArrayCollection {
+		/** Gets all job models that enter the active dayRange. **/
+		public function getJobsInRange():ArrayCollection {
 			
-			var rigsInRange:ArrayCollection = new ArrayCollection();
-			for each(var rig:Rig in rigs) {
-				var rigStart:Number = rig.startDay.date.getTime();
-				var rigEnd:Number = rig.endDay.date.getTime();
+			var jobsInRange:ArrayCollection = new ArrayCollection();
+			for each(var job:Job in jobs) {
+				var jobStart:Number = job.startDay.date.getTime();
+				var jobEnd:Number = job.endDay.date.getTime();
 				
 				var rangeStart:Number = dayRange.startDay.date.getTime();
 				var rangeEnd:Number = dayRange.endDay.date.getTime();
-				// if the rig fits inside the current date range, add it to the active rigs array.
-				if(rigStart <= rangeEnd && rigEnd >= rangeStart) {
-					rigsInRange.addItem(rig);
+				// if the job fits inside the current date range, add it to the active jobs array.
+				if(jobStart <= rangeEnd && jobEnd >= rangeStart) {
+					jobsInRange.addItem(job);
 				}
 			}
-			return rigsInRange;
+			return jobsInRange;
 		}
 		
 		
-		private function rigResized(event:RigEvent):void {
+		private function jobResized(event:JobEvent):void {
 			// since drag has finished, must re-compute start and end day range
 			// based on new width positions.			
-			var sprite:RigSprite = event.view.firstRow;
+			var sprite:JobSprite = event.view.firstRow;
 			var startDay:Day = getDayByColumnAndRow(getColumnIndex(sprite.x), getRowIndex(sprite.y));
 			sprite = event.view.lastRow;
 			// -2 to shave off a few pixels of borders and padding
 			var endDay:Day = getDayByColumnAndRow(getColumnIndex(sprite.x+sprite.width-2), getRowIndex(sprite.y));
 			
-			// set the right startDay and endDay to the view.
+			// set the jobht startDay and endDay to the view.
 			if(event.view.leftDraggable) {
 				event.model.startDay = startDay;
 			}
 			
-			if(event.view.rightDraggable) {
+			if(event.view.jobhtDraggable) {
 				event.model.endDay = endDay;
 			}
 		}
 		
 		/** Adds a new sprite row. **/
-		public function addRigRow(rigEvent:RigEvent):void {
-			var view:RigView = rigEvent.view;
-			var RIG_HEIGHT:Number = 15;
+		public function addJobRow(jobEvent:JobEvent):void {
+			var view:JobView = jobEvent.view;
+			var JOB_HEIGHT:Number = 15;
 			
-			var weekIndex:int = view.rowIndex + rigEvent.view.numRows;
+			var weekIndex:int = view.rowIndex + jobEvent.view.numRows;
 			// week that row will be added to.
 			var nextWeek:Week = dayRange.weeks[weekIndex] as Week;
 			// instantiate an empty sprite row
@@ -240,7 +240,7 @@ package com.etherpros.controllers
 			// if the row being added is not past the 6 week calendar limit.
 			if ( nextWeek != null ) {				
 				var nextDay:Day  = nextWeek.getDayByIndex(0);					
-				row.y = ( weekIndex * DAY_HEIGHT  )  + ( (RIG_HEIGHT+RIG_VERTICAL_PADDING) * getYPosition(nextDay, rigEvent.model) + 1 ) + 15;				
+				row.y = ( weekIndex * DAY_HEIGHT  )  + ( (JOB_HEIGHT+JOB_VERTICAL_PADDING) * getYPosition(nextDay, jobEvent.model) + 1 ) + 15;				
 			}
 			
 		}
@@ -251,44 +251,44 @@ package com.etherpros.controllers
 		}
 		
 		private function getRowIndex(y:int):int {
-			return Math.floor(y/RigsController.DAY_HEIGHT);
+			return Math.floor(y/JobsController.DAY_HEIGHT);
 		}
 		
 		private function getColumnIndex(x:int):int {
-			return Math.floor(x/RigsController.DAY_WIDTH);
+			return Math.floor(x/JobsController.DAY_WIDTH);
 		}		
 		
 		/** 
 		 * Determines how many RingViews have been added in a particular day 
-		 * When a rig is passed in, it is excluded from any position calculations.
+		 * When a job is passed in, it is excluded from any position calculations.
 		 * 
 		 **/
 		
-		private function getYPosition( day:Day, rig:Rig=null):int {
+		private function getYPosition( day:Day, job:Job=null):int {
 			var dayPosition:Point = dayRange.getDateRowAndColumn(day.date);
 			var dayTime:Number = day.date.getTime();			
-			var rigCounter:int = 0;
+			var jobCounter:int = 0;
 			
-			for each(var view:RigView in rigViews) {
-				if(view.model != rig) {
-					// get the time range of the rig we're checking.
+			for each(var view:JobView in jobViews) {
+				if(view.model != job) {
+					// get the time range of the job we're checking.
 					var startTime:Number = view.model.startDay.date.getTime();
 					var endTime:Number = view.model.endDay.date.getTime();
 					
-					// if our date falls within the rig of the rig being checked
+					// if our date falls within the job of the job being checked
 					if(startTime <= dayTime && endTime >= dayTime) {
-					// add one to the number of rigs present inside this date.
-						rigCounter++;
+					// add one to the number of jobs present inside this date.
+						jobCounter++;
 						
-					// if the date is part of the same week as this rig, then
+					// if the date is part of the same week as this job, then
 					// we also add one to the stacking.					
 					} else if(dayPosition.y == view.rowIndex || dayPosition.y == view.endRow) {
-						rigCounter++;
+						jobCounter++;
 					}
 				}
 			}
 			
-			return rigCounter;
+			return jobCounter;
 		}
 		
 		public function setOffset(x:int, y:int):void {
@@ -302,9 +302,9 @@ package com.etherpros.controllers
 		
 		public function set dayRange(value:DayRange):void {
 			_dayRange = value;			
-			// clear all old rig views since week range was changed.
-			clearRigViews();
-			// re draw rigs based on new day range
+			// clear all old job views since week range was changed.
+			clearJobViews();
+			// re draw jobs based on new day range
 			draw();
 		}
 		
@@ -312,12 +312,12 @@ package com.etherpros.controllers
 			return _dayRange;
 		}
 		
-		public function get rigViews():ArrayCollection {
-			return _rigViews;
+		public function get jobViews():ArrayCollection {
+			return _jobViews;
 		}
 		
-		public function set rigViews(value:ArrayCollection):void {
-			_rigViews = value;
+		public function set jobViews(value:ArrayCollection):void {
+			_jobViews = value;
 		}
 		
 	}
