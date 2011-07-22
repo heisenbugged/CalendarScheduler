@@ -17,25 +17,22 @@ package com.etherpros.controllers
 
 	public class CalendarController
 	{
-		public var xOffset:int;
-		public var yOffset:int;
-		
 		public static var JOB_HEIGHT:int = 15;
 		public static var DAY_WIDTH:int;
 		public static var DAY_HEIGHT:int;
 		public static var CALENDAR_WIDTH:int;
 		public static var CALENDAR_HEIGHT:int;
-		public static const JOB_VERTICAL_PADDING:int = 5;		
-		// number of miliseconds in a day.
-		private const MS_IN_DAY:Number = 86400000;
+		public static const JOB_VERTICAL_PADDING:int = 5;	
 		
+		public var xOffset:int;
+		public var yOffset:int;
+			
 		// day range being viewed on the calendar.
 		private var _dayRange:DayRange;
 		// list of job views.
 		private var _jobViews:ArrayCollection;
 		// all job models loaded
-		public var jobs:ArrayCollection;
-		
+		public var jobs:ArrayCollection;		
 		private var container:CalendarForm
 		
 		public function CalendarController(container:CalendarForm) {
@@ -63,21 +60,20 @@ package com.etherpros.controllers
 		public function drawJobView(model:Job = null):void {			
 			var view:JobView = addJobView(model);
 			// find the difference in days between the start day and end day.
-			var dayLength:int = ( (model.endDay.date.getTime() - model.startDay.date.getTime()) / MS_IN_DAY) + 1;
-			var column:int = view.columnIndex;
+			var dayLength:int = ( (model.endDay.date.getTime() - model.startDay.date.getTime()) / Day.MILISECONDS) + 1;			
 			// if job starts outside of the viewable range
 			if(view.leftInRange == false) {
 				// cut off the difference from the start day and the viewable range start day				
-				dayLength += (model.startDay.date.getTime() - dayRange.startDay.date.getTime()) / MS_IN_DAY;
+				dayLength += (model.startDay.date.getTime() - dayRange.startDay.date.getTime()) / Day.MILISECONDS;
 			}
 			
 			// if job finishes outside of viewable range
 			if(view.rightInRange == false) {
 				// cut off the difference from the end day and the viewable range end day
-				dayLength += (dayRange.endDay.date.getTime() - model.endDay.date.getTime() ) / MS_IN_DAY;
+				dayLength += (dayRange.endDay.date.getTime() - model.endDay.date.getTime() ) / Day.MILISECONDS;
 			}
 			
-			view.paint(dayLength, column);
+			view.paint(dayLength);
 		}
 		
 		/** 

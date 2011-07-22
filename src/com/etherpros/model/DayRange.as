@@ -4,8 +4,6 @@ package com.etherpros.model {
 	import mx.collections.ArrayCollection;
 
 	public class DayRange {
-		// number of miliseconds in a day.
-		private static const MS_IN_DAY:Number = 86400000;	
 		private static const WEEKS_IN_CALENDAR:int = 6;
 		
 		private var _weeks:ArrayCollection;
@@ -51,7 +49,7 @@ package com.etherpros.model {
 			// first day of month.
 			var	monthDate:Date = new Date(year, month, 1);			
 			var firstDayOfCalendar:Date = new Date();
-			firstDayOfCalendar.setTime(monthDate.time - (monthDate.day * MS_IN_DAY));
+			firstDayOfCalendar.setTime(monthDate.time - (monthDate.day * Day.MILISECONDS));
 			
 			for(var i:int = 0; i < WEEKS_IN_CALENDAR; i++) {
 				var week:Week = new Week();

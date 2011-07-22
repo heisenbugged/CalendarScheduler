@@ -2,10 +2,12 @@ package com.etherpros.model
 {
 	public class Day
 	{
+		// number of miliseconds in a day.
+		public static const MILISECONDS:Number = 86400000;	
+		
 		private var _dayNumber:int = -1;
 		private var _dayName:String = "";
-		private var _date:Date;
-		
+		private var _date:Date;		
 		private var _isBeginDayWeek:Boolean = false;
 		private var _isEndDayWeek:Boolean= false;
 		private var _isOtherMonth:Boolean = false;
@@ -21,6 +23,10 @@ package com.etherpros.model
 		
 		public function set date(value:Date):void {
 			_date = value;
+		}
+		
+		public function get time():Number {
+			return _date.getTime();
 		}
 		
 		public function get dayName():String {

@@ -16,16 +16,28 @@ package com.etherpros.components
 	
 	import spark.components.Group;
 	
-	public class JobView extends Group
-	{ 
-		private const X_PADDING:Number = 8;
-		
+	/** 
+	 * =======
+	 * JobView
+	 * =======
+	 *   Could also be called JobViewController,
+	 *   this class manages the individual rows, resizing
+	 *   painting of those rows.
+	 * 
+	 *   Any visible Job on the stage is composed of one JobView
+	 *   and a JobSprite per each row the spans across.
+	 */
+	
+	public class JobView extends Group { 
+		private const X_PADDING:Number = 8;		
 		private const LEFT:Number = 0;
 		private const RIGHT:Number = 1;
 		
 		
-		/** width and height of new empty sprites.
-		 *  this usually corresponds to the width of a single day. **/
+		/** 
+		 * width and height of new empty sprites.
+		 * this usually corresponds to the width of a single day. 
+		 */
 		private var defaultWidth:Number;
 		private var defaultHeight:Number;
 		
@@ -76,6 +88,7 @@ package com.etherpros.components
 		// but still forms part of the range being viewed since it FINISHES inside that viewable range,
 		// its "leftInRange" value will be false. 
 		// (and the job will probably have leftDraggable set to false as well).
+		
 		public var leftInRange:Boolean = true;
 		public var rightInRange:Boolean = true;
 		
@@ -101,15 +114,19 @@ package com.etherpros.components
 			sprite.y = initialY;			
 		}
 		
-		/** Sets the first row of the grid to a given X and Y position **/
+		/** 
+		 * Sets the first row of the grid to a given X and Y position 
+		 */
 		public function position(x:int, y:int):void {
 			var sprite:JobSprite = firstRow;
 			sprite.x = x;
 			sprite.y = y;
 		}
 		
-		/** Creates empty sprite and adds the sprite to the spriteRows array.
-		 *  This function is used when a jobview jumps to a new week row. **/
+		/** 
+		 * Creates empty sprite and adds the sprite to the spriteRows array.
+		 * This function is used when a jobview jumps to a new week row. 
+		 */
 		public function createEmptySprite():JobSprite {			
 			var sprite:JobSprite = new JobSprite(this.model.jobColor, this.model.contractor.FullName);
 			sprite.width = defaultWidth;
@@ -121,7 +138,9 @@ package com.etherpros.components
 			return sprite;
 		}
 					
-		/** Causes job to 'snap' to a day based on it's x position and width **/
+		/** 
+		 * Causes job to 'snap' to a day based on it's x position and width. 
+		 */
 		private function snap():void {				
 			dragTarget.x = Math.floor(dragTarget.x/CalendarController.DAY_WIDTH) * CalendarController.DAY_WIDTH;			
 			dragTarget.width = Math.ceil(dragTarget.width/CalendarController.DAY_WIDTH)  * CalendarController.DAY_WIDTH;			
@@ -131,8 +150,10 @@ package com.etherpros.components
 			}
 		}
 		
-		/** Used for starting a drag operation when either 
-		 *  the left or right corner of the component is clicked **/		
+		/** 
+		 * Used for starting a drag operation when either 
+		 * the left or right corner of the component is clicked 
+		 */		
 		private function mouseDown(event:Event):void {
 			var target:JobSprite = event.currentTarget as JobSprite;			
 			var index:int = findSpriteIndex(target);
@@ -166,13 +187,11 @@ package com.etherpros.components
 		}
 		
 		private function endDrag(event:Event=null):void {
-			dragValid = true;			
-			if ( stage != null ) {
-				stage.removeEventListener(MouseEvent.MOUSE_MOVE, resize);				
-			}
-			
+			dragValid = true;
+			// remove old drag event listeners.
+			stage.removeEventListener(MouseEvent.MOUSE_MOVE, resize);							
 			stage.removeEventListener(MouseEvent.MOUSE_UP, endDrag);
-		
+			
 			if(spriteRows.length > 0) {
 				// After a drag-drop operation, snap the job to the correct day 
 				snap();
@@ -183,9 +202,13 @@ package com.etherpros.components
 				resizedEvent.model = model;
 				dispatchEvent(resizedEvent);					
 			}
-			// define remove event
+			
 		}
-				
+		
+		/** 
+		 * Dispatches add row event, which then triggers the job's respective
+		 * controller to position the new row 
+		 */
 		private function addRow():void {
 			var jobEvent:JobEvent = new JobEvent(JobEvent.ADD_JOB_SPRITE);
 			jobEvent.view = this;
@@ -193,7 +216,10 @@ package com.etherpros.components
 			dispatchEvent(jobEvent);			
 		}
 		
-		/** Resizes the width of the selected job row based on the change in mouse position from the drag. **/
+		/** 
+		 * Resizes the width of the selected job row based on 
+		 * the change in mouse position from the drag. 
+		 */
 		private function resize(event:Event=null):void {
 			var target:JobSprite = dragTarget;
 			
@@ -251,13 +277,36 @@ package com.etherpros.components
 			}
 		}
 		
-		public function paint(daySpan:int, startDayIndex:int):void {
-			var numberOfRows:int = Math.ceil( (daySpan+startDayIndex)/Week.DAYS_BY_WEEK);
+		/** 
+		 * 'Paints' the RigView based on the start position and day range.
+		 * The draw() function only draws the literal view using the
+		 * Actionscript Drawing API. paint() on the other hand instantiates
+		 * the entire JobView component, including rows and positioning
+		 * on the calendar.
+		 *  
+		 * In short:
+		 * Use draw() when you want to refresh the graphics.
+		 * Use paint() when you want to instantiate the JobView's graphics.
+		 * 
+		 * Example:
+		 * Use draw() if a change to width and height is made and needs to be refreshed.
+		 * Use paint() when switching between day ranges to reinstantiate the view.
+		 */
+		public function paint(daySpan:int=-1):void {
+			// if daySpan wasn't passed in, use the difference between start and end days.
+			if(daySpan == -1) {
+				daySpan = ( (model.endDay.time - model.startDay.time) / Day.MILISECONDS) + 1;
+			}
+			
+			var startDayIndex:int = pos.x;			
+			var numberOfRows:int = Math.ceil( (daySpan+startDayIndex) / Week.DAYS_BY_WEEK);
 			// set the last sprite width to the remainder number of days
+			var remainder:int;
 			if(numberOfRows > 1) {
-				var remainder:int = daySpan - ( (numberOfRows-1) * Week.DAYS_BY_WEEK) + startDayIndex;
+			 	remainder = daySpan - ( (numberOfRows-1) * Week.DAYS_BY_WEEK) + startDayIndex;
 			} else {
-				var remainder:int = daySpan; 
+				// if there is only one row, then the daySpan IS the "remainder" row!
+				remainder = daySpan; 
 			}
 			
 			for(var i:int=1; i < numberOfRows; i++) {
@@ -267,12 +316,15 @@ package com.etherpros.components
 				addRow();
 			}
 						
-			// in the last row
+			// paint the last row with the "remainder" value.
 			lastRow.width = CalendarController.DAY_WIDTH * remainder;
 		}		
 		
-		/** Redraws the graphics of the job. Used for updating the view
-		 *  with changes to the width or height of the component **/
+		/** 
+		 * Redraws the graphics of all JobSprite rows.
+		 * Used for refreshing any view changes,
+		 * such as changes to width and height.
+		 */
 		public function draw(event:Event=null):void {			
 			// loop through all sprites in sprites array
 			// and redraw their graphics.
@@ -281,10 +333,11 @@ package com.etherpros.components
 			}
 		}
 		
-		/** Searches for passed in sprite in the spriteRows
-		 *  array and returns the corresponding index.
-		 *  If the sprite is not found in the array, -1
-		 *  is returned **/
+		/** 
+		 * Searches for passed in sprite in the spriteRows array 
+		 * and returns the corresponding index.
+		 * If the sprite is not found in the array, -1 is returned 
+		 **/
 		private function findSpriteIndex(sprite:JobSprite):int {
 			var i:int = 0;
 			for each(var currentSprite:JobSprite in spriteRows) {

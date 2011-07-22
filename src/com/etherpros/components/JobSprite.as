@@ -1,15 +1,19 @@
 package com.etherpros.components
 {
 	import flash.display.Graphics;
-	import flash.display.Sprite;
-	
+	import flash.display.Sprite;	
 	import mx.controls.Label;
-	import mx.core.UIComponent;
-	
+	import mx.core.UIComponent;	
 	import spark.components.Group;
 	
-	public class JobSprite extends Group
-	{
+	/**
+	 * =========
+	 * JobSprite
+	 * =========
+	 *   Graphical ViewComponent that represents a single JobRow.
+	 */ 
+
+	public class JobSprite extends Group {
 		private const LABEL_PADDING:Number = 10;
 		
 		private var s:Sprite = new Sprite();
@@ -39,7 +43,9 @@ package com.etherpros.components
 			draw();
 		}
 
-		/** Creates label with name of the job driver **/
+		/** 
+		 * Creates label with name of the contractor. 
+		 */
 		private function createNameLabel(name:String):void {
 			nameLabel = new Label();
 			nameLabel.setStyle('color', '#ffffff');
@@ -50,8 +56,10 @@ package com.etherpros.components
 			nameLabel.text = name;	
 		}
 		
-		/** Redraws the graphics of the job sprite. Used for updating the view
-		 *  with changes to the width or height of the component **/		
+		/** 
+		 * Redraws the graphics of the job sprite. Used for updating the view
+		 * with changes to the width or height of the component 
+		 */		
 		public function draw():void {			
 			// clear out old graphics.			
 			g.clear();
