@@ -15,7 +15,7 @@ package com.etherpros.controllers
 	
 	import spark.components.Group;
 
-	public class JobsController
+	public class CalendarController
 	{
 		public var xOffset:int;
 		public var yOffset:int;
@@ -38,7 +38,7 @@ package com.etherpros.controllers
 		
 		private var container:CalendarForm
 		
-		public function JobsController(container:CalendarForm) {
+		public function CalendarController(container:CalendarForm) {
 			this.container = container;
 			jobViews = new ArrayCollection();
 			jobs = new ArrayCollection();
@@ -251,11 +251,11 @@ package com.etherpros.controllers
 		}
 		
 		private function getRowIndex(y:int):int {
-			return Math.floor(y/JobsController.DAY_HEIGHT);
+			return Math.floor(y/CalendarController.DAY_HEIGHT);
 		}
 		
 		private function getColumnIndex(x:int):int {
-			return Math.floor(x/JobsController.DAY_WIDTH);
+			return Math.floor(x/CalendarController.DAY_WIDTH);
 		}		
 		
 		/** 

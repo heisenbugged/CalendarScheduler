@@ -107,11 +107,11 @@ package com.etherpros.components
 					
 		/** Causes job to 'snap' to a day based on it's x position and width **/
 		private function snap():void {				
-			dragTarget.x = Math.floor(dragTarget.x/JobsController.DAY_WIDTH) * JobsController.DAY_WIDTH;			
-			dragTarget.width = Math.ceil(dragTarget.width/JobsController.DAY_WIDTH)  * JobsController.DAY_WIDTH;			
+			dragTarget.x = Math.floor(dragTarget.x/CalendarController.DAY_WIDTH) * CalendarController.DAY_WIDTH;			
+			dragTarget.width = Math.ceil(dragTarget.width/CalendarController.DAY_WIDTH)  * CalendarController.DAY_WIDTH;			
 			// if new width surpasses calendar width, snap backwards
-			if( (dragTarget.width + dragTarget.x) > JobsController.CALENDAR_WIDTH) {				
-				dragTarget.width = JobsController.CALENDAR_WIDTH - dragTarget.x;
+			if( (dragTarget.width + dragTarget.x) > CalendarController.CALENDAR_WIDTH) {				
+				dragTarget.width = CalendarController.CALENDAR_WIDTH - dragTarget.x;
 			}
 		}
 		
@@ -202,9 +202,9 @@ package com.etherpros.components
 			
 			// if the width of the job row has surpassed that of our calendar
 			// break the job into a new row.					
-			if( (target.width + target.x) > JobsController.CALENDAR_WIDTH) {				
+			if( (target.width + target.x) > CalendarController.CALENDAR_WIDTH) {				
 				// reset width to be the same as the calendar width.
-				target.width = JobsController.CALENDAR_WIDTH - target.x;
+				target.width = CalendarController.CALENDAR_WIDTH - target.x;
 				
 				// dispatch new row created event.
 				addRow();
@@ -247,12 +247,12 @@ package com.etherpros.components
 			for(var i:int=1; i < numberOfRows; i++) {
 				var sprite:JobSprite = spriteRows[i-1];
 				// since new rows are added, all the previous rows must be max width.
-				sprite.width = JobsController.CALENDAR_WIDTH - sprite.x;
+				sprite.width = CalendarController.CALENDAR_WIDTH - sprite.x;
 				addRow();
 			}
 						
 			// in the last row
-			lastRow.width = JobsController.DAY_WIDTH * remainder;
+			lastRow.width = CalendarController.DAY_WIDTH * remainder;
 		}		
 		
 		/** Redraws the graphics of the job. Used for updating the view
