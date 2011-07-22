@@ -54,10 +54,13 @@
 			
 				// create first initial month grid.
 				createDaysGrid();
-				var contractorDAO:ContractorDAO = new ContractorDAO();
-				contractorDAO.findAll();
+				
 				this.addEventListener(RigCreationEvent.ADD_NEW_RIG,addRigView);				
-				this.addEventListener(ContractorEvent.FIND_ALL_DONE,initContractorList);
+				
+				// load contractors
+				var contractorDAO:ContractorDAO = new ContractorDAO();
+				contractorDAO.addEventListener(ContractorEvent.FIND_ALL_DONE,initContractorList);
+				contractorDAO.findAll();				
 			}
 			
 			// create grid of days in current month as per current date provided

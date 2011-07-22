@@ -58,7 +58,7 @@ package com.etherpros.business
 		
 		private function checkIfFullyLoaded():void {
 			if(isLoaded) {
-				var contractorEvent:ContractorEvent = new ContractorEvent(ContractorEvent.FIND_ALL_DONE,true);
+				var contractorEvent:ContractorEvent = new ContractorEvent(ContractorEvent.FIND_ALL_DONE);
 				contractorEvent.contractorList = contractors;
 				dispatchEvent(contractorEvent);	
 			}
