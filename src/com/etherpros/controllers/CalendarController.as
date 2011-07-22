@@ -66,13 +66,13 @@ package com.etherpros.controllers
 			var dayLength:int = ( (model.endDay.date.getTime() - model.startDay.date.getTime()) / MS_IN_DAY) + 1;
 			var column:int = view.columnIndex;
 			// if job starts outside of the viewable range
-			if(view.startPos == null) {
+			if(view.leftInRange == false) {
 				// cut off the difference from the start day and the viewable range start day				
 				dayLength += (model.startDay.date.getTime() - dayRange.startDay.date.getTime()) / MS_IN_DAY;
 			}
 			
 			// if job finishes outside of viewable range
-			if(view.endPos == null) {
+			if(view.rightInRange == false) {
 				// cut off the difference from the end day and the viewable range end day
 				dayLength += (dayRange.endDay.date.getTime() - model.endDay.date.getTime() ) / MS_IN_DAY;
 			}
@@ -111,6 +111,11 @@ package com.etherpros.controllers
 				// true corner of the job extends past the
 				// viewable range.
 				view.leftDraggable = false;
+				view.leftInRange = false;
+				
+				// since the left hand side is out of range
+				// set the starting row,column position to be 0.
+				startPos = new Point();
 			}
 			
 			if(endPos == null) {
@@ -118,13 +123,13 @@ package com.etherpros.controllers
 				// true corner of the job extends past the
 				// viewable range.				
 				view.rightDraggable = false;
+				view.rightInRange = false;
 			}
 			
 			// set positioning.
 			view.x = xOffset;
 			view.y = yOffset;
-			view.startPos = startPos;
-			view.endPos = endPos;			
+			view.pos = startPos;
 			positionJobView(startPos, view);
 			
 			// add to containers

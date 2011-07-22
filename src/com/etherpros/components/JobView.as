@@ -50,8 +50,7 @@ package com.etherpros.components
 		 *  Is used when resizing a component to determine how it is being resized. **/			
 		private var dragDirection:Number;
 		/** Limit used for the drag and drop functionallity, the limit is related with the grid with **/
-		private var dragAndDropLimit:Number = -1;
-		
+		private var dragAndDropLimit:Number = -1;		
 		private var originalWidth:Number = 0;		
 		/** Used for determining the difference in mouse position when dragging. **/
 		private var originalMousePos:Point;		
@@ -59,9 +58,26 @@ package com.etherpros.components
 		/** When set to false resize operations are disabled. **/
 		private var dragValid:Boolean = true;
 		
-		// position on grid
-		public var startPos:Point;
-		public var endPos:Point;
+		// row, column position on calendar grid.
+		public var pos:Point;
+		
+		// All JobViews are displayed based on a certain range of dates. 
+		// These JobViews can be dragged from their left and right corners 
+		// to extend or reduce the range of a particular job.
+		//
+		// When a particular JobView starts before or ends after the range
+		// being viewed, then those sides are out of the users view and are
+		// said to be "out of range".
+		//
+		// For example: 
+		// If the user is currently viewing on the calendar the month of
+		// July, but one of the jobs starts on JUNE 28 and ends on July 10,
+		// since the job starts outside of the visible range, 
+		// but still forms part of the range being viewed since it FINISHES inside that viewable range,
+		// its "leftInRange" value will be false. 
+		// (and the job will probably have leftDraggable set to false as well).
+		public var leftInRange:Boolean = true;
+		public var rightInRange:Boolean = true;
 		
 		// determines which sides can be dragged
 		public var leftDraggable:Boolean = true;
@@ -297,22 +313,22 @@ package com.etherpros.components
 		// Getters and Setters
 		// -------------------
 		public function get rowIndex():int {
-			if(startPos) {
-				return startPos.y;
+			if(pos) {
+				return pos.y;
 			}
 			return 0;
 		}
 		
 		public function get columnIndex():int {
-			if(startPos) {
-				return startPos.x;			
+			if(pos) {
+				return pos.x;			
 			}
 			
 			return 0;
 		}
 		
 		public function get endRow():int {
-			return startPos.y + numRows - 1;
+			return pos.y + numRows - 1;
 		}
 		
 		public function get numRows():int {
