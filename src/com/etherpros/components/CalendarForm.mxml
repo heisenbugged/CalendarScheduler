@@ -54,9 +54,7 @@
 			
 				// create first initial month grid.
 				createDaysGrid();
-				
-				this.addEventListener(RigCreationEvent.ADD_NEW_RIG,addRigView);				
-				
+								
 				// load contractors
 				var contractorDAO:ContractorDAO = new ContractorDAO();
 				contractorDAO.addEventListener(ContractorEvent.FIND_ALL_DONE,initContractorList);
@@ -122,66 +120,29 @@
 				
 				var dayRange:DayRange = new DayRange(weekArray);
 				rigsController.dayRange = dayRange;
-				
-				initSelectedMonth();
+
 			}	
 			
 			protected function dtPicker_changeHandler(event:CalendarLayoutChangeEvent):void
 			{
 				if ( currentMonthSelected != dtPicker.displayedMonth ){
-					clearCalendarGrid();
 					createDaysGrid();
 				}else if ( currentYearSelected != dtPicker.displayedYear ){
-					clearCalendarGrid();
 					createDaysGrid();
 				}
-				
+	
 			}
 			
 			protected function dtPicker_clickHandler(event:MouseEvent):void
 			{
 				if ( currentMonthSelected != dtPicker.displayedMonth ){
-					clearCalendarGrid();
 					createDaysGrid();
 				}else if ( currentYearSelected != dtPicker.displayedYear ){
-					clearCalendarGrid();
 					createDaysGrid();
 				}
 				
 			}
 			
-			private function  initSelectedMonth():void {
-				
-				/*
-				
-				var monthKey:String = dtPicker.displayedYear + "-" + dtPicker.displayedMonth;
-				var rigByMonth:Array =  rigsController.getRigByMonth(monthKey);
-				for each  (var _rigDetail:Rig in rigByMonth){
-					rigsController.reDrawRig(_rigDetail );	
-				}
-				
-				*/
-				
-			}
-			/**
-			 * Function for cleaning the rigs from the calendar and stores the rigs in a temp array
-			 * */
-			private function clearCalendarGrid():void {
-				// rigsController.clearRigViews();				
-			}
-			
-			protected function addRigView(event:RigCreationEvent):void {
-				// if dragging into a valid week.
-				if ( event.weekDay && event.weekDay.dayNumber != -1 ) {
-					
-					var rigDetail:Rig = new Rig();					
-					rigDetail.contractor = event.contractorRig;
-					rigDetail.startDay = event.weekDay;
-					rigsController.createRig(rigDetail);
-					
-				}				
-			}
-					
 			protected function initContractorList(event:ContractorEvent):void {					
 				staffList.dataProvider = event.contractorList;
 			}

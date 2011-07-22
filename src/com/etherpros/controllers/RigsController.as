@@ -1,6 +1,7 @@
 package com.etherpros.controllers
 {
 	import com.etherpros.components.*;
+	import com.etherpros.events.RigCreationEvent;
 	import com.etherpros.events.RigEvent;
 	import com.etherpros.model.*;
 	
@@ -24,21 +25,26 @@ package com.etherpros.controllers
 		public static var DAY_HEIGHT:int;
 		public static var CALENDAR_WIDTH:int;
 		public static var CALENDAR_HEIGHT:int;
-		public static const RIG_VERTICAL_PADDING:int = 5;
+		public static const RIG_VERTICAL_PADDING:int = 5;		
+		// number of miliseconds in a day.
+		private const MS_IN_DAY:Number = 86400000;
 		
+		// day range being viewed on the calendar.
+		private var _dayRange:DayRange;
 		// list of rig views.
 		private var _rigViews:ArrayCollection;
 		// all rig models loaded
 		public var rigs:ArrayCollection;
-		private var _dayRange:DayRange;
 		
-
 		private var container:CalendarForm
 		
 		public function RigsController(container:CalendarForm) {
 			this.container = container;
 			rigViews = new ArrayCollection();
 			rigs = new ArrayCollection();
+			
+			// view event listeners
+			container.addEventListener(RigCreationEvent.ADD_NEW_RIG, createRig);
 		}
 		
 		public static function setCalendarDimensions(width:int, height:int):void {
@@ -49,25 +55,11 @@ package com.etherpros.controllers
 			DAY_HEIGHT = CALENDAR_HEIGHT/6; //6 weeks in datagrid.
 		}
 
-		public function set dayRange(value:DayRange):void {
-			_dayRange = value;
-			
-			// clear all old rig views since week range was changed.
-			clearRigViews();
-			// re draw rigs based on new day range
-			draw();
-		}
 		
-		public function get dayRange():DayRange {
-			return _dayRange;
-		}
 
 		/**
-		 * Draws an existing Rig
-		 * */
-		
-		// number of miliseconds in a day.
-		private const MS_IN_DAY:Number = 86400000;
+		 * Draws an existing Rig and positions it on the stage.
+		 */
 		public function drawRigView(model:Rig = null):void {			
 			var view:RigView = addRigView(model);
 			// find the difference in days between the start day and end day.
@@ -87,6 +79,33 @@ package com.etherpros.controllers
 			
 			view.paint(dayLength, column);
 		}
+
+		/*
+		protected function addRigView(event:RigCreationEvent):void {
+			// if dragging into a valid week.
+			if ( event.weekDay && event.weekDay.dayNumber != -1 ) {
+				
+				var rigDetail:Rig = new Rig();					
+				rigDetail.contractor = event.contractorRig;
+				rigDetail.startDay = event.weekDay;
+				rigsController.createRig(rigDetail);
+				
+			}				
+		}
+		*/
+		
+		/** Creates a new rig, traditionally done on drag and drop to the calendar. **/
+		public function createRig(event:RigCreationEvent):void {
+			// if dragging into a valid week
+			if(event.weekDay && event.weekDay.dayNumber != -1) {
+				var model:Rig = new Rig();
+				model.contractor = event.contractorRig;
+				model.startDay = event.weekDay;
+				rigs.addItem(model);
+				
+				addRigView(model);
+			}			
+		}		
 		
 		/** Creates a new rig view, positions it and adds it to the stage **/
 		public function addRigView(model:Rig):RigView {
@@ -129,7 +148,8 @@ package com.etherpros.controllers
 			return view;			
 		}
 		
-		/** Converts a row, column point into X and Y coordinates **/
+		/** Converts a row/column point into X and Y coordinates.
+		 *  On the calendar. **/
 		private function positionRigView(pos:Point, rig:RigView):void {
 			// if the position is null, use 0,0 instead.
 			if(pos == null) {
@@ -139,11 +159,6 @@ package com.etherpros.controllers
 			var x:int = ( pos.x * DAY_WIDTH );
 			var y:int = ( pos.y * DAY_HEIGHT) + ( (RIG_HEIGHT + RIG_VERTICAL_PADDING) * getYPosition(rig.model.startDay) + 1) + 15;
 			rig.position(x, y);
-		}
-		
-		public function createRig(model:Rig = null):void {			
-			rigs.addItem(model);
-			addRigView(model);
 		}
 			
 		
@@ -281,13 +296,27 @@ package com.etherpros.controllers
 			yOffset = y;
 		}
 		
-		public function get rigViews():ArrayCollection
-		{
+		// -------------------
+		// Getters and Setters
+		// -------------------
+		
+		public function set dayRange(value:DayRange):void {
+			_dayRange = value;			
+			// clear all old rig views since week range was changed.
+			clearRigViews();
+			// re draw rigs based on new day range
+			draw();
+		}
+		
+		public function get dayRange():DayRange {
+			return _dayRange;
+		}
+		
+		public function get rigViews():ArrayCollection {
 			return _rigViews;
 		}
 		
-		public function set rigViews(value:ArrayCollection):void
-		{
+		public function set rigViews(value:ArrayCollection):void {
 			_rigViews = value;
 		}
 		
