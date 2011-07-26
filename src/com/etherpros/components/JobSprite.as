@@ -73,14 +73,16 @@ package com.etherpros.components
 			g.endFill();					
 		}
 		
-		public function fade():void {			
-			var highlightS:Sprite = new Sprite();
-			highlightS.graphics.beginFill(0xFFFFFF, .5);
-			highlightS.graphics.drawRoundRect(0,0, width, height, 15);
-			highlightS.graphics.endFill();		
-			
-			highlightContainer.addChild(highlightS);
-			addElement(highlightContainer);
+		public function fade():void {
+			if(!contains(highlightContainer)) {
+				var highlightS:Sprite = new Sprite();
+				highlightS.graphics.beginFill(0xFFFFFF, .6);
+				highlightS.graphics.drawRoundRect(0,0, width, height, 15);
+				highlightS.graphics.endFill();		
+				
+				highlightContainer.addChild(highlightS);
+				addElement(highlightContainer);
+			}
 		}
 		
 		public function unfade():void {
@@ -89,7 +91,7 @@ package com.etherpros.components
 				highlightContainer.removeChildAt(0);
 			}
 			
-			if(this.contains(highlightContainer)) {
+			if(contains(highlightContainer)) {
 				removeElement(highlightContainer);
 			}
 		}
