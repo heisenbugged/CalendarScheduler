@@ -2,11 +2,11 @@
 <s:Application xmlns:fx="http://ns.adobe.com/mxml/2009"
 			   xmlns:s="library://ns.adobe.com/flex/spark"
 			   xmlns:mx="library://ns.adobe.com/flex/mx"
-			   xmlns:ns1="*"
 			   xmlns:components="com.etherpros.components.*"
+			   xmlns:maps="com.etherpros.maps.*"
 			   initialize="init()"
 			   minWidth="955" minHeight="600"
-			   backgroundColor="#eeeeee" xmlns:maps="com.etherpros.maps.*">
+			   backgroundColor="#eeeeee">
 	
 	<fx:Style source="assets/css/main.css" />	
 	
@@ -24,6 +24,8 @@
 	<fx:Declarations>
 		<maps:MainEventMap/>	
 	</fx:Declarations>
+	
+	
 	<!-- Main Component! -->
 	<components:CalendarForm width="100%">
 	</components:CalendarForm>
