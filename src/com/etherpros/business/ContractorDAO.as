@@ -15,8 +15,12 @@ package com.etherpros.business
 		public static var URL:String = SERVER + "fmi/xml/fmresultset.xml?-db="+DATABASE+"&-lay="+LAYOUT+"&-findall";		
 		//public static var URL:String = "http://184.106.115.50/fmi/xml/fmresultset.xml?-db=LMS&-lay=Questions&-query=(q1,q2);&-q1=CourseID&-q1.value==C2&-q2=ModuleNo&-q2.value==M6&-findquery";
 		public static var CDN_URL:String =  "";
-		var contractors:ArrayCollection;
-		var isLoaded:Boolean = false;
+		private var contractors:ArrayCollection;
+		private var isLoaded:Boolean = false;
+		
+		[Bindable(Event="findAllDone")]
+		public  var contractorList:ArrayCollection;
+		
 		public function ContractorDAO()
 		{
 			
@@ -58,9 +62,10 @@ package com.etherpros.business
 		
 		private function checkIfFullyLoaded():void {
 			if(isLoaded) {
+				contractorList = contractors;
 				var contractorEvent:ContractorEvent = new ContractorEvent(ContractorEvent.FIND_ALL_DONE);
-				contractorEvent.contractorList = contractors;
 				dispatchEvent(contractorEvent);	
+				
 			}
 		}
 	}

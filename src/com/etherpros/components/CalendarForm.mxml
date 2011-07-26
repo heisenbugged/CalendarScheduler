@@ -34,6 +34,9 @@
 			public var currentMonthSelected:int = -1;
 			public var currentYearSelected:int = -1;
 			
+			[Bindable]
+			public var contractorList:ArrayCollection;
+			
 			private function init():void {
 				// set up controlller for rig views.
 				jobsController = new CalendarController(this);
@@ -45,9 +48,8 @@
 				createDaysGrid();
 								
 				// load contractors
-				var contractorDAO:ContractorDAO = new ContractorDAO();
-				contractorDAO.addEventListener(ContractorEvent.FIND_ALL_DONE,initContractorList);
-				contractorDAO.findAll();				
+				var contractorEvent:ContractorEvent = new ContractorEvent(ContractorEvent.FIND_ALL);
+				dispatchEvent(contractorEvent);
 			}
 			
 			// create grid of days in current month as per current date provided
@@ -87,10 +89,6 @@
 					createDaysGrid();
 				}
 				
-			}
-			
-			protected function initContractorList(event:ContractorEvent):void {					
-				staffList.dataProvider = event.contractorList;
 			}
 			
 			[Bindable]
@@ -141,7 +139,7 @@
 		
 		<components:TitleBox label="Drivers" />
 		<s:List id="staffList" width="100%" dragEnabled="true" 
-				dropEnabled="false" skinClass="skins.DriversList">
+				dropEnabled="false" skinClass="skins.DriversList" dataProvider="{contractorList}">
 			<s:itemRenderer>
 				<fx:Component>
 					<s:ItemRenderer height="35">

@@ -6,7 +6,7 @@
 			   xmlns:components="com.etherpros.components.*"
 			   initialize="init()"
 			   minWidth="955" minHeight="600"
-			   backgroundColor="#eeeeee">
+			   backgroundColor="#eeeeee" xmlns:maps="com.etherpros.maps.*">
 	
 	<fx:Style source="assets/css/main.css" />	
 	
@@ -21,7 +21,9 @@
 			}
 		]]>
 	</fx:Script>
-		
+	<fx:Declarations>
+		<maps:MainEventMap/>	
+	</fx:Declarations>
 	<!-- Main Component! -->
 	<components:CalendarForm width="100%">
 	</components:CalendarForm>
