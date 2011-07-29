@@ -1,8 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
-<EventMap xmlns:fx="http://ns.adobe.com/mxml/2009" 
-		  xmlns:s="library://ns.adobe.com/flex/spark" 
-		  xmlns:mx="library://ns.adobe.com/flex/mx"
-		  xmlns="com.asfusion.mate.core.*"
-		  cache="local">
+<EventMap
+	xmlns:fx="http://ns.adobe.com/mxml/2009"
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns="http://mate.asfusion.com/"
+	>
+	
+	<fx:Script>
+		<![CDATA[
+			import com.etherpros.business.ContractorDAO;
+			import com.etherpros.components.CalendarForm;
+			import com.etherpros.events.ContractorEvent;
+			
+			import mx.events.*;
+			import mx.events.FlexEvent;
+			
+		]]>
+	</fx:Script>
+	
+	
+	<fx:Declarations>
+		
+		<!-- ======================================================================================== -->
+		<!-- Config -->
+		<!-- _________________________________________________________________________________________ -->	
+		
+		
+		<!-- InjectorSettings ___________________________________________________________ -->	
+		
+		<!-- Inject properties to any views as soon as possible listening to FlexEvent.PREINITIALIZE -->
+		
+		<InjectorSettings
+			eventType="{ FlexEvent.PREINITIALIZE }"
+			/>
+		
+		
+		<!-- Services   Note: you can have an external file if you have more services -->
+		
+		<s:HTTPService id="employeesService" url="assets/data/Employees.xml" resultFormat="e4x" />
+		
+		
+		<!-- ======================================================================================== -->
+		<!-- Events -->
+		<!-- _________________________________________________________________________________________ -->		
+		
+		
+		<!-- FlexEvent.PREINITIALIZE __________________________________________________________________ -->
+		
+		
+		
+		<!-- FlexEvent.APPLICATION_COMPLETE ___________________________________________________________ -->
+		
+		
+		
+		<!-- LoginEvent.LOGIN ________________________________________________________________________ -->
+		
+		<!-- Loging in, normally this would send a server request, but we are making it simple here  -->
+		<EventHandlers type="{ContractorEvent.FIND_ALL}">
+			<MethodInvoker generator="{ ContractorDAO }" method="findAll"  />			
+		</EventHandlers>
+		
+		<Injectors target="{ CalendarForm }" >
+			<PropertyInjector targetKey="contractorList" source="{ ContractorDAO }" sourceKey="contractorList"/>
+		</Injectors>
+		
+		
+		<!-- ======================================================================================== -->
+		<!-- Injectors -->
+		<!-- _________________________________________________________________________________________ -->
+		
+		<!-- MainUI + MainUIPresentationModel __________________________________________________________________ -->
+		
+		
+		
+	
+		
+		
+		
+	</fx:Declarations>
 	
 </EventMap>

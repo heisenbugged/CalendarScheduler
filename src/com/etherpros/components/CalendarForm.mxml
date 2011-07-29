@@ -4,7 +4,7 @@
 		 xmlns:mx="library://ns.adobe.com/flex/mx"  
 		 xmlns:components="com.etherpros.components.*"
 		 xmlns:model="com.etherpros.model.*" creationComplete="init()"
-		 borderAlpha="0">
+		 borderAlpha="0" xmlns:ns="http://mate.asfusion.com/">
 	
 	<s:layout>
 		<s:HorizontalLayout horizontalAlign="center" />
@@ -49,7 +49,7 @@
 								
 				// load contractors
 				var contractorEvent:ContractorEvent = new ContractorEvent(ContractorEvent.FIND_ALL);
-				dispatchEvent(contractorEvent);
+				myDispatcher.dispatchEvent(contractorEvent);
 			}
 			
 			// create grid of days in current month as per current date provided
@@ -95,6 +95,9 @@
 			public static var COLUMN_WIDTH:int = 146;
 		]]>
 	</fx:Script>
+	<fx:Declarations>
+		<ns:Dispatcher id="myDispatcher" />
+	</fx:Declarations>
 	<s:Group id="gridContainer">
 
 		<s:DataGrid id="grdCalendar" width="1024" height="766" dataProvider="{weekArray}"
