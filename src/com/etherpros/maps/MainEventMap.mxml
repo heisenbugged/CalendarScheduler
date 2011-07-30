@@ -34,33 +34,20 @@
 			/>
 		
 		
-		<!-- Services   Note: you can have an external file if you have more services -->
-		
-		<s:HTTPService id="employeesService" url="assets/data/Employees.xml" resultFormat="e4x" />
-		
-		
-		<!-- ======================================================================================== -->
-		<!-- Events -->
-		<!-- _________________________________________________________________________________________ -->		
-		
-		
-		<!-- FlexEvent.PREINITIALIZE __________________________________________________________________ -->
-		
-		
-		
-		<!-- FlexEvent.APPLICATION_COMPLETE ___________________________________________________________ -->
-		
-		
-		
-		<!-- LoginEvent.LOGIN ________________________________________________________________________ -->
-		
 		<!-- Loging in, normally this would send a server request, but we are making it simple here  -->
-		<EventHandlers type="{ContractorEvent.FIND_ALL}">
+		<EventHandlers type="{ContractorEvent.FIND_ALL}" debug="true">
 			<MethodInvoker generator="{ ContractorDAO }" method="findAll"  />			
 		</EventHandlers>
-		
-		<Injectors target="{ CalendarForm }" >
-			<PropertyInjector targetKey="contractorList" source="{ ContractorDAO }" sourceKey="contractorList"/>
+		<Injectors target="{ CalendarForm }" debug="true">
+			<ObjectBuilder 
+				generator="{ ContractorDAO }"				
+				constructorArguments="{ scope.dispatcher }"
+				/>
+			<PropertyInjector
+				targetKey="contractorList"
+				source="{ ContractorDAO }" 
+				sourceKey="contractorList"
+				/>
 		</Injectors>
 		
 		

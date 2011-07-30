@@ -2,10 +2,13 @@ package com.etherpros.model
 {
 	import flash.events.EventDispatcher;
 
-	public class Contractor extends EventDispatcher
+	public class Contractor
 	{
+		[Bindable]
 		private var _ContractorID:String;
+		[Bindable]
 		private var _FirstName:String;
+		[Bindable]
 		private var _LastName:String;	
 		
 		public function Contractor()

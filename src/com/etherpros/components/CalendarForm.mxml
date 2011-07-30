@@ -46,10 +46,12 @@
 			
 				// create first initial month grid.
 				createDaysGrid();
-								
+				//this.addEventListener(ContractorEvent.FIND_ALL_DONE, initContractorList);				
 				// load contractors
 				var contractorEvent:ContractorEvent = new ContractorEvent(ContractorEvent.FIND_ALL);
 				myDispatcher.dispatchEvent(contractorEvent);
+				
+				
 			}
 			
 			// create grid of days in current month as per current date provided
@@ -90,6 +92,10 @@
 				}
 				
 			}
+			
+			/*protected function initContractorList(event:ContractorEvent):void {					
+				staffList.dataProvider = event.contractorList;
+			}*/
 			
 			[Bindable]
 			public static var COLUMN_WIDTH:int = 146;

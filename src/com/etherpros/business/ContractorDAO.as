@@ -1,9 +1,11 @@
 package com.etherpros.business
 {
+	import com.asfusion.mate.events.Dispatcher;
 	import com.etherpros.events.ContractorEvent;
 	import com.etherpros.model.Contractor;
 	
 	import flash.events.Event;
+	import flash.events.IEventDispatcher;
 	import flash.net.URLLoader;
 	import flash.net.URLRequest;
 	
@@ -18,12 +20,12 @@ package com.etherpros.business
 		private var contractors:ArrayCollection;
 		private var isLoaded:Boolean = false;
 		
-		[Bindable(Event="findAllDone")]
+		[Bindable]
 		public  var contractorList:ArrayCollection;
-		
-		public function ContractorDAO()
+		private var dispatcher:IEventDispatcher;
+		public function ContractorDAO(dispatcher:IEventDispatcher)
 		{
-			
+			this.dispatcher = dispatcher;
 		}
 		
 		public function findAll():void{
@@ -64,8 +66,7 @@ package com.etherpros.business
 			if(isLoaded) {
 				contractorList = contractors;
 				var contractorEvent:ContractorEvent = new ContractorEvent(ContractorEvent.FIND_ALL_DONE);
-				dispatchEvent(contractorEvent);	
-				
+				dispatcher.dispatchEvent(contractorEvent);
 			}
 		}
 	}
