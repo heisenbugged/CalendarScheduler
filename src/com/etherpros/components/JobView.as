@@ -133,7 +133,8 @@ package com.etherpros.components
 		 * This function is used when a jobview jumps to a new week row. 
 		 */
 		public function createEmptySprite():JobSprite {			
-			var sprite:JobSprite = new JobSprite(this.model.jobColor, this.model.contractor.FullName);
+			var spriteText:String = this.model.contractor.FullName + "-" + this.model.project.ProjName;
+			var sprite:JobSprite = new JobSprite(this.model.jobColor, spriteText);
 			sprite.width = defaultWidth;
 			sprite.height = defaultHeight;
 			sprite.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);

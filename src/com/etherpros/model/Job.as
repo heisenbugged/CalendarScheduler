@@ -9,6 +9,7 @@ package com.etherpros.model
 		private var _endDay:Day;
 		private var _contractor:Contractor;
 		private var _jobColor:int;
+		private var _project:Project;
 			
 		public function Job()
 		{
@@ -62,6 +63,16 @@ package com.etherpros.model
 		public function set contractor(value:Contractor):void
 		{
 			_contractor = value;
+		}
+
+		public function get project():Project
+		{
+			return _project;
+		}
+
+		public function set project(value:Project):void
+		{
+			_project = value;
 		}
 
 

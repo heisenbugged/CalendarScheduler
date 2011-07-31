@@ -1,5 +1,6 @@
 package com.etherpros.controllers
 {
+	import com.asfusion.mate.events.Dispatcher;
 	import com.etherpros.components.*;
 	import com.etherpros.events.JobCreationEvent;
 	import com.etherpros.events.JobEvent;
@@ -12,6 +13,8 @@ package com.etherpros.controllers
 	import mx.core.IVisualElement;
 	import mx.core.IVisualElementContainer;
 	import mx.core.UIComponent;
+	import mx.events.CloseEvent;
+	import mx.managers.PopUpManager;
 	
 	import spark.components.Group;
 
@@ -35,11 +38,12 @@ package com.etherpros.controllers
 		public var jobs:ArrayCollection;		
 		private var container:CalendarForm
 		
+		private var jobAssigmentPopup:JobAssigmentPopup;
+		
 		public function CalendarController(container:CalendarForm) {
-			this.container = container;
+			this.container = container;			
 			jobViews = new ArrayCollection();
-			jobs = new ArrayCollection();
-			
+			jobs = new ArrayCollection();			
 			// view event listeners
 			container.addEventListener(JobCreationEvent.ADD_NEW_JOB, createJob);
 		}
@@ -85,11 +89,25 @@ package com.etherpros.controllers
 				var model:Job = new Job();
 				model.contractor = event.contractorJob;
 				model.startDay = event.weekDay;
-				jobs.addItem(model);
 				
-				addJobView(model);
+				jobAssigmentPopup =  PopUpManager.createPopUp(this.container,JobAssigmentPopup,true) as JobAssigmentPopup;
+				jobAssigmentPopup.addEventListener(CloseEvent.CLOSE, onCloseJobAssignmnet);
+				jobAssigmentPopup.jobModel = model;
+				jobAssigmentPopup.init();
+				PopUpManager.centerPopUp(jobAssigmentPopup);
+				
 			}			
-		}		
+		}
+		
+		private function onCloseJobAssignmnet(event:CloseEvent):void{
+			var assignment:JobAssigmentPopup = event.currentTarget as JobAssigmentPopup;
+			PopUpManager.removePopUp(assignment);
+			if ( assignment.selectedProject != null ){
+				assignment.jobModel.project = assignment.selectedProject;
+				jobs.addItem(assignment.jobModel);
+				addJobView(assignment.jobModel);				
+			}
+		}
 		
 		/** 
 		 * Creates a new job view, positions it and adds it to the stage.

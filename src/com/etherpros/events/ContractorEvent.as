@@ -6,8 +6,8 @@ package com.etherpros.events
 
 	public class ContractorEvent extends Event
 	{
-		public static const FIND_ALL_DONE:String = 'findAllDone';
-		public static const FIND_ALL:String = 'findAll';
+		public static const FIND_ALL_DONE:String = 'findAllDoneContractor';
+		public static const FIND_ALL:String = 'findAllContractor';
 		public var contractorList:ArrayCollection;
 		public function ContractorEvent(type:String,  bubbles:Boolean=false, cancelable:Boolean=false)
 		{

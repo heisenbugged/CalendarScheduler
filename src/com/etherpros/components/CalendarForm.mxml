@@ -49,7 +49,7 @@
 				//this.addEventListener(ContractorEvent.FIND_ALL_DONE, initContractorList);				
 				// load contractors
 				var contractorEvent:ContractorEvent = new ContractorEvent(ContractorEvent.FIND_ALL);
-				myDispatcher.dispatchEvent(contractorEvent);
+				mateDispatcher.dispatchEvent(contractorEvent);
 				
 				
 			}
@@ -102,7 +102,7 @@
 		]]>
 	</fx:Script>
 	<fx:Declarations>
-		<ns:Dispatcher id="myDispatcher" />
+		<ns:Dispatcher id="mateDispatcher" />
 	</fx:Declarations>
 	<s:Group id="gridContainer">
 
@@ -148,7 +148,7 @@
 		
 		<components:TitleBox label="Drivers" />
 		<s:List id="staffList" width="100%" dragEnabled="true" 
-				dropEnabled="false" skinClass="skins.DriversList" dataProvider="{contractorList}">
+				dropEnabled="false" skinClass="skins.DriversList" dataProvider="{ contractorList }">
 			<s:itemRenderer>
 				<fx:Component>
 					<s:ItemRenderer height="35">
