@@ -1,6 +1,5 @@
 package com.etherpros.model
 {
-	import flash.events.EventDispatcher;
 
 	public class Contractor
 	{

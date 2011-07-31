@@ -14,8 +14,8 @@ package com.etherpros.business
 	public class ContractorDAO extends BaseDAO
 	{
 		public static var LAYOUT:String = "Contractors";
-		public static var URL:String = SERVER + "fmi/xml/fmresultset.xml?-db="+DATABASE+"&-lay="+LAYOUT+"&-findall";		
-		//public static var URL:String = "http://184.106.115.50/fmi/xml/fmresultset.xml?-db=LMS&-lay=Questions&-query=(q1,q2);&-q1=CourseID&-q1.value==C2&-q2=ModuleNo&-q2.value==M6&-findquery";
+		public static var URL:String = SERVER + "fmi/xml/fmresultset.xml?-db="+DATABASE+"&-lay="+LAYOUT+"&-findall";	
+		
 		public static var CDN_URL:String =  "";
 		private var contractors:ArrayCollection;
 		private var isLoaded:Boolean = false;
@@ -28,15 +28,13 @@ package com.etherpros.business
 			this.dispatcher = dispatcher;
 		}
 		
-		public function findAll():void{
+		public function findAllContractor():void{
 			var urlRequest:URLRequest = new URLRequest(URL);
 			var urlLoader:URLLoader = new URLLoader(urlRequest);
 			urlLoader.addEventListener(Event.COMPLETE,loadedContractors);
 		}
 		
-		private function loadedContractors(event:Event):void {			
-			//quizdataLoaded = true;			
-			//var quiz:Quiz = new Quiz();	
+		private function loadedContractors(event:Event):void {
 			 contractors  = new ArrayCollection();
 			var contractor:Contractor;
 			var xml:XML = new XML(event.target.data);			

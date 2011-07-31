@@ -8,8 +8,11 @@
 	<fx:Script>
 		<![CDATA[
 			import com.etherpros.business.ContractorDAO;
+			import com.etherpros.business.ProjectDAO;
 			import com.etherpros.components.CalendarForm;
+			import com.etherpros.components.JobAssigmentPopup;
 			import com.etherpros.events.ContractorEvent;
+			import com.etherpros.events.ProjectEvent;
 			
 			import mx.events.*;
 			import mx.events.FlexEvent;
@@ -18,26 +21,21 @@
 	</fx:Script>
 	
 	
-	<fx:Declarations>
-		
-		<!-- ======================================================================================== -->
-		<!-- Config -->
-		<!-- _________________________________________________________________________________________ -->	
-		
-		
-		<!-- InjectorSettings ___________________________________________________________ -->	
-		
+	<fx:Declarations>	
 		<!-- Inject properties to any views as soon as possible listening to FlexEvent.PREINITIALIZE -->
 		
-		<InjectorSettings
-			eventType="{ FlexEvent.PREINITIALIZE }"
-			/>
+		<InjectorSettings eventType="{ FlexEvent.PREINITIALIZE }"/>
 		
 		
-		<!-- Loging in, normally this would send a server request, but we are making it simple here  -->
+		<!-- Handlers for contractors events  -->
 		<EventHandlers type="{ContractorEvent.FIND_ALL}" debug="true">
-			<MethodInvoker generator="{ ContractorDAO }" method="findAll"  />			
+			<MethodInvoker generator="{ ContractorDAO }" method="findAllContractor"  />			
 		</EventHandlers>
+		<!-- Handlers for projects events  -->
+		<EventHandlers type="{ProjectEvent.FIND_ALL}" debug="true">
+			<MethodInvoker generator="{ ProjectDAO }" method="findAllProject"  />			
+		</EventHandlers>
+		<!-- Object injectors  -->
 		<Injectors target="{ CalendarForm }" debug="true">
 			<ObjectBuilder 
 				generator="{ ContractorDAO }"				
@@ -49,19 +47,17 @@
 				sourceKey="contractorList"
 				/>
 		</Injectors>
-		
-		
-		<!-- ======================================================================================== -->
-		<!-- Injectors -->
-		<!-- _________________________________________________________________________________________ -->
-		
-		<!-- MainUI + MainUIPresentationModel __________________________________________________________________ -->
-		
-		
-		
-	
-		
-		
+		<Injectors target="{ JobAssigmentPopup }" debug="true">
+			<ObjectBuilder 
+				generator="{ ProjectDAO }"				
+				constructorArguments="{ scope.dispatcher }"
+				/>
+			<PropertyInjector
+				targetKey="projects"
+				source="{ ProjectDAO }" 
+				sourceKey="projects"
+				/>
+		</Injectors>
 		
 	</fx:Declarations>
 	

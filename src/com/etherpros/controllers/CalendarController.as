@@ -1,5 +1,6 @@
 package com.etherpros.controllers
 {
+	import com.asfusion.mate.events.Dispatcher;
 	import com.etherpros.components.*;
 	import com.etherpros.events.JobCreationEvent;
 	import com.etherpros.events.JobEvent;
@@ -12,6 +13,7 @@ package com.etherpros.controllers
 	import mx.core.IVisualElement;
 	import mx.core.IVisualElementContainer;
 	import mx.core.UIComponent;
+	import mx.managers.PopUpManager;
 	
 	import spark.components.Group;
 
@@ -35,11 +37,17 @@ package com.etherpros.controllers
 		public var jobs:ArrayCollection;		
 		private var container:CalendarForm
 		
-		public function CalendarController(container:CalendarForm) {
+		private var jobAssigmentPopup:JobAssigmentPopup;
+		
+		private var mateDispatcher:Dispatcher;
+		
+		public function CalendarController(container:CalendarForm, mateDispatcher:Dispatcher) {
 			this.container = container;
+			this.mateDispatcher = mateDispatcher;
 			jobViews = new ArrayCollection();
 			jobs = new ArrayCollection();
-			
+			jobAssigmentPopup =  PopUpManager.createPopUp(this.container,JobAssigmentPopup,true) as JobAssigmentPopup;
+			jobAssigmentPopup.init(this.mateDispatcher);
 			// view event listeners
 			container.addEventListener(JobCreationEvent.ADD_NEW_JOB, createJob);
 		}
