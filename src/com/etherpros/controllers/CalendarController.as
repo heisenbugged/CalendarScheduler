@@ -17,6 +17,7 @@ package com.etherpros.controllers
 	import mx.managers.PopUpManager;
 	
 	import spark.components.Group;
+	import spark.components.TitleWindow;
 
 	public class CalendarController
 	{
@@ -38,7 +39,7 @@ package com.etherpros.controllers
 		public var jobs:ArrayCollection;		
 		private var container:CalendarForm
 		
-		private var jobAssigmentPopup:JobAssigmentPopup;
+		private var jobAssignmentPopup:JobAssigmnentPopup = new JobAssigmnentPopup();
 		
 		public function CalendarController(container:CalendarForm) {
 			this.container = container;			
@@ -90,17 +91,17 @@ package com.etherpros.controllers
 				model.contractor = event.contractorJob;
 				model.startDay = event.weekDay;
 				
-				jobAssigmentPopup =  PopUpManager.createPopUp(this.container,JobAssigmentPopup,true) as JobAssigmentPopup;
-				jobAssigmentPopup.addEventListener(CloseEvent.CLOSE, onCloseJobAssignmnet);
-				jobAssigmentPopup.jobModel = model;
-				jobAssigmentPopup.init();
-				PopUpManager.centerPopUp(jobAssigmentPopup);
+				PopUpManager.addPopUp(jobAssignmentPopup, container, true);
+				jobAssignmentPopup.jobModel = model;
+				jobAssignmentPopup.init();
+				jobAssignmentPopup.addEventListener(CloseEvent.CLOSE, onCloseJobAssignmnet);
+				PopUpManager.centerPopUp(jobAssignmentPopup);
 				
 			}			
 		}
 		
 		private function onCloseJobAssignmnet(event:CloseEvent):void{
-			var assignment:JobAssigmentPopup = event.currentTarget as JobAssigmentPopup;
+			var assignment:JobAssigmnentPopup = event.currentTarget as JobAssigmnentPopup;
 			PopUpManager.removePopUp(assignment);
 			if ( assignment.selectedProject != null ){
 				assignment.jobModel.project = assignment.selectedProject;

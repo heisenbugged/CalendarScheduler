@@ -21,6 +21,14 @@
 	font-weight: normal;
 }
 
+
+global {
+	modalTransparencyBlur: 0;
+	modalTransparency: 0.5;
+	modalTransparencyColor: black;
+	modalTransparencyDuration: 500;
+}
+
 components|CalendarForm {
 	backgroundColor: #eeeeee;
 	bottom: 0; 

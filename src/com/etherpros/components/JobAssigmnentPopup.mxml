@@ -96,27 +96,19 @@
 	<fx:Declarations>
 		<ns:Dispatcher id="mateDispatcher" />
 	</fx:Declarations>
-	<s:Form >
-		<s:FormHeading label="Assignment of jobs to a contractor"/>
-		<s:FormItem label="Contractor:">
-			<mx:TextInput id="txtContractorName" editable="false"/>
-		</s:FormItem>
-		<s:FormItem label="Project:">
-			<s:ComboBox id="cbxProjectList"
-						dataProvider="{ _projects }"
-						prompt="--Select--"
-						labelField="ProjName"
-						>
-				
-				
-			</s:ComboBox>
-		</s:FormItem>
-		<s:FormItem label="">
-			<s:Label id="lblMessage" text="" color="red" visible="false"/>
-		</s:FormItem>
-		<mx:ControlBar>
-			<s:Button id="btnAssign" label="Assign" click="jobAssignment(event)"/>
-			<s:Button id="btnCancel" label="Cancel" click="closeMe(event)"/>
-		</mx:ControlBar>
-	</s:Form>
+		<s:FormHeading label="Assignment of jobs to a contractor" x="10" />
+	
+		<s:TextInput id="txtContractorName" editable="false" x="10" y="58"/>
+		<s:ComboBox id="cbxProjectList"
+					dataProvider="{ _projects }"
+					prompt="--Select--"
+					labelField="ProjName"
+					 x="153" y="58">
+			
+			
+		</s:ComboBox>
+		<s:Label id="lblMessage" text="" color="red" visible="false"/>
+
+		<s:Button id="btnAssign" label="Assign" click="jobAssignment(event)" x="10" y="112"/>
+		<s:Button id="btnCancel" label="Cancel" click="closeMe(event)" x="95" y="112"/>
 </s:TitleWindow>

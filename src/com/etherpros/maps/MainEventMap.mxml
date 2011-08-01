@@ -10,7 +10,7 @@
 			import com.etherpros.business.ContractorDAO;
 			import com.etherpros.business.ProjectDAO;
 			import com.etherpros.components.CalendarForm;
-			import com.etherpros.components.JobAssigmentPopup;
+			import com.etherpros.components.JobAssigmnentPopup;
 			import com.etherpros.events.ContractorEvent;
 			import com.etherpros.events.ProjectEvent;
 			
@@ -47,7 +47,7 @@
 				sourceKey="contractorList"
 				/>
 		</Injectors>
-		<Injectors target="{ JobAssigmentPopup }" debug="true">
+		<Injectors target="{ JobAssigmnentPopup }" debug="true">
 			<ObjectBuilder 
 				generator="{ ProjectDAO }"				
 				constructorArguments="{ scope.dispatcher }"
