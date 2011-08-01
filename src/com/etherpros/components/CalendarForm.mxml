@@ -39,7 +39,7 @@
 			
 			private function init():void {
 				// set up controlller for rig views.
-				jobsController = new CalendarController(this);
+				jobsController = new CalendarController(this, mateDispatcher);
 				// set the offset based on the position of the first day.
 				jobsController.setOffset(grdCalendar.x + 2, grdCalendar.y + grdCalendar.columnHeaderGroup.height);
 				CalendarController.setCalendarDimensions(grdCalendar.width, grdCalendar.height - grdCalendar.columnHeaderGroup.height);
