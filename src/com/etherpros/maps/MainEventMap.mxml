@@ -9,10 +9,12 @@
 		<![CDATA[
 			import com.etherpros.business.ContractorDAO;
 			import com.etherpros.business.ProjectDAO;
+			import com.etherpros.business.RigDAO;
 			import com.etherpros.components.CalendarForm;
-			import com.etherpros.components.JobAssigmnentPopup;
+			import com.etherpros.components.JobAssignmentPopup;
 			import com.etherpros.events.ContractorEvent;
 			import com.etherpros.events.ProjectEvent;
+			import com.etherpros.events.RigEvent;
 			
 			import mx.events.*;
 			import mx.events.FlexEvent;
@@ -29,11 +31,14 @@
 		
 		<!-- Handlers for contractors events  -->
 		<EventHandlers type="{ContractorEvent.FIND_ALL}" debug="true">
-			<MethodInvoker generator="{ ContractorDAO }" method="findAllContractor"  />			
+			<MethodInvoker generator="{ ContractorDAO }" method="findAll"  />			
 		</EventHandlers>
 		<!-- Handlers for projects events  -->
 		<EventHandlers type="{ProjectEvent.FIND_ALL}" debug="true">
-			<MethodInvoker generator="{ ProjectDAO }" method="findAllProject"  />			
+			<MethodInvoker generator="{ ProjectDAO }" method="findAll"  />			
+		</EventHandlers>
+		<EventHandlers type="{RigEvent.FIND_ALL}" debug="true">
+			<MethodInvoker generator="{ RigDAO }" method="findAll"  />			
 		</EventHandlers>
 		<!-- Object injectors  -->
 		<Injectors target="{ CalendarForm }" debug="true">
@@ -47,7 +52,7 @@
 				sourceKey="contractorList"
 				/>
 		</Injectors>
-		<Injectors target="{ JobAssigmnentPopup }" debug="true">
+		<Injectors target="{ JobAssignmentPopup }" debug="true">
 			<ObjectBuilder 
 				generator="{ ProjectDAO }"				
 				constructorArguments="{ scope.dispatcher }"
@@ -56,6 +61,17 @@
 				targetKey="projects"
 				source="{ ProjectDAO }" 
 				sourceKey="projects"
+				/>
+		</Injectors>
+		<Injectors target="{ JobAssignmentPopup }" debug="true">
+			<ObjectBuilder 
+				generator="{ RigDAO }"				
+				constructorArguments="{ scope.dispatcher }"
+				/>
+			<PropertyInjector
+				targetKey="rigs"
+				source="{ RigDAO }" 
+				sourceKey="rigs"
 				/>
 		</Injectors>
 		

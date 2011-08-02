@@ -28,7 +28,7 @@ package com.etherpros.business
 			this.dispatcher = dispatcher;
 		}
 		
-		public function findAllContractor():void{
+		public function findAll():void{
 			var urlRequest:URLRequest = new URLRequest(URL);
 			var urlLoader:URLLoader = new URLLoader(urlRequest);
 			urlLoader.addEventListener(Event.COMPLETE,loadedContractors);

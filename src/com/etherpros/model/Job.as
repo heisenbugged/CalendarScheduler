@@ -10,6 +10,7 @@ package com.etherpros.model
 		private var _contractor:Contractor;
 		private var _jobColor:int;
 		private var _project:Project;
+		private var _rig:Rig;
 			
 		public function Job()
 		{
@@ -73,6 +74,16 @@ package com.etherpros.model
 		public function set project(value:Project):void
 		{
 			_project = value;
+		}
+
+		public function get rig():Rig
+		{
+			return _rig;
+		}
+
+		public function set rig(value:Rig):void
+		{
+			_rig = value;
 		}
 
 

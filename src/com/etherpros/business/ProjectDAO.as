@@ -26,7 +26,7 @@ package com.etherpros.business
 			this.dispatcher = dispatcher;
 		}
 		
-		public function findAllProject():void{
+		public function findAll():void{
 			var urlRequest:URLRequest = new URLRequest(URL);
 			var urlLoader:URLLoader = new URLLoader(urlRequest);
 			urlLoader.addEventListener(Event.COMPLETE,projectsLoaded);

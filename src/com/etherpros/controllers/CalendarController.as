@@ -39,7 +39,7 @@ package com.etherpros.controllers
 		public var jobs:ArrayCollection;		
 		private var container:CalendarForm
 		
-		private var jobAssignmentPopup:JobAssigmnentPopup = new JobAssigmnentPopup();
+		private var jobAssignmentPopup:JobAssignmentPopup = new JobAssignmentPopup();
 		
 		public function CalendarController(container:CalendarForm) {
 			this.container = container;			
@@ -101,10 +101,11 @@ package com.etherpros.controllers
 		}
 		
 		private function onCloseJobAssignmnet(event:CloseEvent):void{
-			var assignment:JobAssigmnentPopup = event.currentTarget as JobAssigmnentPopup;
+			var assignment:JobAssignmentPopup = event.currentTarget as JobAssignmentPopup;
 			PopUpManager.removePopUp(assignment);
-			if ( assignment.selectedProject != null ){
+			if ( assignment.isValid ){
 				assignment.jobModel.project = assignment.selectedProject;
+				assignment.jobModel.rig	= assignment.selectedRig;
 				jobs.addItem(assignment.jobModel);
 				addJobView(assignment.jobModel);				
 			}
