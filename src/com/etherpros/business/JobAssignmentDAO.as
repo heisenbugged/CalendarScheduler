@@ -11,6 +11,7 @@ package com.etherpros.business
 	public class JobAssignmentDAO extends BaseDAO
 	{
 		public static var LAYOUT:String = "Assignments";
+		public static var STATUS_NEW:String = "new";
 		public static var URL:String = SERVER + "fmi/xml/fmresultset.xml?-db="+DATABASE+"&-lay="+LAYOUT;
 		[Bindable]
 		private var _jobAssignment:Job;
@@ -24,13 +25,17 @@ package com.etherpros.business
 		
 		public function createJobAssignment( job:Job ):void{
 			trace(job.rig.RigName);
-			//var urlRequest:URLRequest = new URLRequest(URL);
-			//var urlLoader:URLLoader = new URLLoader(urlRequest);
-			//urlLoader.addEventListener(Event.COMPLETE,jobAssignmentCompleated);
+			var strURL:String = new String();
+			strURL = URL + "&Contractor_ID="+job.contractor.ContractorID + "&Site_ID=S1" + "&Project_ID="+job.project.ProjectID + "&StartDate=" + format(job.startDay.date);
+			strURL += "&FinishDate" + format(job.endDay.date) + "&Status=" + STATUS_NEW ;
+			strURL += "&–new";
+			var urlRequest:URLRequest = new URLRequest(URL);
+			var urlLoader:URLLoader = new URLLoader(urlRequest);
+			urlLoader.addEventListener(Event.COMPLETE,jobAssignmentCompleated);
 		}
 		
 		public function jobAssignmentCompleated(event:Event):void{
-			
+			trace(event.toString());
 		}
 	}
 }
