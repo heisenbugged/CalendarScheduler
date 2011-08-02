@@ -7,12 +7,14 @@
 	
 	<fx:Script>
 		<![CDATA[
+			import com.etherpros.business.ClientDAO;
 			import com.etherpros.business.ContractorDAO;
 			import com.etherpros.business.JobAssignmentDAO;
 			import com.etherpros.business.ProjectDAO;
 			import com.etherpros.business.RigDAO;
 			import com.etherpros.components.CalendarForm;
 			import com.etherpros.components.JobAssignmentPopup;
+			import com.etherpros.events.ClientEvent;
 			import com.etherpros.events.ContractorEvent;
 			import com.etherpros.events.JobAssignmentEvent;
 			import com.etherpros.events.ProjectEvent;
@@ -41,6 +43,10 @@
 		<EventHandlers type="{RigEvent.FIND_ALL}" debug="true">
 			<MethodInvoker generator="{ RigDAO }" method="findAll"  />			
 		</EventHandlers>
+		<EventHandlers type="{ClientEvent.FIND_ALL}" debug="true">
+			<MethodInvoker generator="{ ClientDAO }" method="findAll"  />			
+		</EventHandlers>
+		
 		<EventHandlers type="{ JobAssignmentEvent.JOB_ASSIGNMENT_SAVE }" debug="true">
 			<ObjectBuilder 
 				generator="{ JobAssignmentDAO }"				
@@ -80,6 +86,17 @@
 				targetKey="rigs"
 				source="{ RigDAO }" 
 				sourceKey="rigs"
+				/>
+		</Injectors>
+		<Injectors target="{ JobAssignmentPopup }" debug="true">
+			<ObjectBuilder 
+				generator="{ ClientDAO }"				
+				constructorArguments="{ scope.dispatcher }"
+				/>
+			<PropertyInjector
+				targetKey="clients"
+				source="{ ClientDAO }" 
+				sourceKey="clients"
 				/>
 		</Injectors>
 		

@@ -11,6 +11,7 @@ package com.etherpros.model
 		private var _jobColor:int;
 		private var _project:Project;
 		private var _rig:Rig;
+		private var _client:Client;
 			
 		public function Job()
 		{
@@ -84,6 +85,16 @@ package com.etherpros.model
 		public function set rig(value:Rig):void
 		{
 			_rig = value;
+		}
+
+		public function get client():Client
+		{
+			return _client;
+		}
+
+		public function set client(value:Client):void
+		{
+			_client = value;
 		}
 
 

@@ -27,8 +27,8 @@ package com.etherpros.business
 		public function createJobAssignment( job:Job ):void{
 			trace(job.rig.RigName);
 			var strURL:String = new String();
-			strURL = URL + "&Contractor_ID="+job.contractor.ContractorID + "&Site_ID=S1" + "&Project_ID="+job.project.ProjectID + "&StartDate=" + format(job.startDay.date);
-			strURL += "&FinishDate=" + format(job.endDay.date)+ "&Rig_ID="+ job.rig.RigID ;
+			strURL = URL + "&Contractor_ID="+job.contractor.ContractorID + "&Site_ID=S1" + "&Project_ID="+job.project.ProjectID + "&Client_ID=" +job.client.ClientID;
+			strURL += "&StartDate=" + format(job.startDay.date) + "&FinishDate=" + format(job.endDay.date)+ "&Rig_ID="+ job.rig.RigID ;
 			strURL += "&-new";
 			var urlRequest:URLRequest = new URLRequest(strURL);
 			var urlLoader:URLLoader = new URLLoader(urlRequest);

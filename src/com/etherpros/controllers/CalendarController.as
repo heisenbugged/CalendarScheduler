@@ -106,6 +106,7 @@ package com.etherpros.controllers
 			if ( assignment.isValid ){
 				assignment.jobModel.project = assignment.selectedProject;
 				assignment.jobModel.rig	= assignment.selectedRig;
+				assignment.jobModel.client	= assignment.selectedClient;
 				jobs.addItem(assignment.jobModel);
 				addJobView(assignment.jobModel);				
 			}
