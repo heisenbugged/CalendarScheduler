@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx" width="400" height="300"
+			   xmlns:ns="http://mate.asfusion.com/"
+			   title="Job Assignment"
+			   >
+	
+	<fx:Script>
+		<![CDATA[
+			import com.asfusion.mate.events.Dispatcher;
+			import com.etherpros.business.ProjectDAO;
+			import com.etherpros.events.ProjectEvent;
+			import com.etherpros.events.RigEvent;
+			import com.etherpros.model.Job;
+			import com.etherpros.model.Project;
+			import com.etherpros.model.Rig;
+			
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.events.CloseEvent;
+			import mx.managers.PopUpManager;
+			[Bindable]
+			private var _projects:ArrayCollection;
+			private var _jobModel:Job;
+			[Bindable]
+			private var _rigs:ArrayCollection;
+			private var _selectedProject:Project;
+			private var _selectedRig:Rig;
+			
+			private var _isValid:Boolean = false;
+			
+			protected function jobAssignment(event:MouseEvent):void
+			{
+				lblMessage.text = "";
+				this.selectedProject= null;
+				this.selectedRig	= null;
+				if ( this.cbxProjectList.selectedIndex < 0 ){
+					lblMessage.visible = true;
+					lblMessage.text = "Project is required";
+					this.isValid = false;
+					return;
+				}else{
+					this.selectedProject = this.cbxProjectList.selectedItem as Project;					
+				}
+				if( this.cbxRigList.selectedIndex < 0 ){
+					lblMessage.visible = true;
+					lblMessage.text = "Rig is required";
+					this.isValid = false;
+					return;
+				}else{
+					this.selectedRig = this.cbxRigList.selectedItem as Rig;						
+				}
+				this.isValid = true; 
+				this.close();
+			}
+			
+			public function init():void{				
+				if ( _projects == null || _projects.length <= 0 ){
+					var projectEvent:ProjectEvent = new ProjectEvent(ProjectEvent.FIND_ALL);
+					this.mateDispatcher.dispatchEvent(projectEvent);
+					var rigsEvent:RigEvent = new RigEvent(RigEvent.FIND_ALL);
+					this.mateDispatcher.dispatchEvent(rigsEvent);
+				}
+			}			
+			
+			public function get projects():ArrayCollection
+			{
+				return _projects;
+			}
+
+			public function set projects(value:ArrayCollection):void
+			{
+				_projects = value;
+			}
+
+			public function get jobModel():Job
+			{
+				return _jobModel;
+			}
+
+			public function set jobModel(value:Job):void
+			{
+				_jobModel = value;
+				this.txtContractorName.text = this._jobModel.contractor.FullName;
+			}
+
+
+			protected function closeMe(event:MouseEvent):void
+			{
+				close();
+			}
+			
+			protected function windowClose(event:CloseEvent):void
+			{
+				close();			
+			}
+			
+			private function close():void{
+				this.lblMessage.text = "";
+				this.lblMessage.visible = false;
+				this.cbxProjectList.prompt = "--Select--";
+				this.cbxRigList.prompt = "--Select--";
+				var closeEvent:CloseEvent = new CloseEvent(CloseEvent.CLOSE);
+				dispatchEvent(closeEvent);
+			}
+
+			public function get selectedProject():Project
+			{
+				return _selectedProject;
+			}
+
+			public function set selectedProject(value:Project):void
+			{
+				_selectedProject = value;
+			}
+
+			public function get rigs():ArrayCollection
+			{
+				return _rigs;
+			}
+
+			public function set rigs(value:ArrayCollection):void
+			{
+				_rigs = value;
+			}			
+
+			public function get selectedRig():Rig
+			{
+				return _selectedRig;
+			}
+
+			public function set selectedRig(value:Rig):void
+			{
+				_selectedRig = value;
+			}
+
+			public function get isValid():Boolean
+			{
+				return _isValid;
+			}
+
+			public function set isValid(value:Boolean):void
+			{
+				_isValid = value;
+			}
+
+
+		]]>
+	</fx:Script>	
+	<fx:Declarations>
+		<ns:Dispatcher id="mateDispatcher" />
+	</fx:Declarations>
+		<s:FormHeading label="Assignment of jobs to a contractor" x="10" />
+	
+		<s:TextInput id="txtContractorName" editable="false" x="10" y="58"/>
+		<s:ComboBox id="cbxProjectList"
+					dataProvider="{ _projects }"
+					prompt="--Select--"
+					labelField="ProjName"
+					 x="153" y="58">			
+		</s:ComboBox>
+		<s:ComboBox id="cbxRigList"
+					dataProvider="{ _rigs }"
+					prompt="--Select--"
+					labelField="RigName"
+					x="153" y="104">			
+		</s:ComboBox>
+		<s:Label id="lblMessage" visible="false" x="110" y="180" color="red" text=""/>
+
+		<s:Button id="btnAssign" label="Assign" click="jobAssignment(event)" x="105" y="150"/>
+		<s:Button id="btnCancel" label="Cancel" click="closeMe(event)" x="214" y="150"/>
+</s:TitleWindow>

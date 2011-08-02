@@ -15,6 +15,7 @@
 			import com.etherpros.business.ContractorDAO;
 			import com.etherpros.controllers.CalendarController;
 			import com.etherpros.events.ContractorEvent;
+			import com.etherpros.events.JobAssignmentEvent;
 			import com.etherpros.model.*;
 			
 			import mx.collections.ArrayCollection;
@@ -93,10 +94,15 @@
 				
 			}
 			
-			/*protected function initContractorList(event:ContractorEvent):void {					
-				staffList.dataProvider = event.contractorList;
-			}*/
-			
+			protected function saveJobs(event:MouseEvent):void
+			{
+				for each(var job:Job in this.jobsController.jobs){
+					var jobAssignmentEvent:JobAssignmentEvent = new JobAssignmentEvent( JobAssignmentEvent.JOB_ASSIGNMENT_SAVE );
+					jobAssignmentEvent.job = job;
+					mateDispatcher.dispatchEvent(jobAssignmentEvent);
+				}
+				
+			}			
 			[Bindable]
 			public static var COLUMN_WIDTH:int = 146;
 		]]>
@@ -143,6 +149,7 @@
 		<mx:DateChooser id="dtPicker" height="31" enabled="true" showToday="false"
 						change="dtPicker_changeHandler(event)" click="dtPicker_clickHandler(event)" 
 						yearNavigationEnabled="true"/>
+		<s:Button id="btnSaveJobs" label="Save Jobs" click="saveJobs(event)"/>
 		
 		<s:Spacer height="30" />
 		

@@ -4,7 +4,9 @@ package com.etherpros.events
 	import com.etherpros.model.Job;
 	
 	import flash.events.Event;
-	
+	/**
+	 * Class used for managing graphic events
+	 * */
 	public class JobEvent extends Event
 	{
 		public var view:JobView;
