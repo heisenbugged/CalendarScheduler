@@ -45,6 +45,10 @@
 			[Bindable]
 			private var _clients:ArrayCollection;
 			
+			private var _rigs:ArrayCollection;
+			
+			private var _projects:ArrayCollection;
+			
 			private function init():void {
 				// set up controlller for rig views.
 				jobsController = new CalendarController(this);
@@ -131,6 +135,29 @@
 				trace("Client's successfully loaded!");
 				_clients = value;
 			}
+
+			[Bindable]
+			public function get rigs():ArrayCollection
+			{
+				return _rigs;
+			}
+
+			public function set rigs(value:ArrayCollection):void
+			{
+				_rigs = value;
+			}
+
+			[Bindable]
+			public function get projects():ArrayCollection
+			{
+				return _projects;
+			}
+
+			public function set projects(value:ArrayCollection):void
+			{
+				_projects = value;
+			}
+
 
 		]]>
 	</fx:Script>

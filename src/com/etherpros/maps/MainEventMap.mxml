@@ -81,7 +81,7 @@
 				/>
 		</Injectors>
 		
-		<Injectors target="{ JobAssignmentPopup }" debug="true">
+		<Injectors target="{ CalendarForm }" debug="true">
 			<ObjectBuilder 
 				generator="{ ProjectDAO }"				
 				constructorArguments="{ scope.dispatcher }"
@@ -92,7 +92,7 @@
 				sourceKey="projects"
 				/>
 		</Injectors>
-		<Injectors target="{ JobAssignmentPopup }" debug="true">
+		<Injectors target="{ CalendarForm }" debug="true">
 			<ObjectBuilder 
 				generator="{ RigDAO }"				
 				constructorArguments="{ scope.dispatcher }"
@@ -104,17 +104,7 @@
 				/>
 		</Injectors>
 		
-		<Injectors target="{ JobAssignmentPopup }" debug="true">
-			<ObjectBuilder 
-				generator="{ ClientDAO }"				
-				constructorArguments="{ scope.dispatcher }"
-				/>
-			<PropertyInjector
-				targetKey="clients"
-				source="{ ClientDAO }" 
-				sourceKey="clients"
-				/>
-		</Injectors>
+		
 		
 	</fx:Declarations>
 	
