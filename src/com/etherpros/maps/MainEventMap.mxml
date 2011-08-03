@@ -93,7 +93,7 @@
 				/>
 		</Injectors>
 		
-		<Injectors target="{ CalendarForm }" debug="true">
+		<Injectors target="{ JobAssignmentPopup }" debug="true">
 			<ObjectBuilder 
 				generator="{ RigDAO }"				
 				constructorArguments="{ scope.dispatcher }"

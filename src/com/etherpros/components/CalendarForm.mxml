@@ -67,8 +67,8 @@
 				mateDispatcher.dispatchEvent(contractorEvent);				
 				var projectEvent:ProjectEvent = new ProjectEvent(ProjectEvent.FIND_ALL);
 				mateDispatcher.dispatchEvent(projectEvent);
-				var rigsEvent:RigEvent = new RigEvent(RigEvent.FIND_ALL);
-				mateDispatcher.dispatchEvent(rigsEvent);
+//				var rigsEvent:RigEvent = new RigEvent(RigEvent.FIND_ALL);
+//				mateDispatcher.dispatchEvent(rigsEvent);
 				var clientEvent:ClientEvent = new ClientEvent(ClientEvent.FIND_ALL);
 				mateDispatcher.dispatchEvent(clientEvent);				
 			}
@@ -137,6 +137,7 @@
 			
 			public function set clients(value:ArrayCollection):void {				
 				_clients = value;
+				clientsList.selectedIndex = 0;
 			}
 
 			[Bindable]
@@ -146,6 +147,7 @@
 
 			public function set rigs(value:ArrayCollection):void {
 				_rigs = value;
+				rigsList.selectedIndex = 0;
 			}
 
 			[Bindable]
@@ -155,6 +157,7 @@
 
 			public function set projects(value:ArrayCollection):void {
 				_projects = value;
+				projectsList.selectedIndex = 0;
 			}
 
 
@@ -208,7 +211,7 @@
 		<s:Spacer height="5" />
 		<components:TitleBox label="Rigs" />
 		<s:List id="rigsList" width="100%" height="145" 
-				skinClass="skins.DriversList" dataProvider="{rigs}">
+				skinClass="skins.DriversList" dataProvider="{rigs}" visible="false">
 			<s:itemRenderer>
 				<fx:Component>
 					<s:ItemRenderer height="28">

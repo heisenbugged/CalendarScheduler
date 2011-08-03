@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <s:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009" 
 			   xmlns:s="library://ns.adobe.com/flex/spark" 
-			   xmlns:mx="library://ns.adobe.com/flex/mx" width="400" height="300"
+			   xmlns:mx="library://ns.adobe.com/flex/mx" width="402" height="204"
 			   xmlns:ns="http://mate.asfusion.com/"
 			   title="Job Assignment"
 			   >
@@ -22,42 +22,19 @@
 			import mx.controls.Alert;
 			import mx.events.CloseEvent;
 			import mx.managers.PopUpManager;
-			[Bindable]
-			private var _projects:ArrayCollection;
+			
 			[Bindable]
 			private var _rigs:ArrayCollection;
-			[Bindable]
-			private var _clients:ArrayCollection;
+			
 			
 			private var _jobModel:Job;
-			
-			private var _selectedProject:Project;
 			private var _selectedRig:Rig;
-			private var _selectedClient:Client;
-			
 			private var _isValid:Boolean = false;
 			
 			protected function jobAssignment(event:MouseEvent):void
 			{
 				lblMessage.text = "";
-				this.selectedProject= null;
-				this.selectedRig	= null;
-				if ( this.cbxClientList.selectedIndex < 0 ){
-					lblMessage.visible = true;
-					lblMessage.text = "Client is required";
-					this.isValid = false;
-					return;
-				}else{
-					this.selectedClient = this.cbxClientList.selectedItem as Client;					
-				}
-				if ( this.cbxProjectList.selectedIndex < 0 ){
-					lblMessage.visible = true;
-					lblMessage.text = "Project is required";
-					this.isValid = false;
-					return;
-				}else{
-					this.selectedProject = this.cbxProjectList.selectedItem as Project;					
-				}
+				this.selectedRig	= null;				
 				if( this.cbxRigList.selectedIndex < 0 ){
 					lblMessage.visible = true;
 					lblMessage.text = "Rig is required";
@@ -70,17 +47,9 @@
 				this.close();
 			}
 			
-			public function init():void{				
-				if ( _projects == null || _projects.length <= 0 ){
-					/*
-					var projectEvent:ProjectEvent = new ProjectEvent(ProjectEvent.FIND_ALL);
-					this.mateDispatcher.dispatchEvent(projectEvent);
-					var rigsEvent:RigEvent = new RigEvent(RigEvent.FIND_ALL);
-					this.mateDispatcher.dispatchEvent(rigsEvent);
-					var clientEvent:ClientEvent = new ClientEvent(ClientEvent.FIND_ALL);
-					this.mateDispatcher.dispatchEvent(clientEvent);
-					*/
-				}
+			public function init():void{
+				var rigsEvent:RigEvent = new RigEvent(RigEvent.FIND_ALL);
+				this.mateDispatcher.dispatchEvent(rigsEvent);
 			}	
 
 			protected function closeMe(event:MouseEvent):void
@@ -90,17 +59,11 @@
 			
 			private function close():void{
 				this.lblMessage.text = "";
-				this.lblMessage.visible = false;
-				this.cbxProjectList.prompt = "--Select--";
+				this.lblMessage.visible = false;				
 				this.cbxRigList.prompt = "--Select--";
 				var closeEvent:CloseEvent = new CloseEvent(CloseEvent.CLOSE);
 				dispatchEvent(closeEvent);
-			}
-			
-			public function get projects():ArrayCollection
-			{ return _projects; }
-			public function set projects(value:ArrayCollection):void
-			{ _projects = value; }
+			}			
 			
 			public function get jobModel():Job
 			{ return _jobModel; }
@@ -109,12 +72,6 @@
 				_jobModel = value;
 				this.txtContractorName.text = this._jobModel.contractor.FullName;
 			}
-
-			public function get selectedProject():Project
-			{ return _selectedProject; }
-
-			public function set selectedProject(value:Project):void
-			{ _selectedProject = value; }
 
 			public function get rigs():ArrayCollection
 			{ return _rigs; }
@@ -130,17 +87,6 @@
 			{ return _isValid; }
 			public function set isValid(value:Boolean):void
 			{ _isValid = value; }
-			
-			public function get clients():ArrayCollection
-			{ return _clients; }
-			public function set clients(value:ArrayCollection):void
-			{ _clients = value;}
-
-			public function get selectedClient():Client
-			{ return _selectedClient; }
-			public function set selectedClient(value:Client):void
-			{ _selectedClient = value; }
-
 		]]>
 	</fx:Script>	
 	<fx:Declarations>
@@ -148,27 +94,17 @@
 	</fx:Declarations>
 		<s:FormHeading label="Assignment of jobs to a contractor" x="10" />
 	
-		<s:TextInput id="txtContractorName" editable="false" x="10" y="58"/>
-		<s:ComboBox id="cbxClientList" x="153" y="58"
-					dataProvider="{ _clients }"
-					prompt="--Select--"
-					labelField="ClientName"
-					/>
-		<s:ComboBox id="cbxProjectList"
-					dataProvider="{ _projects }"
-					prompt="--Select--"
-					labelField="ProjName"
-					 x="153" y="100">			
-		</s:ComboBox>
+		<s:TextInput id="txtContractorName" editable="false" x="10" y="58"/>			
+		
 		<s:ComboBox id="cbxRigList"
 					dataProvider="{ _rigs }"
 					prompt="--Select--"
 					labelField="RigName"
-					x="153" y="146">			
+					x="146" y="58">			
 		</s:ComboBox>
-		<s:Label id="lblMessage" visible="false" x="110" y="203" color="red" text=""/>
+		<s:Label id="lblMessage" visible="false" x="88" y="118" color="red" text=""/>
 
-		<s:Button id="btnAssign" label="Assign" click="jobAssignment(event)" x="105" y="173"/>
-		<s:Button id="btnCancel" label="Cancel" click="closeMe(event)" x="214" y="173"/>
+		<s:Button id="btnAssign" label="Assign" click="jobAssignment(event)" x="83" y="88"/>
+		<s:Button id="btnCancel" label="Cancel" click="closeMe(event)" x="192" y="88"/>
 	
 </s:TitleWindow>

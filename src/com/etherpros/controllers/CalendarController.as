@@ -104,9 +104,9 @@ package com.etherpros.controllers
 			var assignment:JobAssignmentPopup = event.currentTarget as JobAssignmentPopup;
 			PopUpManager.removePopUp(assignment);
 			if ( assignment.isValid ){
-				assignment.jobModel.project = assignment.selectedProject;
+				assignment.jobModel.project = this.container.projectsList.selectedItem as Project;
 				assignment.jobModel.rig	= assignment.selectedRig;
-				assignment.jobModel.client	= assignment.selectedClient;
+				assignment.jobModel.client	= this.container.clientsList.selectedItem as Client;
 				jobs.addItem(assignment.jobModel);
 				addJobView(assignment.jobModel);				
 			}
