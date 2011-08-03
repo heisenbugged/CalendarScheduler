@@ -47,6 +47,12 @@ components|CalendarForm {
 	borderAlpha: 0;
 }
 
+s|VGroup.main-column {
+	paddingLeft: 10;
+	paddingRight: 10;
+	paddingTop: 10;
+}
+
 /*
 .left-column {
 	horizontalAlign: center;

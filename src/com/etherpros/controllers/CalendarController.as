@@ -150,7 +150,7 @@ package com.etherpros.controllers
 			positionJobView(startPos, view);
 			
 			// add to containers
-			container.gridContainer.addElement(view);
+			container.calendarContainer.addElement(view);
 			jobViews.addItem(view);
 			
 			// add event listeners
@@ -207,7 +207,7 @@ package com.etherpros.controllers
 				jobView.removeEventListener(JobEvent.JOB_RESIZED, jobResized);
 				jobView.removeEventListener(JobEvent.ADD_JOB_SPRITE, addJobRow);
 				
-				container.gridContainer.removeElement(jobView);				
+				container.calendarContainer.removeElement(jobView);				
 			}
 			
 			// clear out job views array

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:DataGrid xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			xmlns:s="library://ns.adobe.com/flex/spark" 
+			xmlns:mx="library://ns.adobe.com/flex/mx" 
+			width="774" height="776"
+			requestedRowCount="4" rowHeight="123"
+			selectionMode="none" itemRenderer="com.etherpros.components.DayView">
+	<fx:Script>
+		<![CDATA[
+			[Bindable]
+			public static var COLUMN_WIDTH:int = 110;			
+		]]>
+	</fx:Script>
+	
+	<s:columns>
+		<s:ArrayList>
+			<s:GridColumn width="{COLUMN_WIDTH}" dataField="sunday" headerText="Sunday"
+						  resizable="false" sortable="false">
+			</s:GridColumn>
+			<s:GridColumn width="{COLUMN_WIDTH}" dataField="monday" headerText="Monday"
+						  resizable="false" sortable="false">
+			</s:GridColumn>
+			<s:GridColumn width="{COLUMN_WIDTH}" dataField="tuesday" headerText="Tuesday"
+						  resizable="false" sortable="false">
+			</s:GridColumn>
+			<s:GridColumn width="{COLUMN_WIDTH}" dataField="wednesday" headerText="Wednesday"
+						  resizable="false" sortable="false">
+			</s:GridColumn>
+			<s:GridColumn width="{COLUMN_WIDTH}" dataField="thursday" headerText="Thursday"
+						  resizable="false" sortable="false">
+			</s:GridColumn>
+			<s:GridColumn width="{COLUMN_WIDTH}" dataField="friday" headerText="Friday"
+						  resizable="false" sortable="false">
+			</s:GridColumn>
+			<s:GridColumn width="{COLUMN_WIDTH}" dataField="saturday" headerText="Saturday"
+						  resizable="false" sortable="false">
+			</s:GridColumn>
+		</s:ArrayList>
+	</s:columns>
+	
+</s:DataGrid>

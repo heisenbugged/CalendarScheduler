@@ -63,7 +63,7 @@
 				constructorArguments="{ scope.dispatcher }"
 				/>
 			<PropertyInjector
-				targetKey="contractorList"
+				targetKey="contractors"
 				source="{ ContractorDAO }" 
 				sourceKey="contractorList"
 				/>
@@ -92,6 +92,7 @@
 				sourceKey="projects"
 				/>
 		</Injectors>
+		
 		<Injectors target="{ CalendarForm }" debug="true">
 			<ObjectBuilder 
 				generator="{ RigDAO }"				

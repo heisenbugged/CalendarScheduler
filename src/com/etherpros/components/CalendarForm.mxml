@@ -23,9 +23,9 @@
 			import skins.DriversList;
 			
 			import spark.components.Label;
-			
-			[Bindable]
-			public static var COLUMN_WIDTH:int = 110;
+
+			public var currentMonthSelected:int = -1;
+			public var currentYearSelected:int = -1;
 			
 			[Bindable]
 			private var weekArray:ArrayCollection;
@@ -34,33 +34,35 @@
 			private var jobsController:CalendarController;
 			
 			[Bindable]
-			private var staffDP: ArrayCollection;
-			
-			public var currentMonthSelected:int = -1;
-			public var currentYearSelected:int = -1;
-			
+			private var staffDP: ArrayCollection;		
+	
 			[Bindable]
-			private var _contractorList:ArrayCollection;
+			private var _contractors:ArrayCollection;
 
 			[Bindable]
 			private var _clients:ArrayCollection;
 			
+			[Bindable]
 			private var _rigs:ArrayCollection;
 			
+			[Bindable]
 			private var _projects:ArrayCollection;
 			
 			private function init():void {
 				// set up controlller for rig views.
 				jobsController = new CalendarController(this);
 				// set the offset based on the position of the first day.
-				jobsController.setOffset(grdCalendar.x + 2, grdCalendar.y + grdCalendar.columnHeaderGroup.height);
-				CalendarController.setCalendarDimensions(grdCalendar.width, grdCalendar.height - grdCalendar.columnHeaderGroup.height);
+				jobsController.setOffset(calendar.x + 2, calendar.y + calendar.columnHeaderGroup.height);
+				CalendarController.setCalendarDimensions(calendar.width, calendar.height - calendar.columnHeaderGroup.height);
 			
 				// create first initial month grid.
 				createDaysGrid();
-				//this.addEventListener(ContractorEvent.FIND_ALL_DONE, initContractorList);
 				
-				// Load information from Database.
+				// Load information from Database.				
+				loadData();
+			}
+			
+			private function loadData():void {
 				var contractorEvent:ContractorEvent = new ContractorEvent(ContractorEvent.FIND_ALL);
 				mateDispatcher.dispatchEvent(contractorEvent);				
 				var projectEvent:ProjectEvent = new ProjectEvent(ProjectEvent.FIND_ALL);
@@ -68,10 +70,12 @@
 				var rigsEvent:RigEvent = new RigEvent(RigEvent.FIND_ALL);
 				mateDispatcher.dispatchEvent(rigsEvent);
 				var clientEvent:ClientEvent = new ClientEvent(ClientEvent.FIND_ALL);
-				mateDispatcher.dispatchEvent(clientEvent);
+				mateDispatcher.dispatchEvent(clientEvent);				
 			}
 			
-			// create grid of days in current month as per current date provided
+			/** 
+			 * Create grid of days in current month as per current date provided. 
+			 */
 			private function createDaysGrid():void {				
 				// Dispatch monthChanged event which tell item renderers
 				// to clear their values.
@@ -118,12 +122,12 @@
 			}	
 			
 			[Bindable]
-			public function set contractorList(value:ArrayCollection):void {
-				_contractorList = value;
+			public function set contractors(value:ArrayCollection):void {
+				_contractors = value;
 			}
 			
-			public function get contractorList():ArrayCollection { 
-				return _contractorList;
+			public function get contractors():ArrayCollection { 
+				return _contractors;
 			}
 			
 			[Bindable]
@@ -131,30 +135,25 @@
 				return _clients; 
 			}
 			
-			public function set clients(value:ArrayCollection):void {
-				trace("Client's successfully loaded!");
+			public function set clients(value:ArrayCollection):void {				
 				_clients = value;
 			}
 
 			[Bindable]
-			public function get rigs():ArrayCollection
-			{
+			public function get rigs():ArrayCollection {
 				return _rigs;
 			}
 
-			public function set rigs(value:ArrayCollection):void
-			{
+			public function set rigs(value:ArrayCollection):void {
 				_rigs = value;
 			}
 
 			[Bindable]
-			public function get projects():ArrayCollection
-			{
+			public function get projects():ArrayCollection {
 				return _projects;
 			}
 
-			public function set projects(value:ArrayCollection):void
-			{
+			public function set projects(value:ArrayCollection):void {
 				_projects = value;
 			}
 
@@ -165,45 +164,74 @@
 		<ns:Dispatcher id="mateDispatcher" />
 	</fx:Declarations>
 	
-	<s:VGroup width="245" height="766" horizontalAlign="center" paddingLeft="10" paddingRight="10" paddingTop="10" gap="15" >
+	<!-- Left Column -->
+	<components:MainColumn>		
 		<components:TitleBox label="Clients" />
-
-	</s:VGroup>
+		<s:List id="clientsList" width="100%" height="200" 
+				skinClass="skins.DriversList" dataProvider="{ clients }">
+			<s:itemRenderer>
+				<fx:Component>
+					<s:ItemRenderer height="28">
+						<fx:Script>
+							<![CDATA[
+								import com.etherpros.model.Client;
+								import com.etherpros.model.Contractor;
+							]]>
+						</fx:Script>
+						<s:Label text="{Client(data).ClientName}" verticalCenter="0" horizontalCenter="0" 
+								 fontFamily="Frutiger" color="#555555" fontSize="14" />	
+					</s:ItemRenderer>					
+				</fx:Component>
+			</s:itemRenderer>
+		</s:List>
+		
+		<s:Spacer height="5" />
+		
+		<components:TitleBox label="Projects" />
+		<s:List id="projectsList" width="100%" height="200" 
+				skinClass="skins.DriversList" dataProvider="{ projects }">
+			<s:itemRenderer>
+				<fx:Component>
+					<s:ItemRenderer height="28">
+						<fx:Script>
+							<![CDATA[
+								import com.etherpros.model.Project;
+							]]>
+						</fx:Script>
+						<s:Label text="{Project(data).ProjName}" verticalCenter="0" horizontalCenter="0" 
+								 fontFamily="Frutiger" color="#555555" fontSize="14" />	
+					</s:ItemRenderer>					
+				</fx:Component>
+			</s:itemRenderer>
+		</s:List>
+		
+		<s:Spacer height="5" />
+		<components:TitleBox label="Rigs" />
+		<s:List id="rigsList" width="100%" height="145" 
+				skinClass="skins.DriversList" dataProvider="{rigs}">
+			<s:itemRenderer>
+				<fx:Component>
+					<s:ItemRenderer height="28">
+						<fx:Script>
+							<![CDATA[
+								import com.etherpros.model.Rig;
+							]]>
+						</fx:Script>
+						<s:Label text="{Rig(data).RigName}" verticalCenter="0" horizontalCenter="0" 
+								 fontFamily="Frutiger" color="#555555" fontSize="14" />	
+					</s:ItemRenderer>					
+				</fx:Component>
+			</s:itemRenderer>
+		</s:List>		
+	</components:MainColumn>
 	
-	<s:Group id="gridContainer">
-
-		<s:DataGrid id="grdCalendar" width="774" height="766" dataProvider="{weekArray}"
-					requestedRowCount="4" rowHeight="123" selectionMode="none">			
-			<s:columns>
-				<s:ArrayList>
-					<s:GridColumn width="{COLUMN_WIDTH}" dataField="sunday" headerText="Sunday" resizable="false"
-								  sortable="false" itemRenderer="com.etherpros.components.DayView">
-					</s:GridColumn>
-					<s:GridColumn width="{COLUMN_WIDTH}" dataField="monday" headerText="Monday" resizable="false"
-								  sortable="false" itemRenderer="com.etherpros.components.DayView">
-					</s:GridColumn>
-					<s:GridColumn width="{COLUMN_WIDTH}" dataField="tuesday" headerText="Tuesday"
-								  resizable="false" sortable="false" itemRenderer="com.etherpros.components.DayView">
-					</s:GridColumn>
-					<s:GridColumn width="{COLUMN_WIDTH}" dataField="wednesday" headerText="Wednesday"
-								  resizable="false" sortable="false" itemRenderer="com.etherpros.components.DayView">
-					</s:GridColumn>
-					<s:GridColumn width="{COLUMN_WIDTH}" dataField="thursday" headerText="Thursday"
-								  resizable="false" sortable="false" itemRenderer="com.etherpros.components.DayView">
-					</s:GridColumn>
-					<s:GridColumn width="{COLUMN_WIDTH}" dataField="friday" headerText="Friday" resizable="false"
-								  sortable="false" itemRenderer="com.etherpros.components.DayView">
-					</s:GridColumn>
-					<s:GridColumn width="{COLUMN_WIDTH}" dataField="saturday" headerText="Saturday"
-								  resizable="false" sortable="false" itemRenderer="com.etherpros.components.DayView">
-					</s:GridColumn>
-				</s:ArrayList>
-			</s:columns>			
-		</s:DataGrid>
-	
+	<!-- Middle Calendar -->
+	<s:Group id="calendarContainer">
+		<components:Calendar id="calendar" dataProvider="{weekArray}" />	
 	</s:Group>
-
-	<s:VGroup width="245" height="766" horizontalAlign="center" paddingLeft="10" paddingRight="10" paddingTop="10" gap="15" >
+	
+	<!-- Right Column -->
+	<components:MainColumn>
 		<components:TitleBox label="Date Picker" />
 		
 		<mx:DateChooser id="dtPicker" height="31" enabled="true" showToday="false"
@@ -213,9 +241,9 @@
 		
 		<s:Spacer height="30" />
 		
-		<components:TitleBox label="Drivers" />
+		<components:TitleBox label="Drivers" />				
 		<s:List id="staffList" width="100%" height="100%" dragEnabled="true" 
-				dropEnabled="false" skinClass="skins.DriversList" dataProvider="{ contractorList }">
+				dropEnabled="false" skinClass="skins.DriversList" dataProvider="{ contractors }">
 			<s:itemRenderer>
 				<fx:Component>
 					<s:ItemRenderer height="28">
@@ -224,11 +252,12 @@
 								import com.etherpros.model.Contractor;
 							]]>
 						</fx:Script>
-						<s:Label fontFamily="Frutiger" color="#555555" fontSize="17" text="{Contractor(data).FullName}" verticalCenter="0" horizontalCenter="0" />	
+						<s:Label fontFamily="Frutiger" color="#555555" fontSize="17" 
+								 text="{Contractor(data).FullName}" verticalCenter="0" horizontalCenter="0" />	
 					</s:ItemRenderer>					
 				</fx:Component>
 			</s:itemRenderer>
 		</s:List>
-	</s:VGroup>
+	</components:MainColumn>
 		
 </s:BorderContainer>
