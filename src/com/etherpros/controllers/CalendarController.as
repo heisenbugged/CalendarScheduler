@@ -330,8 +330,7 @@ package com.etherpros.controllers
 
 		// -------------------
 		// Getters and Setters
-		// -------------------
-		
+		// -------------------		
 		private function getDayByColumnAndRow(column:int, row:int):Day {
 			var week:Week = dayRange.weeks[row];
 			return week.getDayByIndex(column);

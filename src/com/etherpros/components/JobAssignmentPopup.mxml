@@ -72,12 +72,14 @@
 			
 			public function init():void{				
 				if ( _projects == null || _projects.length <= 0 ){
+					/*
 					var projectEvent:ProjectEvent = new ProjectEvent(ProjectEvent.FIND_ALL);
 					this.mateDispatcher.dispatchEvent(projectEvent);
 					var rigsEvent:RigEvent = new RigEvent(RigEvent.FIND_ALL);
 					this.mateDispatcher.dispatchEvent(rigsEvent);
 					var clientEvent:ClientEvent = new ClientEvent(ClientEvent.FIND_ALL);
 					this.mateDispatcher.dispatchEvent(clientEvent);
+					*/
 				}
 			}	
 
@@ -132,7 +134,7 @@
 			public function get clients():ArrayCollection
 			{ return _clients; }
 			public function set clients(value:ArrayCollection):void
-			{ _clients = value; }
+			{ _clients = value;}
 
 			public function get selectedClient():Client
 			{ return _selectedClient; }

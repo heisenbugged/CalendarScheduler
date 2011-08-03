@@ -12,12 +12,12 @@
 	
 	<fx:Script>
 		<![CDATA[			
-			// Static reference to main application.
+			// Static reference to main application.			
 			public static var INSTANCE:Application;
 			
 			private function init():void {
 				// set static instance variable to the instantiated main app.
-				INSTANCE = this;
+				INSTANCE = this;				
 			}
 		]]>
 	</fx:Script>

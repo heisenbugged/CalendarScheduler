@@ -7,15 +7,14 @@
 		 borderAlpha="0" xmlns:ns="http://mate.asfusion.com/">
 	
 	<s:layout>
-		<s:HorizontalLayout horizontalAlign="center" />
+		<s:HorizontalLayout horizontalAlign="center" gap="0" />
 	</s:layout>
 	
 	<fx:Script>
 		<![CDATA[
 			import com.etherpros.business.ContractorDAO;
 			import com.etherpros.controllers.CalendarController;
-			import com.etherpros.events.ContractorEvent;
-			import com.etherpros.events.JobAssignmentEvent;
+			import com.etherpros.events.*;
 			import com.etherpros.model.*;
 			
 			import mx.collections.ArrayCollection;
@@ -26,9 +25,14 @@
 			import spark.components.Label;
 			
 			[Bindable]
+			public static var COLUMN_WIDTH:int = 110;
+			
+			[Bindable]
 			private var weekArray:ArrayCollection;
 			
+			[Bindable]
 			private var jobsController:CalendarController;
+			
 			[Bindable]
 			private var staffDP: ArrayCollection;
 			
@@ -36,7 +40,10 @@
 			public var currentYearSelected:int = -1;
 			
 			[Bindable]
-			public var contractorList:ArrayCollection;
+			private var _contractorList:ArrayCollection;
+
+			[Bindable]
+			private var _clients:ArrayCollection;
 			
 			private function init():void {
 				// set up controlller for rig views.
@@ -47,12 +54,17 @@
 			
 				// create first initial month grid.
 				createDaysGrid();
-				//this.addEventListener(ContractorEvent.FIND_ALL_DONE, initContractorList);				
-				// load contractors
+				//this.addEventListener(ContractorEvent.FIND_ALL_DONE, initContractorList);
+				
+				// Load information from Database.
 				var contractorEvent:ContractorEvent = new ContractorEvent(ContractorEvent.FIND_ALL);
-				mateDispatcher.dispatchEvent(contractorEvent);
-				
-				
+				mateDispatcher.dispatchEvent(contractorEvent);				
+				var projectEvent:ProjectEvent = new ProjectEvent(ProjectEvent.FIND_ALL);
+				mateDispatcher.dispatchEvent(projectEvent);
+				var rigsEvent:RigEvent = new RigEvent(RigEvent.FIND_ALL);
+				mateDispatcher.dispatchEvent(rigsEvent);
+				var clientEvent:ClientEvent = new ClientEvent(ClientEvent.FIND_ALL);
+				mateDispatcher.dispatchEvent(clientEvent);
 			}
 			
 			// create grid of days in current month as per current date provided
@@ -74,8 +86,7 @@
 				jobsController.dayRange = range;
 			}	
 			
-			protected function dtPicker_changeHandler(event:CalendarLayoutChangeEvent):void
-			{
+			protected function dtPicker_changeHandler(event:CalendarLayoutChangeEvent):void {
 				if ( currentMonthSelected != dtPicker.displayedMonth ){
 					createDaysGrid();
 				}else if ( currentYearSelected != dtPicker.displayedYear ){
@@ -84,8 +95,7 @@
 	
 			}
 			
-			protected function dtPicker_clickHandler(event:MouseEvent):void
-			{
+			protected function dtPicker_clickHandler(event:MouseEvent):void {
 				if ( currentMonthSelected != dtPicker.displayedMonth ){
 					createDaysGrid();
 				}else if ( currentYearSelected != dtPicker.displayedYear ){
@@ -94,25 +104,48 @@
 				
 			}
 			
-			protected function saveJobs(event:MouseEvent):void
-			{
+			protected function saveJobs(event:MouseEvent):void {
 				for each(var job:Job in this.jobsController.jobs){
 					var jobAssignmentEvent:JobAssignmentEvent = new JobAssignmentEvent( JobAssignmentEvent.JOB_ASSIGNMENT_SAVE );
 					jobAssignmentEvent.job = job;
 					mateDispatcher.dispatchEvent(jobAssignmentEvent);
 				}
 				
-			}			
+			}	
+			
 			[Bindable]
-			public static var COLUMN_WIDTH:int = 146;
+			public function set contractorList(value:ArrayCollection):void {
+				_contractorList = value;
+			}
+			
+			public function get contractorList():ArrayCollection { 
+				return _contractorList;
+			}
+			
+			[Bindable]
+			public function get clients():ArrayCollection { 
+				return _clients; 
+			}
+			
+			public function set clients(value:ArrayCollection):void {
+				trace("Client's successfully loaded!");
+				_clients = value;
+			}
+
 		]]>
 	</fx:Script>
 	<fx:Declarations>
 		<ns:Dispatcher id="mateDispatcher" />
 	</fx:Declarations>
+	
+	<s:VGroup width="245" height="766" horizontalAlign="center" paddingLeft="10" paddingRight="10" paddingTop="10" gap="15" >
+		<components:TitleBox label="Clients" />
+
+	</s:VGroup>
+	
 	<s:Group id="gridContainer">
 
-		<s:DataGrid id="grdCalendar" width="1024" height="766" dataProvider="{weekArray}"
+		<s:DataGrid id="grdCalendar" width="774" height="766" dataProvider="{weekArray}"
 					requestedRowCount="4" rowHeight="123" selectionMode="none">			
 			<s:columns>
 				<s:ArrayList>
@@ -143,7 +176,7 @@
 	
 	</s:Group>
 
-	<s:VGroup width="250" horizontalAlign="center" paddingLeft="20" paddingRight="20" paddingTop="10" gap="15">
+	<s:VGroup width="245" height="766" horizontalAlign="center" paddingLeft="10" paddingRight="10" paddingTop="10" gap="15" >
 		<components:TitleBox label="Date Picker" />
 		
 		<mx:DateChooser id="dtPicker" height="31" enabled="true" showToday="false"
@@ -154,12 +187,17 @@
 		<s:Spacer height="30" />
 		
 		<components:TitleBox label="Drivers" />
-		<s:List id="staffList" width="100%" dragEnabled="true" 
+		<s:List id="staffList" width="100%" height="100%" dragEnabled="true" 
 				dropEnabled="false" skinClass="skins.DriversList" dataProvider="{ contractorList }">
 			<s:itemRenderer>
 				<fx:Component>
-					<s:ItemRenderer height="35">
-						<s:Label fontFamily="Frutiger" color="#555555" fontSize="20" text="{data.FullName}" verticalCenter="0" horizontalCenter="0" />	
+					<s:ItemRenderer height="28">
+						<fx:Script>
+							<![CDATA[
+								import com.etherpros.model.Contractor;
+							]]>
+						</fx:Script>
+						<s:Label fontFamily="Frutiger" color="#555555" fontSize="17" text="{Contractor(data).FullName}" verticalCenter="0" horizontalCenter="0" />	
 					</s:ItemRenderer>					
 				</fx:Component>
 			</s:itemRenderer>

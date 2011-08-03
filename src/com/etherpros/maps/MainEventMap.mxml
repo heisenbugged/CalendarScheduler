@@ -14,6 +14,7 @@
 			import com.etherpros.business.RigDAO;
 			import com.etherpros.components.CalendarForm;
 			import com.etherpros.components.JobAssignmentPopup;
+			import com.etherpros.controllers.CalendarController;
 			import com.etherpros.events.ClientEvent;
 			import com.etherpros.events.ContractorEvent;
 			import com.etherpros.events.JobAssignmentEvent;
@@ -53,8 +54,9 @@
 				constructorArguments="{ scope.dispatcher }"
 				/>
 			<MethodInvoker generator="{ JobAssignmentDAO }" method="createJobAssignment"  arguments="{[event.job]}"/>			
-		</EventHandlers>		
-		<!-- Object injectors  -->
+		</EventHandlers>
+		
+		<!-- Object injectors  -->		
 		<Injectors target="{ CalendarForm }" debug="true">
 			<ObjectBuilder 
 				generator="{ ContractorDAO }"				
@@ -66,6 +68,19 @@
 				sourceKey="contractorList"
 				/>
 		</Injectors>
+		
+		<Injectors target="{ CalendarForm }" debug="true">
+			<ObjectBuilder 
+				generator="{ ClientDAO }"				
+				constructorArguments="{ scope.dispatcher }"
+				/>
+			<PropertyInjector
+				targetKey="clients"
+				source="{ ClientDAO }" 
+				sourceKey="clients"
+				/>
+		</Injectors>
+		
 		<Injectors target="{ JobAssignmentPopup }" debug="true">
 			<ObjectBuilder 
 				generator="{ ProjectDAO }"				
@@ -88,6 +103,7 @@
 				sourceKey="rigs"
 				/>
 		</Injectors>
+		
 		<Injectors target="{ JobAssignmentPopup }" debug="true">
 			<ObjectBuilder 
 				generator="{ ClientDAO }"				
