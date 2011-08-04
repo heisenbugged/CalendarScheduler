@@ -13,7 +13,7 @@
 			import com.etherpros.business.ProjectDAO;
 			import com.etherpros.business.RigDAO;
 			import com.etherpros.components.CalendarForm;
-			import com.etherpros.components.JobAssignmentPopup;
+			import com.etherpros.components.popups.JobAssignmentPopup;
 			import com.etherpros.controllers.CalendarController;
 			import com.etherpros.events.ClientEvent;
 			import com.etherpros.events.ContractorEvent;
@@ -93,7 +93,8 @@
 				/>
 		</Injectors>
 		
-		<Injectors target="{ JobAssignmentPopup }" debug="true">
+		
+		<Injectors target="{ CalendarForm }" debug="true">
 			<ObjectBuilder 
 				generator="{ RigDAO }"				
 				constructorArguments="{ scope.dispatcher }"
@@ -106,6 +107,17 @@
 		</Injectors>
 		
 		
+		<Injectors target="{ JobAssignmentPopup }" debug="true">
+			<ObjectBuilder 
+				generator="{ RigDAO }"				
+				constructorArguments="{ scope.dispatcher }"
+				/>
+			<PropertyInjector
+				targetKey="rigs"
+				source="{ RigDAO }" 
+				sourceKey="rigs"
+				/>
+		</Injectors>
 		
 	</fx:Declarations>
 	

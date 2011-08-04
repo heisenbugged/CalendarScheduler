@@ -2,6 +2,7 @@ package com.etherpros.controllers
 {
 	import com.asfusion.mate.events.Dispatcher;
 	import com.etherpros.components.*;
+	import com.etherpros.components.popups.JobAssignmentPopup;
 	import com.etherpros.events.JobCreationEvent;
 	import com.etherpros.events.JobEvent;
 	import com.etherpros.model.*;

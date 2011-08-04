@@ -48,8 +48,8 @@
 			}
 			
 			public function init():void{
-				var rigsEvent:RigEvent = new RigEvent(RigEvent.FIND_ALL);
-				this.mateDispatcher.dispatchEvent(rigsEvent);
+				//var rigsEvent:RigEvent = new RigEvent(RigEvent.FIND_ALL);
+				//this.mateDispatcher.dispatchEvent(rigsEvent);
 			}	
 
 			protected function closeMe(event:MouseEvent):void

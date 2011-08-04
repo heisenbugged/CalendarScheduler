@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:ItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+				xmlns:s="library://ns.adobe.com/flex/spark" 
+				xmlns:mx="library://ns.adobe.com/flex/mx" 
+				autoDrawBackground="true" height="28">
+	<fx:Script>
+		<![CDATA[
+			import com.etherpros.model.Project;
+		]]>
+	</fx:Script>
+	
+	<s:Label  text="{Project(data).ProjName}" verticalCenter="0" horizontalCenter="0" 
+			 fontFamily="Frutiger" color="#555555" fontSize="14" />
+	
+</s:ItemRenderer>

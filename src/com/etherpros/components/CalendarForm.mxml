@@ -14,6 +14,7 @@
 		<![CDATA[
 			import com.etherpros.business.ContractorDAO;
 			import com.etherpros.controllers.CalendarController;
+			import com.etherpros.controllers.PopupsController;
 			import com.etherpros.events.*;
 			import com.etherpros.model.*;
 			
@@ -21,23 +22,25 @@
 			import mx.events.CalendarLayoutChangeEvent;
 			
 			import skins.DriversList;
+			import skins.NonSelectableItemRenderer;
 			
 			import spark.components.Label;
 
 			public var currentMonthSelected:int = -1;
 			public var currentYearSelected:int = -1;
+
+			[Bindable]
+			private var jobsController:CalendarController;			
+			private var popupsController:PopupsController;
 			
 			[Bindable]
 			private var weekArray:ArrayCollection;
-			
-			[Bindable]
-			private var jobsController:CalendarController;
-			
+				
 			[Bindable]
 			private var staffDP: ArrayCollection;		
 	
 			[Bindable]
-			private var _contractors:ArrayCollection;
+			private var _contractors:ArrayCollection;			
 
 			[Bindable]
 			private var _clients:ArrayCollection;
@@ -48,6 +51,11 @@
 			[Bindable]
 			private var _projects:ArrayCollection;
 			
+			private var bContractorsLoaded:Boolean;
+			private var bClientsLoaded:Boolean;
+			private var bRigsLoaded:Boolean;
+			private var bProjectsLoaded:Boolean;
+			
 			private function init():void {
 				// set up controlller for rig views.
 				jobsController = new CalendarController(this);
@@ -55,20 +63,26 @@
 				jobsController.setOffset(calendar.x + 2, calendar.y + calendar.columnHeaderGroup.height);
 				CalendarController.setCalendarDimensions(calendar.width, calendar.height - calendar.columnHeaderGroup.height);
 			
+				popupsController = new PopupsController(this);
+				
 				// create first initial month grid.
 				createDaysGrid();
 				
 				// Load information from Database.				
 				loadData();
+				
 			}
 			
 			private function loadData():void {
+				// block user from interaction while everything is loaded.
+				popupsController.showLoading();
+				
 				var contractorEvent:ContractorEvent = new ContractorEvent(ContractorEvent.FIND_ALL);
 				mateDispatcher.dispatchEvent(contractorEvent);				
 				var projectEvent:ProjectEvent = new ProjectEvent(ProjectEvent.FIND_ALL);
 				mateDispatcher.dispatchEvent(projectEvent);
-//				var rigsEvent:RigEvent = new RigEvent(RigEvent.FIND_ALL);
-//				mateDispatcher.dispatchEvent(rigsEvent);
+				var rigsEvent:RigEvent = new RigEvent(RigEvent.FIND_ALL);
+				mateDispatcher.dispatchEvent(rigsEvent);
 				var clientEvent:ClientEvent = new ClientEvent(ClientEvent.FIND_ALL);
 				mateDispatcher.dispatchEvent(clientEvent);				
 			}
@@ -119,7 +133,38 @@
 					mateDispatcher.dispatchEvent(jobAssignmentEvent);
 				}
 				
-			}	
+			}
+			
+			private function contractorsLoaded(event:Event):void {
+				bContractorsLoaded = true;
+				checkIfFullyLoaded();
+			}
+			
+			private function rigsLoaded(event:Event):void {
+				bRigsLoaded = true;
+				checkIfFullyLoaded();
+			}
+			
+			private function clientsLoaded(event:Event):void {
+				bClientsLoaded = true;
+				checkIfFullyLoaded();
+			}
+			
+			private function projectsLoaded(event:Event):void {
+				bProjectsLoaded = true;
+				checkIfFullyLoaded();
+			}
+			
+			private function checkIfFullyLoaded():void {
+				// if all tables have been loaded, close loading popup.
+				if(bProjectsLoaded && bClientsLoaded && bRigsLoaded && bContractorsLoaded) {
+					popupsController.hideLoading();
+				}
+			}
+			
+			// ===================
+			// Getters and Setters
+			// ===================
 			
 			[Bindable]
 			public function set contractors(value:ArrayCollection):void {
@@ -147,7 +192,6 @@
 
 			public function set rigs(value:ArrayCollection):void {
 				_rigs = value;
-				rigsList.selectedIndex = 0;
 			}
 
 			[Bindable]
@@ -159,73 +203,40 @@
 				_projects = value;
 				projectsList.selectedIndex = 0;
 			}
-
-
+			
 		]]>
 	</fx:Script>
+	
 	<fx:Declarations>
 		<ns:Dispatcher id="mateDispatcher" />
+		<ns:Listener type="{RigEvent.FIND_ALL_DONE}" method="rigsLoaded" />
+		<ns:Listener type="{ProjectEvent.FIND_ALL_DONE}" method="projectsLoaded" />
+		<ns:Listener type="{ClientEvent.FIND_ALL_DONE}" method="clientsLoaded" />
+		<ns:Listener type="{ContractorEvent.FIND_ALL_DONE}" method="contractorsLoaded" />
 	</fx:Declarations>
 	
 	<!-- Left Column -->
 	<components:MainColumn>		
 		<components:TitleBox label="Clients" />
-		<s:List id="clientsList" width="100%" height="200" 
-				skinClass="skins.DriversList" dataProvider="{ clients }">
-			<s:itemRenderer>
-				<fx:Component>
-					<s:ItemRenderer height="28">
-						<fx:Script>
-							<![CDATA[
-								import com.etherpros.model.Client;
-								import com.etherpros.model.Contractor;
-							]]>
-						</fx:Script>
-						<s:Label text="{Client(data).ClientName}" verticalCenter="0" horizontalCenter="0" 
-								 fontFamily="Frutiger" color="#555555" fontSize="14" />	
-					</s:ItemRenderer>					
-				</fx:Component>
-			</s:itemRenderer>
-		</s:List>
+		<s:List id="clientsList" width="100%" height="200"
+				itemRenderer="com.etherpros.components.listrenderers.ClientsListItem"
+				skinClass="skins.DriversList" dataProvider="{ clients }" />
+
 		
 		<s:Spacer height="5" />
 		
 		<components:TitleBox label="Projects" />
 		<s:List id="projectsList" width="100%" height="200" 
-				skinClass="skins.DriversList" dataProvider="{ projects }">
-			<s:itemRenderer>
-				<fx:Component>
-					<s:ItemRenderer height="28">
-						<fx:Script>
-							<![CDATA[
-								import com.etherpros.model.Project;
-							]]>
-						</fx:Script>
-						<s:Label text="{Project(data).ProjName}" verticalCenter="0" horizontalCenter="0" 
-								 fontFamily="Frutiger" color="#555555" fontSize="14" />	
-					</s:ItemRenderer>					
-				</fx:Component>
-			</s:itemRenderer>
-		</s:List>
+				itemRenderer="com.etherpros.components.listrenderers.ProjectsListItem"
+				skinClass="skins.DriversList" dataProvider="{ projects }" />
+
 		
 		<s:Spacer height="5" />
 		<components:TitleBox label="Rigs" />
-		<s:List id="rigsList" width="100%" height="145" 
-				skinClass="skins.DriversList" dataProvider="{rigs}" visible="false">
-			<s:itemRenderer>
-				<fx:Component>
-					<s:ItemRenderer height="28">
-						<fx:Script>
-							<![CDATA[
-								import com.etherpros.model.Rig;
-							]]>
-						</fx:Script>
-						<s:Label text="{Rig(data).RigName}" verticalCenter="0" horizontalCenter="0" 
-								 fontFamily="Frutiger" color="#555555" fontSize="14" />	
-					</s:ItemRenderer>					
-				</fx:Component>
-			</s:itemRenderer>
-		</s:List>		
+		<s:List id="rigsList" width="100%" height="145"
+				itemRenderer="com.etherpros.components.listrenderers.RigsListItem"
+				skinClass="skins.DriversList" dataProvider="{rigs}" />
+
 	</components:MainColumn>
 	
 	<!-- Middle Calendar -->
@@ -235,32 +246,21 @@
 	
 	<!-- Right Column -->
 	<components:MainColumn>
-		<components:TitleBox label="Date Picker" />
-		
-		<mx:DateChooser id="dtPicker" height="31" enabled="true" showToday="false"
-						change="dtPicker_changeHandler(event)" click="dtPicker_clickHandler(event)" 
-						yearNavigationEnabled="true"/>
+		<components:TitleBox label="Date Picker" />		
+		<mx:DateChooser id="dtPicker" height="31" 
+						yearNavigationEnabled="true" enabled="true" showToday="false"
+						change="dtPicker_changeHandler(event)" 
+						click="dtPicker_clickHandler(event)" 
+						/>		
 		<s:Button id="btnSaveJobs" label="Save Jobs" click="saveJobs(event)"/>
 		
 		<s:Spacer height="30" />
 		
-		<components:TitleBox label="Drivers" />				
-		<s:List id="staffList" width="100%" height="100%" dragEnabled="true" 
-				dropEnabled="false" skinClass="skins.DriversList" dataProvider="{ contractors }">
-			<s:itemRenderer>
-				<fx:Component>
-					<s:ItemRenderer height="28">
-						<fx:Script>
-							<![CDATA[
-								import com.etherpros.model.Contractor;
-							]]>
-						</fx:Script>
-						<s:Label fontFamily="Frutiger" color="#555555" fontSize="17" 
-								 text="{Contractor(data).FullName}" verticalCenter="0" horizontalCenter="0" />	
-					</s:ItemRenderer>					
-				</fx:Component>
-			</s:itemRenderer>
-		</s:List>
+		<components:TitleBox label="Contractors" />				
+		<s:List id="staffList" width="100%" height="100%" dragEnabled="true" dropEnabled="false"  
+				itemRenderer="com.etherpros.components.listrenderers.ContractorsListItem"
+				skinClass="skins.DriversList" dataProvider="{ contractors }" />
+
 	</components:MainColumn>
 		
 </s:BorderContainer>
