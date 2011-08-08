@@ -1,5 +1,6 @@
 package com.etherpros.model
 {
+	[Bindable]
 	public class Client
 	{
 		private var _ClientID:String;

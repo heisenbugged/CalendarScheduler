@@ -48,6 +48,10 @@
 			<MethodInvoker generator="{ ClientDAO }" method="findAll"  />			
 		</EventHandlers>
 		
+		<EventHandlers type="{JobAssignmentEvent.FIND_ALL}" debug="true">
+			<MethodInvoker generator="{ JobAssignmentDAO }" method="findAll"  />			
+		</EventHandlers>
+		
 		<EventHandlers type="{ JobAssignmentEvent.JOB_ASSIGNMENT_SAVE }" debug="true">
 			<ObjectBuilder 
 				generator="{ JobAssignmentDAO }"				

@@ -11,6 +11,8 @@ package com.etherpros.events
 		[Bindable]
 		public var job:Job;
 		public static const JOB_ASSIGNMENT_SAVE:String = 'jobAssignmentSaveEvent';
+		public static const FIND_ALL_DONE:String = 'findAllDoneAssignmentEvent';
+		public static const FIND_ALL:String = 'findAllAssignmentEvent';
 		public function JobAssignmentEvent(type:String, bubbles:Boolean=false, cancelable:Boolean=false)
 		{
 			super(type, bubbles, cancelable);
