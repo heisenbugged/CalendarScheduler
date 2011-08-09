@@ -38,7 +38,7 @@ package com.etherpros.business
 		}
 		
 		public function findAll():void{
-			var strURL:String = URL +  "&-new";
+			var strURL:String = URL +  "&StartDate=08/01/2011&StartDate.op=gt&-find";
 			var urlRequest:URLRequest = new URLRequest(strURL);
 			var urlLoader:URLLoader = new URLLoader(urlRequest);
 			urlLoader.addEventListener(Event.COMPLETE,assignmentsLoaded);
@@ -52,6 +52,10 @@ package com.etherpros.business
 			for each(var result:XML in xml.resultset.record) {				
 				var assignment:Assignment = new Assignment();
 				for each(var field:XML in result.field) {
+					
+					if(field.@name == "AssignmentID") {
+						assignment.AssignmentID = field.data.toString();
+					}
 					if(field.@name == "Client_ID") {
 						assignment.Client_ID = field.data.toString();
 					}
@@ -80,13 +84,13 @@ package com.etherpros.business
 						assignment.RigName = field.data.toString();
 					}
 					if(field.@name == "StartDate") {
-						assignment.StartDate = field.data as Date;
+						assignment.StartDate = new Date( Date.parse(field.data.toString()) );
 					}
 					if(field.@name == "StartTime") {
 						assignment.StartTime = field.data.toString();
 					}
 					if(field.@name == "FinishDate") {
-						assignment.FinishDate = field.data as Date;
+						assignment.FinishDate = new Date( Date.parse(field.data.toString()) );
 					}
 					if(field.@name == "FinishTime") {
 						assignment.FinishTime = field.data.toString();

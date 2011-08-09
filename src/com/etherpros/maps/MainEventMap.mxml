@@ -110,6 +110,20 @@
 				/>
 		</Injectors>
 		
+		<Injectors target="{ CalendarForm }" debug="true">
+			<ObjectBuilder 
+				generator="{ JobAssignmentDAO }"				
+				constructorArguments="{ scope.dispatcher }"
+				/>
+			<PropertyInjector
+				targetKey="jobAssignments"
+				source="{ JobAssignmentDAO }" 
+				sourceKey="assignments"
+				/>
+		</Injectors>
+		
+		
+		
 		
 		<Injectors target="{ JobAssignmentPopup }" debug="true">
 			<ObjectBuilder 
