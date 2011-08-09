@@ -51,6 +51,8 @@
 			[Bindable]
 			private var _projects:ArrayCollection;
 			
+			private var _jobAssignments:ArrayCollection;
+			
 			private var bContractorsLoaded:Boolean;
 			private var bClientsLoaded:Boolean;
 			private var bRigsLoaded:Boolean;
@@ -84,7 +86,9 @@
 				var rigsEvent:RigEvent = new RigEvent(RigEvent.FIND_ALL);
 				mateDispatcher.dispatchEvent(rigsEvent);
 				var clientEvent:ClientEvent = new ClientEvent(ClientEvent.FIND_ALL);
-				mateDispatcher.dispatchEvent(clientEvent);				
+				mateDispatcher.dispatchEvent(clientEvent);
+				
+				
 			}
 			
 			/** 
@@ -105,7 +109,11 @@
 				this.currentMonthSelected = currentMonth;
 				this.currentYearSelected = currentYear;
 				weekArray = range.weeks;
-				jobsController.dayRange = range;
+				//jobsController.dayRange = range;
+				jobsController.clearJobViews();
+				var jobAssignmentEvent:JobAssignmentEvent = new JobAssignmentEvent(JobAssignmentEvent.FIND_ALL);
+				jobAssignmentEvent.queryDate = new Date(dtPicker.displayedYear, dtPicker.displayedMonth, 1);
+				mateDispatcher.dispatchEvent(jobAssignmentEvent);
 			}	
 			
 			protected function dtPicker_changeHandler(event:CalendarLayoutChangeEvent):void {
@@ -203,6 +211,52 @@
 				_projects = value;
 				projectsList.selectedIndex = 0;
 			}
+
+			[Bindable]
+			public function get jobAssignments():ArrayCollection
+			{
+				return _jobAssignments;
+			}
+
+			public function set jobAssignments(value:ArrayCollection):void
+			{
+				_jobAssignments = value;
+				var jobList:ArrayCollection = new ArrayCollection();
+				var job:Job;				
+				for each (var assignment:Assignment in _jobAssignments ){
+					job = new Job();
+					job.AssignmentID 	= assignment.AssignmentID;
+					job.client = new Client();
+					job.project = new Project();
+					job.contractor = new Contractor();
+					job.rig = new Rig();
+					job.client.ClientID 	= assignment.Client_ID;
+					job.client.ClientName 	= assignment.ClientName;
+					job.project.ProjectID 	= assignment.Project_ID;
+					job.project.ProjName	= assignment.ProjectName;
+					job.contractor.ContractorID	= assignment.Contractor_ID;
+					job.contractor.FirstName	= assignment.FirstName;
+					job.contractor.LastName		= assignment.LastName;
+					job.rig.RigID 	= assignment.Rig_ID;
+					job.rig.RigName = assignment.RigName;
+					job.startDay = new Day();
+					job.endDay= new Day();
+					job.startDay.date= assignment.StartDate;
+					job.endDay.date	 = assignment.FinishDate;
+					jobList.addItem(job);
+				}
+				
+				//weekArray = new ArrayCollection();				
+				var currentYear:int  = dtPicker.displayedYear;
+				var currentMonth:int = dtPicker.displayedMonth;
+				var range:DayRange = DayRange.createFromMonth(currentMonth, currentYear);
+				jobsController.jobs = jobList;
+				this.currentMonthSelected = currentMonth;
+				this.currentYearSelected = currentYear;
+				//weekArray = range.weeks;
+				jobsController.dayRange = range;
+			}
+
 			
 		]]>
 	</fx:Script>

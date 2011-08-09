@@ -37,8 +37,9 @@ package com.etherpros.business
 			this.dispatcher = dispatcher;
 		}
 		
-		public function findAll():void{
-			var strURL:String = URL +  "&-new";
+		public function findAll(queryDate:Date):void{
+			var strURL:String = URL +  "&StartDate="+ ( queryDate.month+ 1) +"/01/"+queryDate.fullYear+"&StartDate.op=gte&-find";
+			strURL += "&FinishDate="+ ( queryDate.month+ 1) +"/31/"+queryDate.fullYear+"&FinishDate.op=lte&-find";
 			var urlRequest:URLRequest = new URLRequest(strURL);
 			var urlLoader:URLLoader = new URLLoader(urlRequest);
 			urlLoader.addEventListener(Event.COMPLETE,assignmentsLoaded);
@@ -52,6 +53,10 @@ package com.etherpros.business
 			for each(var result:XML in xml.resultset.record) {				
 				var assignment:Assignment = new Assignment();
 				for each(var field:XML in result.field) {
+					
+					if(field.@name == "AssignmentID") {
+						assignment.AssignmentID = field.data.toString();
+					}
 					if(field.@name == "Client_ID") {
 						assignment.Client_ID = field.data.toString();
 					}
@@ -61,32 +66,32 @@ package com.etherpros.business
 					if(field.@name == "Contractor_ID") {
 						assignment.Contractor_ID = field.data.toString();
 					}
-					if(field.@name == "FirstName") {
+					if(field.@name == "Contractor 4 Assignment::FirstName") {
 						assignment.FirstName = field.data.toString();
 					}
-					if(field.@name == "LastName") {
+					if(field.@name == "Contractor 4 Assignment::LastName") {
 						assignment.LastName = field.data.toString();
 					}
 					if(field.@name == "Project_ID") {
 						assignment.Project_ID = field.data.toString();
 					}
-					if(field.@name == "ProjName") {
+					if(field.@name == "Project 4 Assignment::ClientName") {
 						assignment.ProjectName = field.data.toString();
 					}
 					if(field.@name == "Rig_ID") {
 						assignment.Rig_ID = field.data.toString();
 					}
-					if(field.@name == "RigName") {
+					if(field.@name == "Rigs 4 Assignment::RigName") {
 						assignment.RigName = field.data.toString();
 					}
 					if(field.@name == "StartDate") {
-						assignment.StartDate = field.data as Date;
+						assignment.StartDate = new Date( Date.parse(field.data.toString()) );
 					}
 					if(field.@name == "StartTime") {
 						assignment.StartTime = field.data.toString();
 					}
 					if(field.@name == "FinishDate") {
-						assignment.FinishDate = field.data as Date;
+						assignment.FinishDate = new Date( Date.parse(field.data.toString()) );
 					}
 					if(field.@name == "FinishTime") {
 						assignment.FinishTime = field.data.toString();
@@ -114,9 +119,15 @@ package com.etherpros.business
 		public function createJobAssignment( job:Job ):void{
 			trace(job.rig.RigName);
 			var strURL:String = new String();
-			strURL = URL + "&Contractor_ID="+job.contractor.ContractorID + "&Site_ID=S1" + "&Project_ID="+job.project.ProjectID + "&Client_ID=" +job.client.ClientID;
-			strURL += "&StartDate=" + format(job.startDay.date) + "&FinishDate=" + format(job.endDay.date)+ "&Rig_ID="+ job.rig.RigID ;
-			strURL += "&-new";
+			if ( job.AssignmentID == null || job.AssignmentID <= 0 ){
+				strURL = URL + "&Contractor_ID="+job.contractor.ContractorID + "&Site_ID=S1" + "&Project_ID="+job.project.ProjectID + "&Client_ID=" +job.client.ClientID;
+				strURL += "&StartDate=" + format(job.startDay.date) + "&FinishDate=" + format(job.endDay.date)+ "&Rig_ID="+ job.rig.RigID ;
+				strURL += "&-new";
+			}else{
+				strURL = URL + "&-recid="+ job.AssignmentID  +"&Contractor_ID="+job.contractor.ContractorID + "&Site_ID=S1" + "&Project_ID="+job.project.ProjectID + "&Client_ID=" +job.client.ClientID;
+				strURL += "&StartDate=" + format(job.startDay.date) + "&FinishDate=" + format(job.endDay.date)+ "&Rig_ID="+ job.rig.RigID ;
+				strURL += "&-edit";
+			}
 			var urlRequest:URLRequest = new URLRequest(strURL);
 			var urlLoader:URLLoader = new URLLoader(urlRequest);
 			urlLoader.addEventListener(Event.COMPLETE,jobAssignmentCompleated);

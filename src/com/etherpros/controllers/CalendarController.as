@@ -201,7 +201,7 @@ package com.etherpros.controllers
 		public function clearJobViews():void {			
 			var jobModels:Array = new Array();		
 			for each(var jobView:JobView in jobViews) {									
-				jobModels.push(jobView.model);
+				//jobModels.push(jobView.model);
 				
 				// clear out view elements from stage
 				jobView.destroy();
@@ -354,7 +354,7 @@ package com.etherpros.controllers
 		public function set dayRange(value:DayRange):void {
 			_dayRange = value;			
 			// clear all old job views since week range was changed.
-			clearJobViews();
+			//clearJobViews();
 			// re draw jobs based on new day range
 			draw();
 		}

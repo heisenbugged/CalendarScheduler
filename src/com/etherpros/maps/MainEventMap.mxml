@@ -49,7 +49,7 @@
 		</EventHandlers>
 		
 		<EventHandlers type="{JobAssignmentEvent.FIND_ALL}" debug="true">
-			<MethodInvoker generator="{ JobAssignmentDAO }" method="findAll"  />			
+			<MethodInvoker generator="{ JobAssignmentDAO }" method="findAll"  arguments="{[event.queryDate]}"/>
 		</EventHandlers>
 		
 		<EventHandlers type="{ JobAssignmentEvent.JOB_ASSIGNMENT_SAVE }" debug="true">
@@ -109,6 +109,20 @@
 				sourceKey="rigs"
 				/>
 		</Injectors>
+		
+		<Injectors target="{ CalendarForm }" debug="true">
+			<ObjectBuilder 
+				generator="{ JobAssignmentDAO }"				
+				constructorArguments="{ scope.dispatcher }"
+				/>
+			<PropertyInjector
+				targetKey="jobAssignments"
+				source="{ JobAssignmentDAO }" 
+				sourceKey="assignments"
+				/>
+		</Injectors>
+		
+		
 		
 		
 		<Injectors target="{ JobAssignmentPopup }" debug="true">

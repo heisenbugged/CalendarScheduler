@@ -12,6 +12,7 @@ package com.etherpros.model
 		private var _project:Project;
 		private var _rig:Rig;
 		private var _client:Client;
+		private var _AssignmentID;
 			
 		public function Job()
 		{
@@ -95,6 +96,16 @@ package com.etherpros.model
 		public function set client(value:Client):void
 		{
 			_client = value;
+		}
+
+		public function get AssignmentID()
+		{
+			return _AssignmentID;
+		}
+
+		public function set AssignmentID(value):void
+		{
+			_AssignmentID = value;
 		}
 
 

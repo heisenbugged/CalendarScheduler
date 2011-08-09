@@ -10,6 +10,8 @@ package com.etherpros.events
 	{
 		[Bindable]
 		public var job:Job;
+		[Bindable]
+		public var queryDate:Date;
 		public static const JOB_ASSIGNMENT_SAVE:String = 'jobAssignmentSaveEvent';
 		public static const FIND_ALL_DONE:String = 'findAllDoneAssignmentEvent';
 		public static const FIND_ALL:String = 'findAllAssignmentEvent';
