@@ -13,7 +13,18 @@ package com.etherpros.model
 		private var _rig:Rig;
 		private var _client:Client;
 		private var _AssignmentID;
-			
+		
+		/**
+		 * Determines whether the startDay/endDay range has changed.
+		 * from its original value in the database.
+		 */ 
+		public var dirty:Boolean;
+		
+		/**
+		 * Determines whether Job exists in database or not.
+		 */
+		public var persisted:Boolean;
+		
 		public function Job()
 		{
 		}
@@ -25,6 +36,12 @@ package com.etherpros.model
 
 		public function set startDay(value:Day):void
 		{
+			// if the date is different.
+			if(_startDay && startDay.date.getTime() != value.date.getTime()) {
+				// set model to dirty.
+				dirty = true;
+			}
+			
 			_startDay = value;
 		}
 
@@ -45,6 +62,12 @@ package com.etherpros.model
 
 		public function set endDay(value:Day):void
 		{
+			// if date is different.
+			if(_endDay && endDay.date.getTime() != value.date.getTime()) {
+				// set model to dirty.
+				dirty = true;
+			}
+			
 			_endDay = value;
 		}
 

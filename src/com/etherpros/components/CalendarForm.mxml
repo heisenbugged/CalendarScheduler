@@ -135,10 +135,14 @@
 			}
 			
 			protected function saveJobs(event:MouseEvent):void {
+				var jobs:ArrayCollection = jobsController.jobs;
+				
 				for each(var job:Job in this.jobsController.jobs){
-					var jobAssignmentEvent:JobAssignmentEvent = new JobAssignmentEvent( JobAssignmentEvent.JOB_ASSIGNMENT_SAVE );
-					jobAssignmentEvent.job = job;
-					mateDispatcher.dispatchEvent(jobAssignmentEvent);
+					if(job.dirty || !job.persisted) {
+						var jobAssignmentEvent:JobAssignmentEvent = new JobAssignmentEvent( JobAssignmentEvent.JOB_ASSIGNMENT_SAVE );
+						jobAssignmentEvent.job = job;
+						mateDispatcher.dispatchEvent(jobAssignmentEvent);
+					}
 				}
 				
 			}
@@ -240,8 +244,8 @@
 					job.rig.RigID 	= assignment.Rig_ID;
 					job.rig.RigName = assignment.RigName;
 					job.startDay = new Day();
-					job.endDay= new Day();
-					job.startDay.date= assignment.StartDate;
+					job.endDay = new Day();
+					job.startDay.date = assignment.StartDate;
 					job.endDay.date	 = assignment.FinishDate;
 					jobList.addItem(job);
 				}
