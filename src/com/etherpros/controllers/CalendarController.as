@@ -1,8 +1,10 @@
 package com.etherpros.controllers
 {
 	import com.asfusion.mate.events.Dispatcher;
+	import com.asfusion.mate.events.Listener;
 	import com.etherpros.components.*;
 	import com.etherpros.components.popups.JobAssignmentPopup;
+	import com.etherpros.events.JobAssignmentEvent;
 	import com.etherpros.events.JobCreationEvent;
 	import com.etherpros.events.JobEvent;
 	import com.etherpros.model.*;
@@ -31,23 +33,25 @@ package com.etherpros.controllers
 		
 		public var xOffset:int;
 		public var yOffset:int;
-			
+		
+		private var jobAssignmentPopup:JobAssignmentPopup = new JobAssignmentPopup();
+		// View associated to this controller.
+		private var _container:CalendarForm;
 		// day range being viewed on the calendar.
 		private var _dayRange:DayRange;
+		
+		[Bindable] private var _contractors:ArrayCollection;			
+		[Bindable] private var _clients:ArrayCollection;		
+		[Bindable] private var _rigs:ArrayCollection;		
+		[Bindable] private var _projects:ArrayCollection;
+		[Bindable] private var _jobs:JobsCollection;
+		
 		// list of job views.
-		private var _jobViews:ArrayCollection;
-		// all job models loaded
-		public var jobs:JobsCollection;
-		
-		private var container:CalendarForm;		
-		private var jobAssignmentPopup:JobAssignmentPopup = new JobAssignmentPopup();
-		
-		public function CalendarController(container:CalendarForm) {
+		private var _jobViews:ArrayCollection;		
+				
+		public function CalendarController(container:CalendarForm = null) {
 			this.container = container;			
 			jobViews = new ArrayCollection();
-			jobs = new JobsCollection();
-			// view event listeners
-			container.addEventListener(JobCreationEvent.ADD_NEW_JOB, createJob);
 		}
 		
 		public static function setCalendarDimensions(width:int, height:int):void {
@@ -57,8 +61,6 @@ package com.etherpros.controllers
 			CALENDAR_HEIGHT = height;
 			DAY_HEIGHT = CALENDAR_HEIGHT/6; //6 weeks in datagrid.
 		}
-
-		
 
 		/**
 		 * Draws an existing Job and positions it on the stage.
@@ -92,7 +94,7 @@ package com.etherpros.controllers
 				model.contractor = event.contractorJob;
 				model.startDay = event.weekDay;
 				
-				PopUpManager.addPopUp(jobAssignmentPopup, container, true);
+				PopUpManager.addPopUp(jobAssignmentPopup, _container, true);
 				jobAssignmentPopup.jobModel = model;
 				jobAssignmentPopup.init();
 				jobAssignmentPopup.addEventListener(CloseEvent.CLOSE, onCloseJobAssignmnet);
@@ -105,9 +107,9 @@ package com.etherpros.controllers
 			var assignment:JobAssignmentPopup = event.currentTarget as JobAssignmentPopup;
 			PopUpManager.removePopUp(assignment);
 			if ( assignment.isValid ){
-				assignment.jobModel.project = this.container.projectsList.selectedItem as Project;
+				assignment.jobModel.project = this._container.projectsList.selectedItem as Project;
 				assignment.jobModel.rig	= assignment.selectedRig;
-				assignment.jobModel.client	= this.container.clientsList.selectedItem as Client;
+				assignment.jobModel.client	= this._container.clientsList.selectedItem as Client;
 				jobs.addItem(assignment.jobModel);
 				addJobView(assignment.jobModel);				
 			}
@@ -151,7 +153,7 @@ package com.etherpros.controllers
 			positionJobView(startPos, view);
 			
 			// add to containers
-			container.calendarContainer.addElement(view);
+			_container.calendarContainer.addElement(view);
 			jobViews.addItem(view);
 			
 			// add event listeners
@@ -207,7 +209,7 @@ package com.etherpros.controllers
 				jobView.removeEventListener(JobEvent.JOB_RESIZED, jobResized);
 				jobView.removeEventListener(JobEvent.ADD_JOB_SPRITE, addJobRow);
 				
-				container.calendarContainer.removeElement(jobView);				
+				_container.calendarContainer.removeElement(jobView);				
 			}
 			
 			// clear out job views array
@@ -326,15 +328,82 @@ package com.etherpros.controllers
 			
 			return jobCounter;
 		}
-		
-
-		public function addJobs(array:ArrayCollection):void {
+		private function refresh():void {
+			// clear all old job views since week range was changed.
+			clearJobViews();
 			
+			// re draw jobs based on new day range
+			draw();			
+		}
+		
+		public function jobsLoaded():void {
+			refresh();
 		}
 		
 		// -------------------
 		// Getters and Setters
-		// -------------------		
+		// -------------------
+		[Bindable]
+		public function set jobs(value:JobsCollection):void {
+			_jobs = value;	
+		}
+		
+		public function get jobs():JobsCollection {
+			return _jobs;
+		}
+		
+		[Bindable]
+		public function set contractors(value:ArrayCollection):void {
+			_contractors = value;
+		}
+		
+		public function get contractors():ArrayCollection { 
+			return _contractors;
+		}
+		
+		[Bindable]
+		public function get clients():ArrayCollection { 
+			return _clients; 
+		}
+		
+		public function set clients(value:ArrayCollection):void {				
+			_clients = value;
+			container.clientsList.selectedIndex = 0;
+		}
+		
+		[Bindable]
+		public function get rigs():ArrayCollection {
+			return _rigs;
+		}
+		
+		public function set rigs(value:ArrayCollection):void {
+			_rigs = value;
+		}
+		
+		[Bindable]
+		public function get projects():ArrayCollection {
+			return _projects;
+		}
+		
+		public function set projects(value:ArrayCollection):void {
+			_projects = value;
+			container.projectsList.selectedIndex = 0;
+		}
+		
+		
+		public function set container(container:CalendarForm):void {
+			_container = container;
+			
+			// view event listeners
+			if(container) {
+				container.addEventListener(JobCreationEvent.ADD_NEW_JOB, createJob);
+			}			
+		}
+		
+		public function get container():CalendarForm {
+			return _container;
+		}
+		
 		private function getDayByColumnAndRow(column:int, row:int):Day {
 			var week:Week = dayRange.weeks[row];
 			return week.getDayByIndex(column);
@@ -353,15 +422,10 @@ package com.etherpros.controllers
 			yOffset = y;
 		}
 		
-		
 		public function set dayRange(value:DayRange):void {
 			_dayRange = value;
-			
-			// clear all old job views since week range was changed.
-			clearJobViews();
-			
-			// re draw jobs based on new day range
-			draw();
+			// refresh view since range has changed.
+			refresh();
 		}
 		
 		public function get dayRange():DayRange {

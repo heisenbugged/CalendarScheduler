@@ -9,7 +9,7 @@
 	<fx:Script>
 		<![CDATA[
 			import com.asfusion.mate.events.Dispatcher;
-			import com.etherpros.business.ProjectDAO;
+			import com.etherpros.business.loaders.ProjectDAO;
 			import com.etherpros.events.ClientEvent;
 			import com.etherpros.events.ProjectEvent;
 			import com.etherpros.events.RigEvent;

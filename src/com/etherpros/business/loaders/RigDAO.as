@@ -1,4 +1,4 @@
-package com.etherpros.business
+package com.etherpros.business.loaders
 {
 	import com.etherpros.events.RigEvent;
 	import com.etherpros.model.Rig;
@@ -14,9 +14,8 @@ package com.etherpros.business
 	{
 		public static var LAYOUT:String = "Rigs";
 		public static var URL:String = SERVER + "fmi/xml/fmresultset.xml?-db="+DATABASE+"&-lay="+LAYOUT+"&-findall";
-		[Bindable]
+
 		public var rigs:ArrayCollection;
-		public var rigList:ArrayCollection;
 		private var isLoaded:Boolean = false;
 		[Bindable]
 		private var dispatcher:IEventDispatcher;
@@ -34,7 +33,7 @@ package com.etherpros.business
 		}
 		
 		private function rigsLoaded(event:Event):void{
-			this.rigList  = new ArrayCollection();			
+			rigs  = new ArrayCollection();			
 			var xml:XML = new XML(event.target.data);			
 			if (xml.namespace("") != undefined) { default xml namespace = xml.namespace(""); }
 			
@@ -48,7 +47,7 @@ package com.etherpros.business
 						rig.RigName = field.data.toString();
 					}
 				}
-				rigList.addItem(rig);
+				rigs.addItem(rig);
 			}
 			isLoaded = true;
 			checkIfFullyLoaded();
@@ -56,9 +55,9 @@ package com.etherpros.business
 		}
 		private function checkIfFullyLoaded():void {
 			if(isLoaded) {
-				this.rigs = this.rigList;
-				var projectEvent:RigEvent = new RigEvent(RigEvent.FIND_ALL_DONE,true);
-				dispatcher.dispatchEvent(projectEvent);
+				var doneEvent:RigEvent = new RigEvent(RigEvent.FIND_ALL_DONE,true);
+				doneEvent.rigs = rigs;
+				dispatcher.dispatchEvent(doneEvent);
 			}
 		}	
 	}

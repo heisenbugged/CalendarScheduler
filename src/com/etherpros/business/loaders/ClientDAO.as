@@ -1,4 +1,4 @@
-package com.etherpros.business
+package com.etherpros.business.loaders
 {
 	import com.etherpros.events.ClientEvent;
 	import com.etherpros.model.Client;
@@ -56,9 +56,11 @@ package com.etherpros.business
 		
 		private function checkIfFullyLoaded():void {
 			if(isLoaded) {
-				this.clients = this._clientList;
+
 				var clientEvent:ClientEvent = new ClientEvent(ClientEvent.FIND_ALL_DONE,true);
+				clientEvent.clients = _clientList;				
 				dispatcher.dispatchEvent(clientEvent);
+				
 			}
 		}	
 	}

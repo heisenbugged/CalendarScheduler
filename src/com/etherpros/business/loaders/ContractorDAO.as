@@ -1,4 +1,4 @@
-package com.etherpros.business
+package com.etherpros.business.loaders
 {
 	import com.asfusion.mate.events.Dispatcher;
 	import com.etherpros.events.ContractorEvent;
@@ -18,11 +18,9 @@ package com.etherpros.business
 		
 		public static var CDN_URL:String =  "";
 		private var contractors:ArrayCollection;
-		private var isLoaded:Boolean = false;
-		
-		[Bindable]
-		public  var contractorList:ArrayCollection;
+		private var isLoaded:Boolean = false;		
 		private var dispatcher:IEventDispatcher;
+		
 		public function ContractorDAO(dispatcher:IEventDispatcher)
 		{
 			this.dispatcher = dispatcher;
@@ -35,7 +33,7 @@ package com.etherpros.business
 		}
 		
 		private function loadedContractors(event:Event):void {
-			 contractors  = new ArrayCollection();
+			contractors  = new ArrayCollection();
 			var contractor:Contractor;
 			var xml:XML = new XML(event.target.data);			
 			if (xml.namespace("") != undefined) { default xml namespace = xml.namespace(""); }			
@@ -62,8 +60,8 @@ package com.etherpros.business
 		
 		private function checkIfFullyLoaded():void {
 			if(isLoaded) {
-				contractorList = contractors;
 				var contractorEvent:ContractorEvent = new ContractorEvent(ContractorEvent.FIND_ALL_DONE);
+				contractorEvent.contractors = contractors;
 				dispatcher.dispatchEvent(contractorEvent);
 			}
 		}

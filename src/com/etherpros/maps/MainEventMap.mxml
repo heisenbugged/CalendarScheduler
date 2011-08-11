@@ -1,142 +1,116 @@
 <?xml version="1.0" encoding="utf-8"?>
-<EventMap
-	xmlns:fx="http://ns.adobe.com/mxml/2009"
-	xmlns:s="library://ns.adobe.com/flex/spark" 
-	xmlns="http://mate.asfusion.com/"
-	>
+<EventMap xmlns:fx="http://ns.adobe.com/mxml/2009"
+		  xmlns:s="library://ns.adobe.com/flex/spark" 
+		  xmlns="http://mate.asfusion.com/">
 	
 	<fx:Script>
 		<![CDATA[
-			import com.etherpros.business.ClientDAO;
-			import com.etherpros.business.ContractorDAO;
-			import com.etherpros.business.JobAssignmentDAO;
-			import com.etherpros.business.ProjectDAO;
-			import com.etherpros.business.RigDAO;
+			import com.etherpros.business.*;
+			import com.etherpros.business.loaders.*;
 			import com.etherpros.components.CalendarForm;
 			import com.etherpros.components.popups.JobAssignmentPopup;
 			import com.etherpros.controllers.CalendarController;
-			import com.etherpros.events.ClientEvent;
-			import com.etherpros.events.ContractorEvent;
-			import com.etherpros.events.JobAssignmentEvent;
-			import com.etherpros.events.ProjectEvent;
-			import com.etherpros.events.RigEvent;
+			import com.etherpros.events.*;
 			
 			import mx.events.*;
 			
 		]]>
 	</fx:Script>
 	
-	
 	<fx:Declarations>	
-		<!-- Inject properties to any views as soon as possible listening to FlexEvent.PREINITIALIZE -->
-		
+		<Debugger level="{Debugger.ALL}" />
+		<!-- Inject properties to any views as soon as possible listening to FlexEvent.PREINITIALIZE -->	
 		<InjectorSettings eventType="{ FlexEvent.PREINITIALIZE }"/>
-		
-		
-		<!-- Handlers for contractors events  -->
-		<EventHandlers type="{ContractorEvent.FIND_ALL}" debug="true">
+				
+		<!-- Instantiate data loaders -->
+		<EventHandlers type="{FlexEvent.PREINITIALIZE}"> 
+			<ObjectBuilder generator="{ DataManager }" constructorArguments="{ scope.dispatcher }" />
+			<ObjectBuilder generator="{ ClientDAO }" constructorArguments="{ scope.dispatcher }" />
+			<ObjectBuilder generator="{ ProjectDAO }" constructorArguments="{ scope.dispatcher }" />
+			<ObjectBuilder generator="{ RigDAO }" constructorArguments="{ scope.dispatcher }" />
+			<ObjectBuilder generator="{ ContractorDAO }" constructorArguments="{ scope.dispatcher }" />		
+			<ObjectBuilder generator="{ JobAssignmentDAO }" constructorArguments="{ scope.dispatcher }" />
+			
+			<ObjectBuilder generator="{ CalendarController }"  />
+		</EventHandlers>
+				
+
+		<!-- Contractor loading.  -->
+		<EventHandlers type="{ContractorEvent.FIND_ALL}">
 			<MethodInvoker generator="{ ContractorDAO }" method="findAll"  />			
 		</EventHandlers>
-		<!-- Handlers for projects events  -->
-		<EventHandlers type="{ProjectEvent.FIND_ALL}" debug="true">
+		<EventHandlers type="{ContractorEvent.FIND_ALL_DONE}">
+			<MethodInvoker generator="{DataManager}" method="loadContractors" arguments="{event.contractors}" /> 
+		</EventHandlers>		
+				
+		<!-- Project loading.  -->
+		<EventHandlers type="{ProjectEvent.FIND_ALL}">
 			<MethodInvoker generator="{ ProjectDAO }" method="findAll"  />			
 		</EventHandlers>
-		<EventHandlers type="{RigEvent.FIND_ALL}" debug="true">
+		<EventHandlers type="{ProjectEvent.FIND_ALL_DONE}">
+			<MethodInvoker generator="{DataManager}" method="loadProjects" arguments="{event.projects}" /> 
+		</EventHandlers>			
+		
+		<!-- Rig loading. -->
+		<EventHandlers type="{RigEvent.FIND_ALL}">
 			<MethodInvoker generator="{ RigDAO }" method="findAll"  />			
 		</EventHandlers>
-		<EventHandlers type="{ClientEvent.FIND_ALL}" debug="true">
+		<EventHandlers type="{RigEvent.FIND_ALL_DONE}">
+			<MethodInvoker generator="{DataManager}" method="loadRigs" arguments="{event.rigs}" /> 
+		</EventHandlers>		
+		
+		<!-- Client loading. -->
+		<EventHandlers type="{ClientEvent.FIND_ALL}">
 			<MethodInvoker generator="{ ClientDAO }" method="findAll"  />			
+		</EventHandlers>		
+		<EventHandlers type="{ClientEvent.FIND_ALL_DONE}">
+			<MethodInvoker generator="{DataManager}" method="loadClients" arguments="{event.clients}" /> 
+		</EventHandlers>	
+		
+		<!-- Jobs loading. -->
+		<EventHandlers type="{JobAssignmentEvent.FIND_ALL}">
+			<MethodInvoker generator="{ JobAssignmentDAO }" method="findAll"  arguments="{[event.queryDate]}" />
+		</EventHandlers>
+		<EventHandlers type="{JobAssignmentEvent.FIND_ALL_DONE}">
+			<MethodInvoker generator="{DataManager}" method="loadJobs" arguments="{event.jobs}" /> 
+		</EventHandlers>			
+		
+		<EventHandlers type="{ JobAssignmentEvent.JOB_ASSIGNMENT_SAVE }">
+			<MethodInvoker generator="{ JobAssignmentDAO }" method="createJobAssignment"  arguments="{[event.job]}" />			
 		</EventHandlers>
 		
-		<EventHandlers type="{JobAssignmentEvent.FIND_ALL}" debug="true">
-			<MethodInvoker generator="{ JobAssignmentDAO }" method="findAll"  arguments="{[event.queryDate]}"/>
-		</EventHandlers>
+		<EventHandlers type="{ JobAssignmentEvent.JOBS_LOADED }">
+			<MethodInvoker generator="{ CalendarController }" method="jobsLoaded" />			
+		</EventHandlers>		
 		
-		<EventHandlers type="{ JobAssignmentEvent.JOB_ASSIGNMENT_SAVE }" debug="true">
-			<ObjectBuilder 
-				generator="{ JobAssignmentDAO }"				
-				constructorArguments="{ scope.dispatcher }"
-				/>
-			<MethodInvoker generator="{ JobAssignmentDAO }" method="createJobAssignment"  arguments="{[event.job]}"/>			
-		</EventHandlers>
-		
-		<!-- Object injectors  -->		
-		<Injectors target="{ CalendarForm }" debug="true">
-			<ObjectBuilder 
-				generator="{ ContractorDAO }"				
-				constructorArguments="{ scope.dispatcher }"
-				/>
-			<PropertyInjector
-				targetKey="contractors"
-				source="{ ContractorDAO }" 
-				sourceKey="contractorList"
-				/>
+		<!-- Object injectors  -->
+		<Injectors target="{ CalendarController }">			
+			<PropertyInjector targetKey="clients" source="{ DataManager }" 
+							  sourceKey="clients" />
+			
+			<PropertyInjector targetKey="projects" source="{ DataManager }" 
+							  sourceKey="projects" />
+			
+			<PropertyInjector targetKey="rigs" source="{ DataManager }"
+							  sourceKey="rigs" />
+			
+			<PropertyInjector targetKey="contractors" source="{ DataManager }"
+							  sourceKey="contractors" />
+			
+			<PropertyInjector targetKey="jobs" source="{ DataManager }"
+							  sourceKey="jobs" />			
 		</Injectors>
 		
-		<Injectors target="{ CalendarForm }" debug="true">
-			<ObjectBuilder 
-				generator="{ ClientDAO }"				
-				constructorArguments="{ scope.dispatcher }"
-				/>
-			<PropertyInjector
-				targetKey="clients"
-				source="{ ClientDAO }" 
-				sourceKey="clients"
-				/>
-		</Injectors>
+		<Injectors target="{ CalendarForm }">			
+			<PropertyInjector targetKey="controller" source="{ CalendarController }" />			
+		</Injectors>		
 		
-		<Injectors target="{ CalendarForm }" debug="true">
-			<ObjectBuilder 
-				generator="{ ProjectDAO }"				
-				constructorArguments="{ scope.dispatcher }"
-				/>
-			<PropertyInjector
-				targetKey="projects"
-				source="{ ProjectDAO }" 
-				sourceKey="projects"
-				/>
-		</Injectors>
-		
-		
-		<Injectors target="{ CalendarForm }" debug="true">
-			<ObjectBuilder 
-				generator="{ RigDAO }"				
-				constructorArguments="{ scope.dispatcher }"
-				/>
-			<PropertyInjector
-				targetKey="rigs"
-				source="{ RigDAO }" 
-				sourceKey="rigs"
-				/>
-		</Injectors>
-		
-		<Injectors target="{ CalendarForm }" debug="true">
-			<ObjectBuilder 
-				generator="{ JobAssignmentDAO }"				
-				constructorArguments="{ scope.dispatcher }"
-				/>
-			<PropertyInjector
-				targetKey="jobAssignments"
-				source="{ JobAssignmentDAO }" 
-				sourceKey="assignments"
-				/>
-		</Injectors>
-		
-		
-		
-		
-		<Injectors target="{ JobAssignmentPopup }" debug="true">
-			<ObjectBuilder 
-				generator="{ RigDAO }"				
-				constructorArguments="{ scope.dispatcher }"
-				/>
-			<PropertyInjector
-				targetKey="rigs"
-				source="{ RigDAO }" 
+		<Injectors target="{ JobAssignmentPopup }">
+			<PropertyInjector targetKey="rigs"
+				source="{ DataManager }" 
 				sourceKey="rigs"
 				/>
 		</Injectors>
 		
 	</fx:Declarations>
-	
 </EventMap>

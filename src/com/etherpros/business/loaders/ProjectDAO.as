@@ -1,4 +1,4 @@
-package com.etherpros.business
+package com.etherpros.business.loaders
 {
 	import com.etherpros.events.ProjectEvent;
 	import com.etherpros.model.Project;
@@ -14,9 +14,7 @@ package com.etherpros.business
 	{
 		public static var LAYOUT:String = "Projects";
 		public static var URL:String = SERVER + "fmi/xml/fmresultset.xml?-db="+DATABASE+"&-lay="+LAYOUT+"&-findall";
-		[Bindable]
-		public var projects:ArrayCollection;
-		private var _projectList:ArrayCollection;
+		private var projects:ArrayCollection;
 		private var isLoaded:Boolean = false;
 		[Bindable]
 		private var dispatcher:IEventDispatcher;
@@ -33,7 +31,7 @@ package com.etherpros.business
 		}
 		
 		private function projectsLoaded(event:Event):void{
-			this._projectList  = new ArrayCollection();			
+			projects  = new ArrayCollection();			
 			var xml:XML = new XML(event.target.data);			
 			if (xml.namespace("") != undefined) { default xml namespace = xml.namespace(""); }
 			
@@ -56,7 +54,7 @@ package com.etherpros.business
 						project.ClientName = field.data.toString();
 					}
 				}
-				this._projectList.addItem(project);				
+				projects.addItem(project);				
 			}
 			isLoaded = true;
 			checkIfFullyLoaded();
@@ -87,8 +85,8 @@ package com.etherpros.business
 		
 		private function checkIfFullyLoaded():void {
 			if(isLoaded) {
-				this.projects = this._projectList;
 				var projectEvent:ProjectEvent = new ProjectEvent(ProjectEvent.FIND_ALL_DONE,true);
+				projectEvent.projects = projects;
 				dispatcher.dispatchEvent(projectEvent);
 			}
 		}		

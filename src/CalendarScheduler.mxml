@@ -22,7 +22,7 @@
 		]]>
 	</fx:Script>
 	<fx:Declarations>
-		<maps:MainEventMap/>	
+		<maps:MainEventMap />	
 	</fx:Declarations>
 	
 	

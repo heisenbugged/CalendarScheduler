@@ -1,4 +1,4 @@
-package com.etherpros.business
+package com.etherpros.business.loaders
 {
 	import com.etherpros.events.JobAssignmentEvent;
 	import com.etherpros.model.Assignment;
@@ -24,9 +24,7 @@ package com.etherpros.business
 		//public static var URL:String = SERVER + "fmi/xml/fmresultset.xml?-db="+DATABASE+"&-lay="+LAYOUT+"&Site_ID=S1&-new";
 		[Bindable]
 		private var _jobAssignment:Job;
-		[Bindable]
-		public  var assignments:ArrayCollection;
-		private var _assignmentList:ArrayCollection;
+		private var assignments:ArrayCollection;
 		private var isLoaded:Boolean = false;
 		
 		[Bindable]
@@ -46,7 +44,7 @@ package com.etherpros.business
 		}
 		
 		private function assignmentsLoaded(event:Event):void{
-			this._assignmentList  = new ArrayCollection();			
+			assignments = new ArrayCollection();			
 			var xml:XML = new XML(event.target.data);			
 			if (xml.namespace("") != undefined) { default xml namespace = xml.namespace(""); }
 			
@@ -101,7 +99,7 @@ package com.etherpros.business
 					}
 				}
 				assignment.Client_ID
-				this._assignmentList.addItem(assignment);
+				assignments.addItem(assignment);
 			}
 			isLoaded = true;
 			checkIfFullyLoaded();
@@ -109,10 +107,10 @@ package com.etherpros.business
 		}
 		
 		private function checkIfFullyLoaded():void {
-			if(isLoaded) {
-				this.assignments = this._assignmentList;
-				var clientEvent:JobAssignmentEvent = new JobAssignmentEvent(JobAssignmentEvent.FIND_ALL_DONE,true);
-				dispatcher.dispatchEvent(clientEvent);
+			if(isLoaded) {			
+				var doneEvent:JobAssignmentEvent = new JobAssignmentEvent(JobAssignmentEvent.FIND_ALL_DONE,true);
+				doneEvent.jobs = assignments;
+				dispatcher.dispatchEvent(doneEvent);
 			}
 		}	
 		
@@ -130,7 +128,7 @@ package com.etherpros.business
 			}
 			var urlRequest:URLRequest = new URLRequest(strURL);
 			var urlLoader:URLLoader = new URLLoader(urlRequest);
-			urlLoader.addEventListener(Event.COMPLETE,jobAssignmentCompleated);
+			urlLoader.addEventListener(Event.COMPLETE, jobAssignmentCompleated);
 		}
 		
 		public function jobAssignmentCompleated(event:Event):void{
