@@ -17,7 +17,7 @@
 			
 			private function init():void {
 				// set static instance variable to the instantiated main app.
-				INSTANCE = this;				
+				INSTANCE = this;
 			}
 		]]>
 	</fx:Script>

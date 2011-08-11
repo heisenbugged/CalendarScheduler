@@ -87,8 +87,6 @@
 				mateDispatcher.dispatchEvent(rigsEvent);
 				var clientEvent:ClientEvent = new ClientEvent(ClientEvent.FIND_ALL);
 				mateDispatcher.dispatchEvent(clientEvent);
-				
-				
 			}
 			
 			/** 
@@ -109,8 +107,9 @@
 				this.currentMonthSelected = currentMonth;
 				this.currentYearSelected = currentYear;
 				weekArray = range.weeks;
-				//jobsController.dayRange = range;
-				jobsController.clearJobViews();
+				
+				jobsController.dayRange = range;
+				
 				var jobAssignmentEvent:JobAssignmentEvent = new JobAssignmentEvent(JobAssignmentEvent.FIND_ALL);
 				jobAssignmentEvent.queryDate = new Date(dtPicker.displayedYear, dtPicker.displayedMonth, 1);
 				mateDispatcher.dispatchEvent(jobAssignmentEvent);
@@ -225,7 +224,7 @@
 			public function set jobAssignments(value:ArrayCollection):void
 			{
 				_jobAssignments = value;
-				var jobList:ArrayCollection = new ArrayCollection();
+				var jobList:JobsCollection = jobsController.jobs;
 				var job:Job;				
 				for each (var assignment:Assignment in _jobAssignments ){
 					job = new Job();
@@ -254,7 +253,6 @@
 				var currentYear:int  = dtPicker.displayedYear;
 				var currentMonth:int = dtPicker.displayedMonth;
 				var range:DayRange = DayRange.createFromMonth(currentMonth, currentYear);
-				jobsController.jobs = jobList;
 				this.currentMonthSelected = currentMonth;
 				this.currentYearSelected = currentYear;
 				//weekArray = range.weeks;

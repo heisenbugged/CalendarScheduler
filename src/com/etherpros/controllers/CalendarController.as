@@ -37,15 +37,15 @@ package com.etherpros.controllers
 		// list of job views.
 		private var _jobViews:ArrayCollection;
 		// all job models loaded
-		public var jobs:ArrayCollection;		
-		private var container:CalendarForm
+		public var jobs:JobsCollection;
 		
+		private var container:CalendarForm;		
 		private var jobAssignmentPopup:JobAssignmentPopup = new JobAssignmentPopup();
 		
 		public function CalendarController(container:CalendarForm) {
 			this.container = container;			
 			jobViews = new ArrayCollection();
-			jobs = new ArrayCollection();			
+			jobs = new JobsCollection();
 			// view event listeners
 			container.addEventListener(JobCreationEvent.ADD_NEW_JOB, createJob);
 		}
@@ -199,7 +199,6 @@ package com.etherpros.controllers
 		 * their respective listeners.
 		 */
 		public function clearJobViews():void {			
-			var jobModels:Array = new Array();		
 			for each(var jobView:JobView in jobViews) {									
 				//jobModels.push(jobView.model);
 				
@@ -329,6 +328,10 @@ package com.etherpros.controllers
 		}
 		
 
+		public function addJobs(array:ArrayCollection):void {
+			
+		}
+		
 		// -------------------
 		// Getters and Setters
 		// -------------------		
@@ -352,9 +355,11 @@ package com.etherpros.controllers
 		
 		
 		public function set dayRange(value:DayRange):void {
-			_dayRange = value;			
+			_dayRange = value;
+			
 			// clear all old job views since week range was changed.
-			//clearJobViews();
+			clearJobViews();
+			
 			// re draw jobs based on new day range
 			draw();
 		}
