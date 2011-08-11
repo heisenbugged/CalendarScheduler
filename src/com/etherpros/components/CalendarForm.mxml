@@ -246,6 +246,7 @@
 					job.endDay = new Day();
 					job.startDay.date = assignment.StartDate;
 					job.endDay.date	 = assignment.FinishDate;
+					job.persisted = true;
 					jobList.addItem(job);
 				}
 				
