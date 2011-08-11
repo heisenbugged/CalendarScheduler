@@ -97,13 +97,13 @@ package com.etherpros.controllers
 				PopUpManager.addPopUp(jobAssignmentPopup, _container, true);
 				jobAssignmentPopup.jobModel = model;
 				jobAssignmentPopup.init();
-				jobAssignmentPopup.addEventListener(CloseEvent.CLOSE, onCloseJobAssignmnet);
+				jobAssignmentPopup.addEventListener(CloseEvent.CLOSE, onCloseJobAssignment);
 				PopUpManager.centerPopUp(jobAssignmentPopup);
 				
 			}			
 		}
 		
-		private function onCloseJobAssignmnet(event:CloseEvent):void{
+		private function onCloseJobAssignment(event:CloseEvent):void{
 			var assignment:JobAssignmentPopup = event.currentTarget as JobAssignmentPopup;
 			PopUpManager.removePopUp(assignment);
 			if ( assignment.isValid ){
@@ -195,7 +195,19 @@ package com.etherpros.controllers
 			var y:int = ( pos.y * DAY_HEIGHT) + ( (JOB_HEIGHT + JOB_VERTICAL_PADDING) * getYPosition(job.model.startDay) + 1) + 15;
 			job.position(x, y);
 		}
+		
+		/**
+		 * Simply clears view and repaints it.
+		 */ 
+		public function refresh():void {
+			// clear all old job views since week range was changed.
+			clearJobViews();
 			
+			// re draw jobs based on new day range
+			draw();			
+		}
+		
+		
 		/**
 		 * Removes all JobViews from their stage and destroyes
 		 * their respective listeners.
@@ -328,16 +340,28 @@ package com.etherpros.controllers
 			
 			return jobCounter;
 		}
-		private function refresh():void {
-			// clear all old job views since week range was changed.
-			clearJobViews();
-			
-			// re draw jobs based on new day range
-			draw();			
-		}
 		
 		public function jobsLoaded():void {
 			refresh();
+		}
+		
+		
+		private function getDayByColumnAndRow(column:int, row:int):Day {
+			var week:Week = dayRange.weeks[row];
+			return week.getDayByIndex(column);
+		}
+		
+		private function getRowIndex(y:int):int {
+			return Math.floor(y/CalendarController.DAY_HEIGHT);
+		}
+		
+		private function getColumnIndex(x:int):int {
+			return Math.floor(x/CalendarController.DAY_WIDTH);
+		}		
+		
+		public function setOffset(x:int, y:int):void {
+			xOffset = x;
+			yOffset = y;
 		}
 		
 		// -------------------
@@ -402,24 +426,6 @@ package com.etherpros.controllers
 		
 		public function get container():CalendarForm {
 			return _container;
-		}
-		
-		private function getDayByColumnAndRow(column:int, row:int):Day {
-			var week:Week = dayRange.weeks[row];
-			return week.getDayByIndex(column);
-		}
-		
-		private function getRowIndex(y:int):int {
-			return Math.floor(y/CalendarController.DAY_HEIGHT);
-		}
-		
-		private function getColumnIndex(x:int):int {
-			return Math.floor(x/CalendarController.DAY_WIDTH);
-		}		
-
-		public function setOffset(x:int, y:int):void {
-			xOffset = x;
-			yOffset = y;
 		}
 		
 		public function set dayRange(value:DayRange):void {

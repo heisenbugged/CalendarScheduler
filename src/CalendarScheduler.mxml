@@ -6,23 +6,61 @@
 			   xmlns:maps="com.etherpros.maps.*"
 			   initialize="init()"
 			   minWidth="955" minHeight="600"
-			   backgroundColor="#eeeeee">
+			   backgroundColor="#eeeeee" xmlns:mate="http://mate.asfusion.com/">
 	
 	<fx:Style source="assets/css/main.css" />	
 	
 	<fx:Script>
-		<![CDATA[			
+		<![CDATA[						
+			import com.etherpros.events.NotifyEvent;
+			
+			import spark.effects.easing.Elastic;
+			import spark.effects.easing.Power;
+			import spark.effects.easing.Sine;
+			
 			// Static reference to main application.			
 			public static var INSTANCE:Application;
+			
+			private static const NOTIFY_HEIGHT:int = 25;
+			private var notifyVisible:Boolean = false;
 			
 			private function init():void {
 				// set static instance variable to the instantiated main app.
 				INSTANCE = this;
 			}
+			
+			private function showNotifyBar(event:NotifyEvent):void {
+				notifyLabel.text = event.notification;
+				
+				if(!notifyVisible) {
+					showNotify.play();	
+				}
+				
+				notifyVisible = true;
+			}
+			
+			private function hideNotifyBar(event:NotifyEvent):void {
+				if(notifyVisible) {
+					hideNotify.play();
+				}
+				
+				notifyVisible = false;
+			}
+
 		]]>
 	</fx:Script>
+	
 	<fx:Declarations>
-		<maps:MainEventMap />	
+		<maps:MainEventMap />
+		
+		<s:Move id="showNotify" target="{notifyBar}" duration="400" yBy="{-NOTIFY_HEIGHT}" 
+				easer="{new Power(.1)}" />
+		
+		<s:Move id="hideNotify" target="{notifyBar}" duration="400" yBy="{NOTIFY_HEIGHT}" 
+				easer="{new Power(.1)}" />
+		
+		<mate:Listener type="{NotifyEvent.SHOW}" method="showNotifyBar" />
+		<mate:Listener type="{NotifyEvent.HIDE}" method="hideNotifyBar" />
 	</fx:Declarations>
 	
 	
@@ -35,4 +73,13 @@
 		<s:Label styleName="title" text="Calendar Scheduler" verticalCenter="0" left="10" />
 	</s:SkinnableContainer>
 	
+	<!-- notify at bottom -->
+	<s:Group bottom="0" height="{NOTIFY_HEIGHT}" width="100%">
+		<s:BorderContainer id="notifyBar" height="{NOTIFY_HEIGHT}" width="100%" y="{NOTIFY_HEIGHT}" 
+						   backgroundColor="#edebc5" color="#cccccc">
+			
+			<s:Label id="notifyLabel" x="20" verticalCenter="0" horizontalCenter="0" text="haha" color="black" />
+		</s:BorderContainer>		
+	</s:Group>
+
 </s:Application>

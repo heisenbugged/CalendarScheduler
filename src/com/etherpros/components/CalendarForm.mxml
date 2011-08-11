@@ -78,9 +78,15 @@
 			}
 			
 			private function loadJobs():void {
+				dispatchEvent(new NotifyEvent(NotifyEvent.SHOW, "Loading assignments."));
+				
 				var jobAssignmentEvent:JobAssignmentEvent = new JobAssignmentEvent(JobAssignmentEvent.FIND_ALL);
 				jobAssignmentEvent.queryDate = new Date(dtPicker.displayedYear, dtPicker.displayedMonth, 1);
 				mateDispatcher.dispatchEvent(jobAssignmentEvent);				
+			}
+			
+			private function jobsLoaded(event:Event=null):void {
+				dispatchEvent(new NotifyEvent(NotifyEvent.HIDE));
 			}
 			
 			/** 
@@ -174,6 +180,7 @@
 		<ns:Listener type="{ProjectEvent.FIND_ALL_DONE}" method="projectsLoaded" />
 		<ns:Listener type="{ClientEvent.FIND_ALL_DONE}" method="clientsLoaded" />
 		<ns:Listener type="{ContractorEvent.FIND_ALL_DONE}" method="contractorsLoaded" />
+		<ns:Listener type="{JobAssignmentEvent.FIND_ALL_DONE}" method="jobsLoaded" />
 	</fx:Declarations>
 	
 	<!-- Left Column -->
