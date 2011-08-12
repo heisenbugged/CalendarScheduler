@@ -1,13 +1,26 @@
 package com.etherpros.model
 {
 	[Bindable]
-	public class Client
+	public class Client implements IDataModel
 	{
 		private var _ClientID:String;
 		private var _ClientName:String;
+		private var _persisted:Boolean;
 		
 		public function Client()
 		{
+		}
+
+		public function get persisted():Boolean {
+			return _persisted;
+		}
+		
+		public function set persisted(value:Boolean):void {
+			_persisted = value;
+		}
+		
+		public function get uniqueID():String {
+			return _ClientID;
 		}
 
 		public function get ClientID():String

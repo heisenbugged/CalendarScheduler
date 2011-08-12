@@ -3,14 +3,26 @@ package com.etherpros.model
 	import flash.events.EventDispatcher;
 
 	[Bindable]
-	public class Contractor extends EventDispatcher
+	public class Contractor implements IDataModel
 	{
 		private var _ContractorID:String;
 		private var _FirstName:String;
 		private var _LastName:String;	
 		
-		public function Contractor()
-		{
+		private var _persisted:Boolean;
+		public function Contractor() {
+		}
+		
+		public function get persisted():Boolean {
+			return _persisted;
+		}
+		
+		public function set persisted(value:Boolean):void {
+			_persisted = value;
+		}
+		
+		public function get uniqueID():String {
+			return _ContractorID;
 		}
 		
 		[Bindable]

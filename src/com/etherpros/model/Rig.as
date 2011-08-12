@@ -1,13 +1,23 @@
 package com.etherpros.model
 {
-	public class Rig
+	public class Rig implements IDataModel
 	{
 		private var _RigID:String;
 		private var _RigName:String;
-		public function Rig()
-		{
-		}
+		private var _persisted:Boolean;
 
+		public function get uniqueID():String {
+			return _RigID;
+		}
+		
+		public function get persisted():Boolean {
+			return _persisted;
+		}
+		
+		public function set persisted(value:Boolean):void {
+			_persisted = value;
+		}
+		
 		[Bindable]
 		public function get RigID():String
 		{

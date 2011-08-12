@@ -4,6 +4,7 @@ package com.etherpros.business.loaders
 	import com.etherpros.model.Assignment;
 	import com.etherpros.model.Client;
 	import com.etherpros.model.Contractor;
+	import com.etherpros.model.DataModelCollection;
 	import com.etherpros.model.Job;
 	import com.etherpros.model.Project;
 	import com.etherpros.model.Rig;
@@ -24,7 +25,7 @@ package com.etherpros.business.loaders
 		//public static var URL:String = SERVER + "fmi/xml/fmresultset.xml?-db="+DATABASE+"&-lay="+LAYOUT+"&Site_ID=S1&-new";
 		[Bindable]
 		private var _jobAssignment:Job;
-		private var assignments:ArrayCollection;
+		private var assignments:DataModelCollection;
 		private var isLoaded:Boolean = false;
 		
 		[Bindable]
@@ -46,7 +47,7 @@ package com.etherpros.business.loaders
 		}
 		
 		private function assignmentsLoaded(event:Event):void{
-			assignments = new ArrayCollection();			
+			assignments = new DataModelCollection();			
 			var xml:XML = new XML(event.target.data);			
 			if (xml.namespace("") != undefined) { default xml namespace = xml.namespace(""); }
 			
@@ -119,12 +120,14 @@ package com.etherpros.business.loaders
 		public function createJobAssignment( job:Job ):void{
 			trace(job.rig.RigName);
 			var strURL:String = new String();
+			
 			//New job is saved
-			if ( job.AssignmentID == null || job.AssignmentID <= 0 ){
+			if ( job.AssignmentID == null || job.AssignmentID <= 0) {
 				strURL = URL + "&Contractor_ID="+job.contractor.ContractorID + "&Site_ID=S1" + "&Project_ID="+job.project.ProjectID + "&Client_ID=" +job.client.ClientID;
 				strURL += "&StartDate=" + format(job.startDay.date) + "&FinishDate=" + format(job.endDay.date)+ "&Rig_ID="+ job.rig.RigID ;
 				strURL += "&-new";
-			}else{//Edition option
+			}else{
+				//Edition option
 				var recordId:String = job.AssignmentID.toString().substring(1);
 				strURL = URL + "&-recid="+ recordId  +"&Contractor_ID="+job.contractor.ContractorID + "&Site_ID=S1" + "&Project_ID="+job.project.ProjectID + "&Client_ID=" +job.client.ClientID;
 				strURL += "&StartDate=" + format(job.startDay.date) + "&FinishDate=" + format(job.endDay.date)+ "&Rig_ID="+ job.rig.RigID ;

@@ -3,7 +3,7 @@ package com.etherpros.model
 	/***
 	 * Class used for storing the Job details for repainting a JobView component
  	* */
-	public class Job
+	public class Job implements IDataModel		
 	{
 		private var _startDay:Day;
 		private var _endDay:Day;
@@ -18,17 +18,25 @@ package com.etherpros.model
 		 * Determines whether the startDay/endDay range has changed.
 		 * from its original value in the database.
 		 */ 
-		public var dirty:Boolean;
-		
-		/**
-		 * Determines whether Job exists in database or not.
-		 */
-		public var persisted:Boolean;
+		public var dirty:Boolean;		
+		private var _persisted:Boolean;
 		
 		public function Job()
 		{
 		}
-
+		
+		public function get persisted():Boolean {
+			return _persisted;
+		}
+		
+		public function set persisted(value:Boolean):void {
+			_persisted = value;
+		}
+		
+		public function get uniqueID():String {
+			return _AssignmentID;
+		}
+		
 		public function get startDay():Day
 		{
 			return _startDay;

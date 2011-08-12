@@ -1,6 +1,7 @@
 package com.etherpros.business.loaders
 {
 	import com.etherpros.events.RigEvent;
+	import com.etherpros.model.DataModelCollection;
 	import com.etherpros.model.Rig;
 	
 	import flash.events.Event;
@@ -15,10 +16,9 @@ package com.etherpros.business.loaders
 		public static var LAYOUT:String = "Rigs";
 		public static var URL:String = SERVER + "fmi/xml/fmresultset.xml?-db="+DATABASE+"&-lay="+LAYOUT+"&-findall";
 
-		public var rigs:ArrayCollection;
+		public var rigs:DataModelCollection;
 		private var isLoaded:Boolean = false;
-		[Bindable]
-		private var dispatcher:IEventDispatcher;
+		[Bindable] private var dispatcher:IEventDispatcher;
 		
 		public function RigDAO(dispatcher:IEventDispatcher)
 		{
@@ -33,7 +33,7 @@ package com.etherpros.business.loaders
 		}
 		
 		private function rigsLoaded(event:Event):void{
-			rigs  = new ArrayCollection();			
+			rigs  = new DataModelCollection();			
 			var xml:XML = new XML(event.target.data);			
 			if (xml.namespace("") != undefined) { default xml namespace = xml.namespace(""); }
 			

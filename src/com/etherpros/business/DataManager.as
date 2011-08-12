@@ -6,55 +6,48 @@ package com.etherpros.business {
 	import flash.events.EventDispatcher;
 	import flash.events.IEventDispatcher;
 	
-	import mx.collections.ArrayCollection;
 
 	[Bindable]
 	public class DataManager extends EventDispatcher {
 		private var dispatcher:IEventDispatcher;
 		
-		public var clients:ArrayCollection;
-		public var projects:ArrayCollection;
-		public var rigs:ArrayCollection;
-		public var contractors:ArrayCollection;
-		public var jobs:JobsCollection = new JobsCollection();
+		public var clients:DataModelCollection;
+		public var projects:DataModelCollection;
+		public var rigs:DataModelCollection;
+		public var contractors:DataModelCollection;
+		public var jobs:DataModelCollection = new DataModelCollection();
 		
 		public function DataManager(dispatcher:IEventDispatcher) {
 			this.dispatcher = dispatcher;		
 		}
 		
-		public function loadClients(clients:ArrayCollection):void {
+		public function loadClients(clients:DataModelCollection):void {
 			this.clients = clients;
 		}
 		
-		public function loadProjects(projects:ArrayCollection):void {
+		public function loadProjects(projects:DataModelCollection):void {
 			this.projects = projects;
 		}
 		
-		public function loadRigs(rigs:ArrayCollection):void {
+		public function loadRigs(rigs:DataModelCollection):void {
 			this.rigs = rigs;
 		}
 		
-		public function loadContractors(contractors:ArrayCollection):void {
+		public function loadContractors(contractors:DataModelCollection):void {
 			this.contractors = contractors;
 		}
 		
-		public function loadJobs(assignments:ArrayCollection):void {
+		public function loadJobs(assignments:DataModelCollection):void {
 			for each (var assignment:Assignment in assignments) {
+				trace( (clients.getByID(assignment.Client_ID) as Client).ClientName);
 				var job:Job = new Job();
 				job.AssignmentID 	= assignment.AssignmentID;
-				job.client = new Client();
-				job.project = new Project();
-				job.contractor = new Contractor();
-				job.rig = new Rig();
-				job.client.ClientID 	= assignment.Client_ID;
-				job.client.ClientName 	= assignment.ClientName;
-				job.project.ProjectID 	= assignment.Project_ID;
-				job.project.ProjName	= assignment.ProjectName;
-				job.contractor.ContractorID	= assignment.Contractor_ID;
-				job.contractor.FirstName	= assignment.FirstName;
-				job.contractor.LastName		= assignment.LastName;
-				job.rig.RigID 	= assignment.Rig_ID;
-				job.rig.RigName = assignment.RigName;
+				
+				job.client = clients.getByID(assignment.Client_ID) as Client;
+				job.project = projects.getByID(assignment.Project_ID) as Project;
+				job.contractor = contractors.getByID(assignment.Contractor_ID) as Contractor;
+				job.rig = rigs.getByID(assignment.Rig_ID) as Rig;
+
 				job.startDay = new Day();
 				job.endDay = new Day();
 				job.startDay.date = assignment.StartDate;

@@ -1,8 +1,7 @@
 package com.etherpros.model
 {
-	import flash.events.EventDispatcher;
 
-	public class Project extends EventDispatcher
+	public class Project implements IDataModel
 	{
 		[Bindable]
 		private var _ProjectID:String;
@@ -16,8 +15,22 @@ package com.etherpros.model
 		private var _ProjStatus:String;
 		[Bindable]
 		private var _ClientName:String;
+		private var _persisted:Boolean;
+		
 		public function Project()
 		{
+		}
+		
+		public function get persisted():Boolean {
+			return _persisted;
+		}
+		
+		public function set persisted(value:Boolean):void {
+			_persisted = value;
+		}
+		
+		public function get uniqueID():String {
+			return _ProjectID;
 		}
 		
 		public function get ProjectID():String

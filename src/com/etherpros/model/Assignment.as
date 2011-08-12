@@ -1,7 +1,7 @@
 package com.etherpros.model
 {
 	[Bindable]
-	public class Assignment
+	public class Assignment implements IDataModel
 	{
 		private var _AssignmentID:String;
 		private var _Client_ID:String;
@@ -25,12 +25,25 @@ package com.etherpros.model
 		private var _ConCode:String;		
 		private var _Details:String;
 		private var _CurrDate:Date;
-		
+		private var _persisted:Boolean;
 		
 		public function Assignment()
 		{
 		}
 
+		
+		public function get persisted():Boolean {
+			return _persisted;
+		}
+		
+		public function set persisted(value:Boolean):void {
+			_persisted = value;
+		}
+		
+		public function get uniqueID():String {
+			return _AssignmentID;
+		}
+		
 		public function get AssignmentID():String
 		{
 			return _AssignmentID;

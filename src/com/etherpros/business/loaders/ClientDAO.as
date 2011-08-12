@@ -2,6 +2,7 @@ package com.etherpros.business.loaders
 {
 	import com.etherpros.events.ClientEvent;
 	import com.etherpros.model.Client;
+	import com.etherpros.model.DataModelCollection;
 	
 	import flash.events.Event;
 	import flash.events.IEventDispatcher;
@@ -14,10 +15,8 @@ package com.etherpros.business.loaders
 	{
 		public static var LAYOUT:String = "Clients";
 		public static var URL:String = SERVER + "fmi/xml/fmresultset.xml?-db="+DATABASE+"&-lay="+LAYOUT+"&-findall";
-		[Bindable]
-		public  var clients:ArrayCollection;
-		private var _clientList:ArrayCollection;
-		
+	
+		private var clients:DataModelCollection;		
 		private var isLoaded:Boolean = false;		
 		private var dispatcher:IEventDispatcher;
 		
@@ -33,7 +32,7 @@ package com.etherpros.business.loaders
 		}
 		
 		private function clientsLoaded(event:Event):void{
-			this._clientList  = new ArrayCollection();			
+			clients = new DataModelCollection();			
 			var xml:XML = new XML(event.target.data);			
 			if (xml.namespace("") != undefined) { default xml namespace = xml.namespace(""); }
 			
@@ -47,7 +46,7 @@ package com.etherpros.business.loaders
 						client.ClientName = field.data.toString();
 					}
 				}
-				this._clientList.addItem(client);
+				clients.addItem(client);
 			}
 			isLoaded = true;
 			checkIfFullyLoaded();
@@ -56,9 +55,8 @@ package com.etherpros.business.loaders
 		
 		private function checkIfFullyLoaded():void {
 			if(isLoaded) {
-
 				var clientEvent:ClientEvent = new ClientEvent(ClientEvent.FIND_ALL_DONE,true);
-				clientEvent.clients = _clientList;				
+				clientEvent.clients = clients;
 				dispatcher.dispatchEvent(clientEvent);
 				
 			}

@@ -1,5 +1,6 @@
 package com.etherpros.events
 {
+	import com.etherpros.model.DataModelCollection;
 	import com.etherpros.model.Job;
 	
 	import flash.events.Event;
@@ -13,7 +14,7 @@ package com.etherpros.events
 	{
 		[Bindable]
 		public var job:Job;
-		public var jobs:ArrayCollection;
+		public var jobs:DataModelCollection;
 		
 		[Bindable]
 		public var startDate:Date;

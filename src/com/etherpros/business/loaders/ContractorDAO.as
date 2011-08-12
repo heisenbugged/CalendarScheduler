@@ -3,6 +3,7 @@ package com.etherpros.business.loaders
 	import com.asfusion.mate.events.Dispatcher;
 	import com.etherpros.events.ContractorEvent;
 	import com.etherpros.model.Contractor;
+	import com.etherpros.model.DataModelCollection;
 	
 	import flash.events.Event;
 	import flash.events.IEventDispatcher;
@@ -17,7 +18,7 @@ package com.etherpros.business.loaders
 		public static var URL:String = SERVER + "fmi/xml/fmresultset.xml?-db="+DATABASE+"&-lay="+LAYOUT+"&-findall";	
 		
 		public static var CDN_URL:String =  "";
-		private var contractors:ArrayCollection;
+		private var contractors:DataModelCollection;
 		private var isLoaded:Boolean = false;		
 		private var dispatcher:IEventDispatcher;
 		
@@ -33,7 +34,7 @@ package com.etherpros.business.loaders
 		}
 		
 		private function loadedContractors(event:Event):void {
-			contractors  = new ArrayCollection();
+			contractors  = new DataModelCollection();
 			var contractor:Contractor;
 			var xml:XML = new XML(event.target.data);			
 			if (xml.namespace("") != undefined) { default xml namespace = xml.namespace(""); }			

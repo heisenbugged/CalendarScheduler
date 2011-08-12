@@ -1,6 +1,7 @@
 package com.etherpros.business.loaders
 {
 	import com.etherpros.events.ProjectEvent;
+	import com.etherpros.model.DataModelCollection;
 	import com.etherpros.model.Project;
 	
 	import flash.events.Event;
@@ -14,7 +15,7 @@ package com.etherpros.business.loaders
 	{
 		public static var LAYOUT:String = "Projects";
 		public static var URL:String = SERVER + "fmi/xml/fmresultset.xml?-db="+DATABASE+"&-lay="+LAYOUT+"&-findall";
-		private var projects:ArrayCollection;
+		private var projects:DataModelCollection;
 		private var isLoaded:Boolean = false;
 		[Bindable]
 		private var dispatcher:IEventDispatcher;
@@ -31,7 +32,7 @@ package com.etherpros.business.loaders
 		}
 		
 		private function projectsLoaded(event:Event):void{
-			projects  = new ArrayCollection();			
+			projects  = new DataModelCollection();			
 			var xml:XML = new XML(event.target.data);			
 			if (xml.namespace("") != undefined) { default xml namespace = xml.namespace(""); }
 			

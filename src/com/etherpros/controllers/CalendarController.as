@@ -40,11 +40,11 @@ package com.etherpros.controllers
 		// day range being viewed on the calendar.
 		private var _dayRange:DayRange;
 		
-		[Bindable] private var _contractors:ArrayCollection;			
-		[Bindable] private var _clients:ArrayCollection;		
-		[Bindable] private var _rigs:ArrayCollection;		
-		[Bindable] private var _projects:ArrayCollection;
-		[Bindable] private var _jobs:JobsCollection;
+		[Bindable] private var _contractors:DataModelCollection;			
+		[Bindable] private var _clients:DataModelCollection;		
+		[Bindable] private var _rigs:DataModelCollection;		
+		[Bindable] private var _projects:DataModelCollection;
+		[Bindable] private var _jobs:DataModelCollection;
 		
 		// list of job views.
 		private var _jobViews:ArrayCollection;		
@@ -374,48 +374,48 @@ package com.etherpros.controllers
 		// Getters and Setters
 		// -------------------
 		[Bindable]
-		public function set jobs(value:JobsCollection):void {
+		public function set jobs(value:DataModelCollection):void {
 			_jobs = value;	
 		}
 		
-		public function get jobs():JobsCollection {
+		public function get jobs():DataModelCollection {
 			return _jobs;
 		}
 		
 		[Bindable]
-		public function set contractors(value:ArrayCollection):void {
+		public function set contractors(value:DataModelCollection):void {
 			_contractors = value;
 		}
 		
-		public function get contractors():ArrayCollection { 
+		public function get contractors():DataModelCollection { 
 			return _contractors;
 		}
 		
 		[Bindable]
-		public function get clients():ArrayCollection { 
+		public function get clients():DataModelCollection { 
 			return _clients; 
 		}
 		
-		public function set clients(value:ArrayCollection):void {				
+		public function set clients(value:DataModelCollection):void {				
 			_clients = value;
 			container.clientsList.selectedIndex = 0;
 		}
 		
 		[Bindable]
-		public function get rigs():ArrayCollection {
+		public function get rigs():DataModelCollection {
 			return _rigs;
 		}
 		
-		public function set rigs(value:ArrayCollection):void {
+		public function set rigs(value:DataModelCollection):void {
 			_rigs = value;
 		}
 		
 		[Bindable]
-		public function get projects():ArrayCollection {
+		public function get projects():DataModelCollection {
 			return _projects;
 		}
 		
-		public function set projects(value:ArrayCollection):void {
+		public function set projects(value:DataModelCollection):void {
 			_projects = value;
 			container.projectsList.selectedIndex = 0;
 		}
