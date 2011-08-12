@@ -81,7 +81,10 @@
 				dispatchEvent(new NotifyEvent(NotifyEvent.SHOW, "Loading assignments."));
 				
 				var jobAssignmentEvent:JobAssignmentEvent = new JobAssignmentEvent(JobAssignmentEvent.FIND_ALL);
-				jobAssignmentEvent.queryDate = new Date(dtPicker.displayedYear, dtPicker.displayedMonth, 1);
+				
+				jobAssignmentEvent.startDate = controller.dayRange.startDay.date;
+				jobAssignmentEvent.endDate = controller.dayRange.endDay.date;
+				
 				mateDispatcher.dispatchEvent(jobAssignmentEvent);				
 			}
 			

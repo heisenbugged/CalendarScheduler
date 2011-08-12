@@ -11,7 +11,7 @@ package com.etherpros.model
 				
 				// if the job with this ID doesn't exist yet
 				// in our collection
-				if(ids[job.AssignmentID] != true) {
+				if(ids[job.AssignmentID] != true || !job.persisted) {
 					super.addItem(item);
 					ids[job.AssignmentID] = true;
 				}			

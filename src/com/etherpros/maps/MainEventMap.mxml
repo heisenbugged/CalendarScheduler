@@ -69,7 +69,7 @@
 		
 		<!-- Jobs loading. -->
 		<EventHandlers type="{JobAssignmentEvent.FIND_ALL}">
-			<MethodInvoker generator="{ JobAssignmentDAO }" method="findAll"  arguments="{[event.queryDate]}" />
+			<MethodInvoker generator="{ JobAssignmentDAO }" method="findAll"  arguments="{[event.startDate, event.endDate]}" />
 		</EventHandlers>
 		<EventHandlers type="{JobAssignmentEvent.FIND_ALL_DONE}">
 			<MethodInvoker generator="{DataManager}" method="loadJobs" arguments="{event.jobs}" /> 

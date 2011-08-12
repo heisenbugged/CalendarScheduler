@@ -33,6 +33,7 @@
 				notifyLabel.text = event.notification;
 				
 				if(!notifyVisible) {
+					notifyBar.y = NOTIFY_HEIGHT;
 					showNotify.play();	
 				}
 				
@@ -41,6 +42,7 @@
 			
 			private function hideNotifyBar(event:NotifyEvent):void {
 				if(notifyVisible) {
+					notifyBar.y = 0;
 					hideNotify.play();
 				}
 				

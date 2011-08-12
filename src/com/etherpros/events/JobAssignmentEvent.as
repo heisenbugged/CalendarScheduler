@@ -16,7 +16,9 @@ package com.etherpros.events
 		public var jobs:ArrayCollection;
 		
 		[Bindable]
-		public var queryDate:Date;
+		public var startDate:Date;
+		
+		public var endDate:Date;
 		
 		public static const JOB_ASSIGNMENT_SAVE:String = 'jobAssignmentSaveEvent';
 		// FIND_ALL_DONE is dispatched when assignment models are loaded from the database.

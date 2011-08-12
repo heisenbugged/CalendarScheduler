@@ -316,6 +316,12 @@ package com.etherpros.controllers
 		 */		
 		private function getYPosition( day:Day, job:Job=null):int {
 			var dayPosition:Point = dayRange.getDateRowAndColumn(day.date);
+			// if position is outside viewable range
+			// use 0, 0
+			if(dayPosition == null) {
+				dayPosition = new Point();
+			}
+			
 			var dayTime:Number = day.date.getTime();			
 			var jobCounter:int = 0;
 			
