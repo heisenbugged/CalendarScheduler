@@ -119,12 +119,14 @@ package com.etherpros.business.loaders
 		public function createJobAssignment( job:Job ):void{
 			trace(job.rig.RigName);
 			var strURL:String = new String();
+			//New job is saved
 			if ( job.AssignmentID == null || job.AssignmentID <= 0 ){
 				strURL = URL + "&Contractor_ID="+job.contractor.ContractorID + "&Site_ID=S1" + "&Project_ID="+job.project.ProjectID + "&Client_ID=" +job.client.ClientID;
 				strURL += "&StartDate=" + format(job.startDay.date) + "&FinishDate=" + format(job.endDay.date)+ "&Rig_ID="+ job.rig.RigID ;
 				strURL += "&-new";
-			}else{
-				strURL = URL + "&-recid="+ job.AssignmentID  +"&Contractor_ID="+job.contractor.ContractorID + "&Site_ID=S1" + "&Project_ID="+job.project.ProjectID + "&Client_ID=" +job.client.ClientID;
+			}else{//Edition option
+				var recordId:String = job.AssignmentID.toString().substring(1);
+				strURL = URL + "&-recid="+ recordId  +"&Contractor_ID="+job.contractor.ContractorID + "&Site_ID=S1" + "&Project_ID="+job.project.ProjectID + "&Client_ID=" +job.client.ClientID;
 				strURL += "&StartDate=" + format(job.startDay.date) + "&FinishDate=" + format(job.endDay.date)+ "&Rig_ID="+ job.rig.RigID ;
 				strURL += "&-edit";
 			}
