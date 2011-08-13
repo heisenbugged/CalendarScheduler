@@ -1,7 +1,9 @@
-package com.etherpros.model
-{
+package com.etherpros.model {
+	import com.etherpros.model.data.DataModel;	
+	import flash.events.EventDispatcher;
+
 	[Bindable]
-	public class Assignment implements IDataModel
+	public class Assignment extends DataModel
 	{
 		private var _AssignmentID:String;
 		private var _Client_ID:String;
@@ -25,23 +27,19 @@ package com.etherpros.model
 		private var _ConCode:String;		
 		private var _Details:String;
 		private var _CurrDate:Date;
-		private var _persisted:Boolean;
 		
-		public function Assignment()
-		{
+		public function Assignment() {
+			// pass abstract check
+			super(this);
 		}
 
 		
-		public function get persisted():Boolean {
-			return _persisted;
-		}
-		
-		public function set persisted(value:Boolean):void {
-			_persisted = value;
-		}
-		
-		public function get uniqueID():String {
+		override public function get uniqueID():String {
 			return _AssignmentID;
+		}
+		
+		override public function set uniqueID(value:String):void {
+			_AssignmentID = value;
 		}
 		
 		public function get AssignmentID():String

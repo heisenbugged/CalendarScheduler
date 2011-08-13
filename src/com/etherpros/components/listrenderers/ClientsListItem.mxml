@@ -5,7 +5,7 @@
 				autoDrawBackground="true" height="28">
 	<fx:Script>
 		<![CDATA[
-			import com.etherpros.model.Client;
+			import com.etherpros.model.data.Client;
 		]]>
 	</fx:Script>
 	

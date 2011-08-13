@@ -17,6 +17,7 @@
 			import com.etherpros.controllers.PopupsController;
 			import com.etherpros.events.*;
 			import com.etherpros.model.*;
+			import com.etherpros.model.data.*;
 			
 			import mx.collections.ArrayCollection;
 			import mx.events.CalendarLayoutChangeEvent;

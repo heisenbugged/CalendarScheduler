@@ -2,7 +2,7 @@ package com.etherpros.business.loaders
 {
 	import com.etherpros.events.ProjectEvent;
 	import com.etherpros.model.DataModelCollection;
-	import com.etherpros.model.Project;
+	import com.etherpros.model.data.Project;
 	
 	import flash.events.Event;
 	import flash.events.IEventDispatcher;

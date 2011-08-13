@@ -2,7 +2,7 @@ package com.etherpros.business.loaders
 {
 	import com.asfusion.mate.events.Dispatcher;
 	import com.etherpros.events.ContractorEvent;
-	import com.etherpros.model.Contractor;
+	import com.etherpros.model.data.Contractor;
 	import com.etherpros.model.DataModelCollection;
 	
 	import flash.events.Event;

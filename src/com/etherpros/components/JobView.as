@@ -3,6 +3,7 @@ package com.etherpros.components
 	import com.etherpros.controllers.*;
 	import com.etherpros.events.JobEvent;
 	import com.etherpros.model.*;
+	import com.etherpros.model.data.*;
 	
 	import flash.display.*;
 	import flash.events.*;

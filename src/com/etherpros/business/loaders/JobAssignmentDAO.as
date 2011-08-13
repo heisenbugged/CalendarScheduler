@@ -2,12 +2,13 @@ package com.etherpros.business.loaders
 {
 	import com.etherpros.events.JobAssignmentEvent;
 	import com.etherpros.model.Assignment;
-	import com.etherpros.model.Client;
-	import com.etherpros.model.Contractor;
+	import com.etherpros.model.data.Client;
+	import com.etherpros.model.data.Contractor;
 	import com.etherpros.model.DataModelCollection;
-	import com.etherpros.model.Job;
-	import com.etherpros.model.Project;
-	import com.etherpros.model.Rig;
+	import com.etherpros.model.data.Job;
+	import com.etherpros.model.data.Project;
+	import com.etherpros.model.data.Rig;
+	import com.etherpros.model.URLDataModelLoader;
 	
 	import flash.events.Event;
 	import flash.events.IEventDispatcher;
@@ -118,7 +119,6 @@ package com.etherpros.business.loaders
 		}	
 		
 		public function createJobAssignment( job:Job ):void{
-			trace(job.rig.RigName);
 			var strURL:String = new String();
 			
 			//New job is saved
@@ -134,11 +134,26 @@ package com.etherpros.business.loaders
 				strURL += "&-edit";
 			}
 			var urlRequest:URLRequest = new URLRequest(strURL);
-			var urlLoader:URLLoader = new URLLoader(urlRequest);
-			urlLoader.addEventListener(Event.COMPLETE, jobAssignmentCompleated);
+			var urlLoader:URLDataModelLoader = new URLDataModelLoader(urlRequest);
+			urlLoader.model = job;
+			urlLoader.addEventListener(Event.COMPLETE, jobAssignmentCompleted);
 		}
 		
-		public function jobAssignmentCompleated(event:Event):void{
+		public function jobAssignmentCompleted(event:Event):void {
+			var loader:URLDataModelLoader = event.target as URLDataModelLoader;
+			var xml:XML = new XML(event.target.data);
+			
+			if (xml.namespace("") != undefined) { default xml namespace = xml.namespace(""); }			
+			for each(var result:XML in xml.resultset.record) {
+				for each(var field:XML in result.field) {
+					if(field.@name == "AssignmentID") {
+						loader.model.uniqueID = field.data.toString(); 
+						loader.model.persisted = true;
+					}
+				}
+			}	
+ 			default xml namespace = new Namespace("");
+			
 			trace(event.toString());
 		}
 	}

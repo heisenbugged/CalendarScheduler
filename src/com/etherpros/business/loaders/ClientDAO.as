@@ -1,7 +1,7 @@
 package com.etherpros.business.loaders
 {
 	import com.etherpros.events.ClientEvent;
-	import com.etherpros.model.Client;
+	import com.etherpros.model.data.Client;
 	import com.etherpros.model.DataModelCollection;
 	
 	import flash.events.Event;

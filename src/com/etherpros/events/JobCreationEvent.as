@@ -1,7 +1,7 @@
 package com.etherpros.events
 {
 	import com.etherpros.components.JobView;
-	import com.etherpros.model.Contractor;
+	import com.etherpros.model.data.Contractor;
 	import com.etherpros.model.Day;
 	
 	import flash.events.Event;

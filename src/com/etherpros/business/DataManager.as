@@ -1,6 +1,7 @@
 package com.etherpros.business {
 	import com.etherpros.events.JobAssignmentEvent;
 	import com.etherpros.model.*;
+	import com.etherpros.model.data.*;
 	
 	import flash.events.Event;
 	import flash.events.EventDispatcher;

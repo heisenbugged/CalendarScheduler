@@ -5,7 +5,7 @@
 				autoDrawBackground="true" height="28">
 	<fx:Script>
 		<![CDATA[
-			import com.etherpros.model.Contractor;
+			import com.etherpros.model.data.Contractor;
 		]]>
 	</fx:Script>
 	

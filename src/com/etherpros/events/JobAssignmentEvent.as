@@ -1,7 +1,7 @@
 package com.etherpros.events
 {
 	import com.etherpros.model.DataModelCollection;
-	import com.etherpros.model.Job;
+	import com.etherpros.model.data.Job;
 	
 	import flash.events.Event;
 	

@@ -13,10 +13,10 @@
 			import com.etherpros.events.ClientEvent;
 			import com.etherpros.events.ProjectEvent;
 			import com.etherpros.events.RigEvent;
-			import com.etherpros.model.Client;
-			import com.etherpros.model.Job;
-			import com.etherpros.model.Project;
-			import com.etherpros.model.Rig;
+			import com.etherpros.model.data.Client;
+			import com.etherpros.model.data.Job;
+			import com.etherpros.model.data.Project;
+			import com.etherpros.model.data.Rig;
 			
 			import mx.collections.ArrayCollection;
 			import mx.controls.Alert;

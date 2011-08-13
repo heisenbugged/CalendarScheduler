@@ -2,7 +2,7 @@ package com.etherpros.business.loaders
 {
 	import com.etherpros.events.RigEvent;
 	import com.etherpros.model.DataModelCollection;
-	import com.etherpros.model.Rig;
+	import com.etherpros.model.data.Rig;
 	
 	import flash.events.Event;
 	import flash.events.IEventDispatcher;
