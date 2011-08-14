@@ -1,7 +1,9 @@
 package com.etherpros.events
 {
 	import com.etherpros.model.DataModelCollection;
+	import com.etherpros.model.data.Client;
 	import com.etherpros.model.data.Job;
+	import com.etherpros.model.data.Project;
 	
 	import flash.events.Event;
 	
@@ -25,10 +27,13 @@ package com.etherpros.events
 		// FIND_ALL_DONE is dispatched when assignment models are loaded from the database.
 		public static const FIND_ALL_DONE:String = 'findAllDoneAssignmentEvent';
 		public static const FIND_ALL:String = 'findAllAssignmentEvent';
+		public static const FIND_BY_PROJECT:String = 'findByProjectEvent';
 		
 		// JOBS_LOADED is dispatched when all the assignments have been converted into
 		// jobs and the cache inside DataManager has been refreshed.
 		public static const JOBS_LOADED:String = "jobsLoadedAssignmentEvent";
+		
+		public var project:Project;//Selected project
 		
 		public function JobAssignmentEvent(type:String, bubbles:Boolean=false, cancelable:Boolean=false)
 		{

@@ -7,9 +7,11 @@ package com.etherpros.controllers
 	import com.etherpros.events.JobAssignmentEvent;
 	import com.etherpros.events.JobCreationEvent;
 	import com.etherpros.events.JobEvent;
+	import com.etherpros.events.ProjectEvent;
 	import com.etherpros.model.*;
 	import com.etherpros.model.data.*;
 	
+	import flash.events.Event;
 	import flash.geom.Point;
 	
 	import mx.collections.ArrayCollection;
@@ -18,7 +20,10 @@ package com.etherpros.controllers
 	import mx.core.IVisualElementContainer;
 	import mx.core.UIComponent;
 	import mx.events.CloseEvent;
+	import mx.events.IndexChangedEvent;
 	import mx.managers.PopUpManager;
+	
+	import org.flexunit.internals.matchers.Each;
 	
 	import spark.components.Group;
 	import spark.components.TitleWindow;
@@ -399,7 +404,42 @@ package com.etherpros.controllers
 		
 		public function set clients(value:DataModelCollection):void {				
 			_clients = value;
+			container.clientsList.dataProvider = this._clients;
 			container.clientsList.selectedIndex = 0;
+			updateProjectList();
+		}
+		
+		public function updateProjectList():void{
+			if ( container.clientsList.selectedItem == null ) {
+				return;
+			}
+			var selectedClient:Client = container.clientsList.selectedItem as Client;
+			container.projectsList.dataProvider = getProjectsByClient( selectedClient.ClientID );
+			container.projectsList.selectedIndex = 0;
+			updateDisplayedJobs();
+		}
+		
+		public function updateDisplayedJobs():void{
+			if ( container.projectsList.selectedItem == null ){
+				return;
+			}
+			var jobAssignmentEvent:JobAssignmentEvent = new JobAssignmentEvent( JobAssignmentEvent.FIND_BY_PROJECT );			
+			jobAssignmentEvent.startDate = this.dayRange.startDay.date;
+			jobAssignmentEvent.endDate = this.dayRange.endDay.date;
+			
+			var selectedProject:Project = container.projectsList.selectedItem as Project;
+			jobAssignmentEvent.project = selectedProject;
+			container.mateDispatcher.dispatchEvent(jobAssignmentEvent);	
+		}
+		
+		public function getProjectsByClient( clientId:String ):ArrayCollection{
+			var projectsByClient:ArrayCollection = new ArrayCollection;
+			for each(var project:Project in projects  ){
+				if ( project.ClientID == clientId ){
+					projectsByClient.addItem( project );					
+				}
+			}
+			return projectsByClient;
 		}
 		
 		[Bindable]

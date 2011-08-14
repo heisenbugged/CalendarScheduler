@@ -2,13 +2,13 @@ package com.etherpros.business.loaders
 {
 	import com.etherpros.events.JobAssignmentEvent;
 	import com.etherpros.model.Assignment;
+	import com.etherpros.model.DataModelCollection;
+	import com.etherpros.model.URLDataModelLoader;
 	import com.etherpros.model.data.Client;
 	import com.etherpros.model.data.Contractor;
-	import com.etherpros.model.DataModelCollection;
 	import com.etherpros.model.data.Job;
 	import com.etherpros.model.data.Project;
 	import com.etherpros.model.data.Rig;
-	import com.etherpros.model.URLDataModelLoader;
 	
 	import flash.events.Event;
 	import flash.events.IEventDispatcher;
@@ -37,7 +37,17 @@ package com.etherpros.business.loaders
 			this.dispatcher = dispatcher;
 		}
 		
-		public function findAll(startDate:Date, endDate:Date):void{
+		public function finByProject( project:Project, startDate:Date, endDate:Date ):void{
+			var strURL:String = URL +  "&Project_ID=" + project.ProjectID 
+				+ " &StartDate=" + ( startDate.month + 1) + "/" + startDate.date + "/" + startDate.fullYear	+ "&StartDate.op=gte&-find";
+			
+			strURL += "&FinishDate="+ ( endDate.month + 1)  + "/" + endDate.date + "/" + endDate.fullYear + "&FinishDate.op=lte&-find";
+			var urlRequest:URLRequest = new URLRequest(strURL);
+			var urlLoader:URLLoader = new URLLoader(urlRequest);
+			urlLoader.addEventListener(Event.COMPLETE,assignmentsLoaded);
+		}
+		
+		public function findAll( startDate:Date, endDate:Date ):void{
 			var strURL:String = URL +  "&StartDate=" + ( startDate.month + 1) + "/" + startDate.date + "/" + startDate.fullYear
 								+ "&StartDate.op=gte&-find";
 			

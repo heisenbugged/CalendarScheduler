@@ -71,6 +71,9 @@
 		<EventHandlers type="{JobAssignmentEvent.FIND_ALL}">
 			<MethodInvoker generator="{ JobAssignmentDAO }" method="findAll"  arguments="{[event.startDate, event.endDate]}" />
 		</EventHandlers>
+		<EventHandlers type="{JobAssignmentEvent.FIND_BY_PROJECT}">
+			<MethodInvoker generator="{ JobAssignmentDAO }" method="finByProject"  arguments="{[event.project, event.startDate, event.endDate]}" />
+		</EventHandlers>
 		<EventHandlers type="{JobAssignmentEvent.FIND_ALL_DONE}">
 			<MethodInvoker generator="{DataManager}" method="loadJobs" arguments="{event.jobs}" /> 
 		</EventHandlers>			
