@@ -64,12 +64,17 @@ package com.etherpros.controllers
 			container.projectsList.addEventListener(IndexChangeEvent.CHANGE, selectedProjectChanged);
 		}
 		
-		
+		/**
+		 * Updates active project list based on client selected.
+		 */ 		
 		public function updateProjectList():void {
 			if(selectedClient) {
 				container.projectsList.dataProvider = getProjectsByClient(selectedClient.ClientID);
 				container.projectsList.selectedIndex = 0;
 				
+				// If the project list is greater than zero and since the first
+				// item on the list is selected, set the selectedProject variable to
+				// the newly selected project.
 				if(container.projectsList.dataProvider.length > 0) {
 					selectedProject = container.projectsList.selectedItem;
 				}
@@ -101,7 +106,9 @@ package com.etherpros.controllers
 			}
 		}
 		
-		
+		/**
+		 * Loads Jobs based on selectedProject and selected dayRange
+		 */
 		public function loadProjectJobs():void {			
 			new Dispatcher().dispatchEvent(new NotifyEvent(NotifyEvent.SHOW, "Loading assignments."));	
 			
