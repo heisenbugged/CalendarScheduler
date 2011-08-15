@@ -38,7 +38,7 @@ package com.etherpros.business.loaders
 		}
 		
 		public function finByProject( project:Project, startDate:Date, endDate:Date ):void{
-			var strURL:String = URL +  "&Project_ID=" + project.ProjectID 
+			var strURL:String = URL +  "&Project_ID==" + project.ProjectID 
 				+ " &StartDate=" + ( startDate.month + 1) + "/" + startDate.date + "/" + startDate.fullYear	+ "&StartDate.op=gte&-find";
 			
 			strURL += "&FinishDate="+ ( endDate.month + 1)  + "/" + endDate.date + "/" + endDate.fullYear + "&FinishDate.op=lte&-find";

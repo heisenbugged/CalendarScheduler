@@ -4,10 +4,7 @@ package com.etherpros.controllers
 	import com.asfusion.mate.events.Listener;
 	import com.etherpros.components.*;
 	import com.etherpros.components.popups.JobAssignmentPopup;
-	import com.etherpros.events.JobAssignmentEvent;
-	import com.etherpros.events.JobCreationEvent;
-	import com.etherpros.events.JobEvent;
-	import com.etherpros.events.ProjectEvent;
+	import com.etherpros.events.*;
 	import com.etherpros.model.*;
 	import com.etherpros.model.data.*;
 	
@@ -15,10 +12,7 @@ package com.etherpros.controllers
 	import flash.geom.Point;
 	
 	import mx.collections.ArrayCollection;
-	import mx.core.IContainer;
-	import mx.core.IVisualElement;
-	import mx.core.IVisualElementContainer;
-	import mx.core.UIComponent;
+	import mx.core.*;
 	import mx.events.CloseEvent;
 	import mx.events.IndexChangedEvent;
 	import mx.managers.PopUpManager;
@@ -27,6 +21,7 @@ package com.etherpros.controllers
 	
 	import spark.components.Group;
 	import spark.components.TitleWindow;
+	import spark.events.IndexChangeEvent;
 
 	public class CalendarController
 	{
@@ -36,7 +31,7 @@ package com.etherpros.controllers
 		public static var CALENDAR_WIDTH:int;
 		public static var CALENDAR_HEIGHT:int;
 		public static const JOB_VERTICAL_PADDING:int = 5;	
-		
+				
 		public var xOffset:int;
 		public var yOffset:int;
 		
@@ -53,13 +48,79 @@ package com.etherpros.controllers
 		[Bindable] private var _jobs:DataModelCollection;
 		
 		// list of job views.
-		private var _jobViews:ArrayCollection;		
+		private var _jobViews:ArrayCollection;
+
+		public var selectedClient:Client;
+		public var selectedProject:Project;
 				
 		public function CalendarController(container:CalendarForm = null) {
 			this.container = container;			
 			jobViews = new ArrayCollection();
 		}
 		
+		private function createViewEventListeners():void {
+			container.addEventListener(JobCreationEvent.ADD_NEW_JOB, createJob);
+			container.clientsList.addEventListener(IndexChangeEvent.CHANGE, selectedClientChanged);
+			container.projectsList.addEventListener(IndexChangeEvent.CHANGE, selectedProjectChanged);
+		}
+		
+		
+		public function updateProjectList():void {
+			if(selectedClient) {
+				container.projectsList.dataProvider = getProjectsByClient(selectedClient.ClientID);
+				container.projectsList.selectedIndex = 0;
+				
+				if(container.projectsList.dataProvider.length > 0) {
+					selectedProject = container.projectsList.selectedItem;
+				}
+				
+			}
+		}
+		
+		private function selectedClientChanged(event:Event = null):void {			
+			selectedClient = container.clientsList.selectedItem;
+			// update projects list since clients have changed.
+			updateProjectList();
+			
+			// simulate selected project changed event.
+			// when a client list has changed, the entire project list
+			// displayed changes and the first element is selected,
+			// so a new project is ALWAYS selected.
+			selectedProjectChanged();
+		}
+		
+		private function selectedProjectChanged(event:Event = null):void {
+			// if there are any projects.
+			if(container.projectsList.dataProvider.length > 0) {
+				selectedProject = container.projectsList.selectedItem;
+				
+				// load new jobs for project from the database!
+				loadProjectJobs();				
+			} else {
+				selectedProject = null;
+			}
+		}
+		
+		
+		public function loadProjectJobs():void {			
+			new Dispatcher().dispatchEvent(new NotifyEvent(NotifyEvent.SHOW, "Loading assignments."));	
+			
+			// only load jobs if there is a selected project.
+			if(selectedProject) {				
+				var jobAssignmentEvent:JobAssignmentEvent = new JobAssignmentEvent( JobAssignmentEvent.FIND_BY_PROJECT );			
+				jobAssignmentEvent.startDate = this.dayRange.startDay.date;
+				jobAssignmentEvent.endDate = this.dayRange.endDay.date;
+				jobAssignmentEvent.project = selectedProject;
+				
+				container.mateDispatcher.dispatchEvent(jobAssignmentEvent);
+			}
+		}		
+				
+		public function jobsLoaded():void {
+			new Dispatcher().dispatchEvent(new NotifyEvent(NotifyEvent.HIDE));
+			refresh();
+		}
+				
 		public static function setCalendarDimensions(width:int, height:int):void {
 			CALENDAR_WIDTH = width;
 			DAY_WIDTH = CALENDAR_WIDTH/7; //7 columns, one per day of week.
@@ -353,11 +414,6 @@ package com.etherpros.controllers
 			return jobCounter;
 		}
 		
-		public function jobsLoaded():void {
-			refresh();
-		}
-		
-		
 		private function getDayByColumnAndRow(column:int, row:int):Day {
 			var week:Week = dayRange.weeks[row];
 			return week.getDayByIndex(column);
@@ -375,6 +431,17 @@ package com.etherpros.controllers
 			xOffset = x;
 			yOffset = y;
 		}
+		
+		
+		public function getProjectsByClient( clientId:String ):ArrayCollection{
+			var projectsByClient:ArrayCollection = new ArrayCollection;
+			for each(var project:Project in projects  ){
+				if ( project.ClientID == clientId ){
+					projectsByClient.addItem( project );					
+				}
+			}
+			return projectsByClient;
+		}		
 		
 		// -------------------
 		// Getters and Setters
@@ -404,43 +471,18 @@ package com.etherpros.controllers
 		
 		public function set clients(value:DataModelCollection):void {				
 			_clients = value;
+			
+			// set view data provider.
 			container.clientsList.dataProvider = this._clients;
 			container.clientsList.selectedIndex = 0;
-			updateProjectList();
-		}
-		
-		public function updateProjectList():void{
-			if ( container.clientsList.selectedItem == null ) {
-				return;
-			}
-			var selectedClient:Client = container.clientsList.selectedItem as Client;
-			container.projectsList.dataProvider = getProjectsByClient( selectedClient.ClientID );
-			container.projectsList.selectedIndex = 0;
-			updateDisplayedJobs();
-		}
-		
-		public function updateDisplayedJobs():void{
-			if ( container.projectsList.selectedItem == null ){
-				return;
-			}
-			var jobAssignmentEvent:JobAssignmentEvent = new JobAssignmentEvent( JobAssignmentEvent.FIND_BY_PROJECT );			
-			jobAssignmentEvent.startDate = this.dayRange.startDay.date;
-			jobAssignmentEvent.endDate = this.dayRange.endDay.date;
+			selectedClient = container.clientsList.selectedItem;
 			
-			var selectedProject:Project = container.projectsList.selectedItem as Project;
-			jobAssignmentEvent.project = selectedProject;
-			container.mateDispatcher.dispatchEvent(jobAssignmentEvent);	
+			// only update project list if projects exist.
+			if(projects && projects.length > 0) {
+				updateProjectList();
+			}
 		}
 		
-		public function getProjectsByClient( clientId:String ):ArrayCollection{
-			var projectsByClient:ArrayCollection = new ArrayCollection;
-			for each(var project:Project in projects  ){
-				if ( project.ClientID == clientId ){
-					projectsByClient.addItem( project );					
-				}
-			}
-			return projectsByClient;
-		}
 		
 		[Bindable]
 		public function get rigs():DataModelCollection {
@@ -459,6 +501,11 @@ package com.etherpros.controllers
 		public function set projects(value:DataModelCollection):void {
 			_projects = value;
 			container.projectsList.selectedIndex = 0;
+			
+			// only update project list if clients exist
+			if(clients && clients.length > 0) {
+				updateProjectList();
+			}
 		}
 		
 		
@@ -467,7 +514,7 @@ package com.etherpros.controllers
 			
 			// view event listeners
 			if(container) {
-				container.addEventListener(JobCreationEvent.ADD_NEW_JOB, createJob);
+				createViewEventListeners();				
 			}			
 		}
 		

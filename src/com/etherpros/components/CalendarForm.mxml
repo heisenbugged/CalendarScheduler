@@ -79,14 +79,6 @@
 				mateDispatcher.dispatchEvent(clientEvent);
 			}
 			
-			private function loadJobs():void {
-				dispatchEvent(new NotifyEvent(NotifyEvent.SHOW, "Loading assignments."));			
-			}
-			
-			private function jobsLoaded(event:Event=null):void {
-				dispatchEvent(new NotifyEvent(NotifyEvent.HIDE));
-			}
-			
 			/** 
 			 * Create grid of days in current month as per current date provided. 
 			 */
@@ -111,7 +103,7 @@
 			protected function dtPicker_clickHandler(event:MouseEvent):void {
 				if ( currentMonthSelected != dtPicker.displayedMonth ||  currentYearSelected != dtPicker.displayedYear ){
 					createDaysGrid();
-					loadJobs();
+					controller.loadProjectJobs();
 				}			
 			}
 			
@@ -154,7 +146,7 @@
 					popupsController.hideLoading();
 					
 					// load jobs.
-					loadJobs();
+					controller.loadProjectJobs();
 				}
 			}
 			
@@ -170,15 +162,6 @@
 				_controller = controller;
 			}			
 			
-			protected function selectedClientChanged(event:IndexChangeEvent):void
-			{
-				this.controller.updateProjectList();				
-			}
-			
-			protected function selectedProjectChanged(event:IndexChangeEvent):void
-			{
-				this.controller.updateDisplayedJobs();			
-			}
 			
 		]]>
 	</fx:Script>
@@ -189,7 +172,6 @@
 		<ns:Listener type="{ProjectEvent.FIND_ALL_DONE}" method="projectsLoaded" />
 		<ns:Listener type="{ClientEvent.FIND_ALL_DONE}" method="clientsLoaded" />
 		<ns:Listener type="{ContractorEvent.FIND_ALL_DONE}" method="contractorsLoaded" />
-		<ns:Listener type="{JobAssignmentEvent.FIND_ALL_DONE}" method="jobsLoaded" />
 	</fx:Declarations>
 	
 	<!-- Left Column -->
@@ -197,7 +179,7 @@
 		<components:TitleBox label="Clients" />
 		<s:List id="clientsList" width="100%" height="200"
 				itemRenderer="com.etherpros.components.listrenderers.ClientsListItem"
-				skinClass="skins.DriversList" change="selectedClientChanged(event)"/>
+				skinClass="skins.DriversList" />
 
 		
 		<s:Spacer height="5" />
@@ -205,7 +187,7 @@
 		<components:TitleBox label="Projects" />
 		<s:List id="projectsList" width="100%" height="200" 
 				itemRenderer="com.etherpros.components.listrenderers.ProjectsListItem"
-				skinClass="skins.DriversList"  change="selectedProjectChanged(event)"/>
+				skinClass="skins.DriversList" />
 
 		
 		<s:Spacer height="5" />

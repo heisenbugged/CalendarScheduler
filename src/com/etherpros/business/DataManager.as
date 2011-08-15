@@ -38,9 +38,10 @@ package com.etherpros.business {
 			this.contractors = contractors;
 		}
 		
-		public function loadJobs(assignments:DataModelCollection):void {
+		public function loadJobs(assignments:DataModelCollection):void {			
 			for each (var assignment:Assignment in assignments) {
-				trace( (clients.getByID(assignment.Client_ID) as Client).ClientName);
+				// trace( (clients.getByID(assignment.Client_ID) as Client).ClientName);
+				 
 				var job:Job = new Job();
 				job.AssignmentID 	= assignment.AssignmentID;
 				
