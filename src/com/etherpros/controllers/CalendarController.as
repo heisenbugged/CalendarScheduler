@@ -306,7 +306,8 @@ package com.etherpros.controllers
 		 * Draws all jobs based on the current dayRange 
 		 */
 		public function draw():void {
-			var jobs:ArrayCollection = getJobsInRange();
+			
+			var jobs:ArrayCollection = getJobsInRange( selectedProjectJobs );
 			for each(var job:Job in jobs) {
 				drawJobView(job);
 			}
@@ -315,7 +316,11 @@ package com.etherpros.controllers
 		/** 
 		 * Gets all job models that enter the active dayRange. 
 		 */
-		public function getJobsInRange():ArrayCollection {
+		public function getJobsInRange(jobs:ArrayCollection = null):ArrayCollection {
+			// if jobs list is null, use global jobs list
+			if(!jobs) {
+				jobs = this.jobs;
+			}
 			
 			var jobsInRange:ArrayCollection = new ArrayCollection();
 			for each(var job:Job in jobs) {
@@ -453,6 +458,17 @@ package com.etherpros.controllers
 		// -------------------
 		// Getters and Setters
 		// -------------------
+		public function get selectedProjectJobs():ArrayCollection {			
+			var jobs:ArrayCollection = new ArrayCollection();
+			for each(var job:Job in this.jobs) {
+				if(job.project.ProjectID == selectedProject.ProjectID) {
+					jobs.addItem(job);
+				}
+			}
+			
+			return jobs;
+		}
+		
 		[Bindable]
 		public function set jobs(value:DataModelCollection):void {
 			_jobs = value;	
