@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009"
+			   xmlns:s="library://ns.adobe.com/flex/spark"
+			   xmlns:mx="library://ns.adobe.com/flex/mx"
+			   width="400" height="128" title="Customer-Edit" xmlns:ns="http://mate.asfusion.com/">
+	
+	<fx:Script>
+		<![CDATA[
+			import com.etherpros.events.ClientEvent;
+			import com.etherpros.events.ContractorEvent;
+			import com.etherpros.model.data.Client;
+			import com.etherpros.model.data.Contractor;
+			
+			import mx.events.CloseEvent;
+			protected function addNewCustomer(event:MouseEvent):void
+			{
+				var client:Client = new Client();
+				client.ClientName = txtClientName.text;
+				var clientEvent:ClientEvent = new ClientEvent( ClientEvent.ADD_NEW );
+				clientEvent.client = client;
+				mateDispatcher.dispatchEvent(clientEvent);
+				close();
+			}
+			protected function closeMe(event:MouseEvent):void
+			{ close(); }			
+			protected function windowClose(event:CloseEvent):void
+			{ close(); }
+			
+			private function close():void{
+				reset();
+				var closeEvent:CloseEvent = new CloseEvent(CloseEvent.CLOSE);
+				dispatchEvent(closeEvent);
+			}
+			
+			private function reset():void{
+				txtClientName.text = "";
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<ns:Dispatcher id="mateDispatcher" />
+	</fx:Declarations>
+	
+	<s:Label x="39" y="17" width="101" height="22" text="Customer name:"/>
+	<s:TextInput id="txtClientName" x="135" y="17" width="236"/>
+	<s:Button id="btnAddProject" x="70" y="51" label="Add new" click="addNewCustomer(event)"/>
+	<s:Button id="btnCancel" x="219" y="51" label="Cancel" click="closeMe(event)"/>
+</s:TitleWindow>

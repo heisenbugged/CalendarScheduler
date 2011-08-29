@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009"
+			   xmlns:s="library://ns.adobe.com/flex/spark"
+			   xmlns:mx="library://ns.adobe.com/flex/mx"			   
+			   width="488" height="518" title="Contractor-Edit" xmlns:ns="http://mate.asfusion.com/">
+	
+	<fx:Script>
+		<![CDATA[
+			import com.etherpros.events.ContractorEvent;
+			import com.etherpros.model.data.Client;
+			import com.etherpros.model.data.Contractor;
+			
+			import mx.events.CloseEvent;
+			protected function addNewCustomer(event:MouseEvent):void
+			{
+				var contractor:Contractor = new Contractor();
+				contractor.FirstName= txtFirstName.text;
+				contractor.LastName	= txtLastName.text;
+				contractor.Title 	= txtTitle.text;
+				contractor.Tel		= txtPhone.text;
+				contractor.Email	= txtEmail.text;
+				contractor.Fax		= txtFax.text;
+				contractor.Cell 	= txtCellPhone.text;
+				contractor.Password	= txtPassword.text;
+				var contractorEvent:ContractorEvent = new ContractorEvent( ContractorEvent.ADD_NEW );
+				contractorEvent.contractor = contractor;
+				mateDispatcher.dispatchEvent(contractorEvent);						
+				close();
+			}
+			protected function closeMe(event:MouseEvent):void
+			{ close(); }			
+			protected function windowClose(event:CloseEvent):void
+			{ close(); }
+			
+			private function close():void{
+				reset();
+				var closeEvent:CloseEvent = new CloseEvent(CloseEvent.CLOSE);
+				dispatchEvent(closeEvent);
+			}
+			
+			private function reset():void{
+				txtFirstName.text	= "";
+				txtLastName.text	= "";
+				txtTitle.text	= "";
+				txtPhone.text	= "";
+				txtEmail.text	= "";
+				txtFax.text		= "";
+				txtCellPhone.text	= "";
+				txtPassword.text	= "";
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<ns:Dispatcher id="mateDispatcher" />
+	</fx:Declarations>
+	
+	<s:Button  x="133" y="427" label="Add new" click="addNewCustomer(event)"/>
+	<s:Button id="btnCancel" x="239" y="428" label="Cancel" click="closeMe(event)"/>
+	<s:Form x="39" y="22" width="420" height="344">
+		<s:FormItem width="100%" label="First Name:">
+			<s:TextInput id="txtFirstName" width="90%"/>
+		</s:FormItem>
+		<s:FormItem width="100%" label="Last Name:">
+			<s:TextInput id="txtLastName" width="90%"/>
+		</s:FormItem>
+		<s:FormItem width="100%" label="Title:">
+			<s:TextInput id="txtTitle" width="90%"/>
+		</s:FormItem>
+		<s:FormItem width="100%" label="Telephone:">
+			<s:TextInput id="txtPhone" width="90%"/>
+		</s:FormItem>
+		<s:FormItem width="100%" label="Email:">
+			<s:TextInput id="txtEmail" width="90%"/>
+		</s:FormItem>
+		<s:FormItem width="100%" label="Fax:">
+			<s:TextInput id="txtFax" width="90%"/>
+		</s:FormItem>
+		<s:FormItem width="100%" label="Cell Phone:">
+			<s:TextInput id="txtCellPhone" width="90%"/>
+		</s:FormItem>
+		<s:FormItem width="100%" label="Password:">
+			<s:TextInput id="txtPassword" width="90%"/>
+		</s:FormItem>
+	</s:Form>
+</s:TitleWindow>

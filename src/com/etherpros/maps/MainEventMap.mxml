@@ -38,10 +38,13 @@
 		<!-- Contractor loading.  -->
 		<EventHandlers type="{ContractorEvent.FIND_ALL}">
 			<MethodInvoker generator="{ ContractorDAO }" method="findAll"  />			
-		</EventHandlers>
+		</EventHandlers>		
 		<EventHandlers type="{ContractorEvent.FIND_ALL_DONE}">
 			<MethodInvoker generator="{DataManager}" method="loadContractors" arguments="{event.contractors}" /> 
-		</EventHandlers>		
+		</EventHandlers>
+		<EventHandlers type="{ContractorEvent.ADD_NEW}">
+			<MethodInvoker generator="{ ContractorDAO }" method="addNewContractor"  arguments="{event.contractor}"/>			
+		</EventHandlers>
 				
 		<!-- Project loading.  -->
 		<EventHandlers type="{ProjectEvent.FIND_ALL}">
@@ -50,7 +53,9 @@
 		<EventHandlers type="{ProjectEvent.FIND_ALL_DONE}">
 			<MethodInvoker generator="{DataManager}" method="loadProjects" arguments="{event.projects}" /> 
 		</EventHandlers>			
-		
+		<EventHandlers type="{ProjectEvent.ADD_NEW}">
+			<MethodInvoker generator="{ ProjectDAO }" method="addNewProject"   arguments="{event.project}" />			
+		</EventHandlers>
 		<!-- Rig loading. -->
 		<EventHandlers type="{RigEvent.FIND_ALL}">
 			<MethodInvoker generator="{ RigDAO }" method="findAll"  />			
@@ -66,7 +71,9 @@
 		<EventHandlers type="{ClientEvent.FIND_ALL_DONE}">
 			<MethodInvoker generator="{DataManager}" method="loadClients" arguments="{event.clients}" /> 
 		</EventHandlers>	
-		
+		<EventHandlers type="{ClientEvent.ADD_NEW}">
+			<MethodInvoker generator="{ ClientDAO }" method="addNewClient"  arguments="{event.client}" />			
+		</EventHandlers>
 		<!-- Jobs loading. -->
 		<EventHandlers type="{JobAssignmentEvent.FIND_ALL}">
 			<MethodInvoker generator="{ JobAssignmentDAO }" method="findAll"  arguments="{[event.startDate, event.endDate]}" />

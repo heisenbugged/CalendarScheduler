@@ -137,6 +137,7 @@
 			
 			private function projectsLoaded(event:Event):void {
 				bProjectsLoaded = true;
+				controller.updateProjectList();
 				checkIfFullyLoaded();
 			}
 			
@@ -162,6 +163,19 @@
 				_controller = controller;
 			}			
 			
+			
+			protected function addNewClient(event:MouseEvent):void
+			{
+				controller.showEditCustomer();
+				
+			}
+			
+			protected function addNewProject(event:MouseEvent):void
+			{	controller.showEditProject(); }
+			
+			
+			protected function addNewContractor(event:MouseEvent):void
+			{	controller.showEditContractor(); }
 			
 		]]>
 	</fx:Script>
@@ -211,6 +225,9 @@
 						click="dtPicker_clickHandler(event)" 
 						/>		
 		<s:Button id="btnSaveJobs" label="Save Jobs" click="saveJobs(event)"/>
+		<s:Button label="New client" click="addNewClient(event)"/>
+		<s:Button label="New Project" click="addNewProject(event)"/>		
+		<s:Button label="New Contractor" click="addNewContractor(event)"/>
 		
 		<s:Spacer height="30" />
 		

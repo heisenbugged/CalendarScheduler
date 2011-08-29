@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009"
+			   xmlns:s="library://ns.adobe.com/flex/spark"
+			   xmlns:mx="library://ns.adobe.com/flex/mx"
+			   width="400" height="258" title="Project-Edit" xmlns:ns="http://mate.asfusion.com/">
+	
+	<fx:Script>
+		<![CDATA[
+			import com.etherpros.events.ClientEvent;
+			import com.etherpros.events.ContractorEvent;
+			import com.etherpros.events.ProjectEvent;
+			import com.etherpros.model.data.Client;
+			import com.etherpros.model.data.Contractor;
+			import com.etherpros.model.data.Project;
+			
+			import mx.events.CloseEvent;
+			private var client:Client;
+			
+			public function init( _client:Client ):void{
+				this.client = _client;
+				this.lblSelectedClient.text = client.ClientName;
+			}
+			
+			protected function addNewProject(event:MouseEvent):void
+			{
+				var project:Project = new Project();
+				project.ProjName 	= txtProjectName.text;
+				project.ClientID	= this.client.ClientID;
+				project.ClientName	= this.client.ClientName;
+				var projectEvent:ProjectEvent = new ProjectEvent( ProjectEvent.ADD_NEW );
+				projectEvent.project = project;
+				mateDispatcher.dispatchEvent(projectEvent);
+				close();
+			}
+			protected function closeMe(event:MouseEvent):void
+			{ close(); }			
+			protected function windowClose(event:CloseEvent):void
+			{ close(); }
+			
+			private function close():void{
+				reset();
+				var closeEvent:CloseEvent = new CloseEvent(CloseEvent.CLOSE);
+				dispatchEvent(closeEvent);
+			}
+			
+			private function reset():void{
+				txtProjectName.text = "";
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<ns:Dispatcher id="mateDispatcher" />
+	</fx:Declarations>
+	
+	<s:Button id="btnAddProject" x="78" y="168" label="Add new" click="addNewProject(event)"/>
+	<s:Button id="btnCancel" x="234" y="168" label="Cancel" click="closeMe(event)"/>
+	<s:Form x="23" y="43" width="344" height="103">
+		<s:FormItem width="100%" label="Selected client:">
+			<s:Label id="lblSelectedClient" width="100%"/>
+		</s:FormItem>
+		<s:FormItem width="100%" label="Project Name:">
+			<s:TextInput id="txtProjectName" width="100%"/>
+		</s:FormItem>
+	</s:Form>
+</s:TitleWindow>

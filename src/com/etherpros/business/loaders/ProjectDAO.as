@@ -14,8 +14,8 @@ package com.etherpros.business.loaders
 	public class ProjectDAO extends BaseDAO
 	{
 		public static var LAYOUT:String = "Projects";
-		public static var URL:String = SERVER + "fmi/xml/fmresultset.xml?-db="+DATABASE+"&-lay="+LAYOUT+"&-findall";
-		private var projects:DataModelCollection;
+		public static var URL:String = SERVER + "fmi/xml/fmresultset.xml?-db="+DATABASE+"&-lay="+LAYOUT;
+		private var projects:DataModelCollection = new DataModelCollection()
 		private var isLoaded:Boolean = false;
 		[Bindable]
 		private var dispatcher:IEventDispatcher;
@@ -26,13 +26,20 @@ package com.etherpros.business.loaders
 		}
 		
 		public function findAll():void{
-			var urlRequest:URLRequest = new URLRequest(URL);
+			var urlRequest:URLRequest = new URLRequest( URL + "&-findall" );
 			var urlLoader:URLLoader = new URLLoader(urlRequest);
 			urlLoader.addEventListener(Event.COMPLETE,projectsLoaded);
 		}
 		
-		private function projectsLoaded(event:Event):void{
-			projects  = new DataModelCollection();			
+		public function addNewProject( project:Project ):void{
+			var strURL:String = URL + "&ProjName=" + project.ProjName + "&ClientID=" + project.ClientID 
+				+ "&ClientName="+project.ClientName	+ "&-new";
+			var urlRequest:URLRequest = new URLRequest( strURL );
+			var urlLoader:URLLoader = new URLLoader( urlRequest );
+			urlLoader.addEventListener( Event.COMPLETE, projectsLoaded );
+		}
+		
+		private function projectsLoaded(event:Event):void{						
 			var xml:XML = new XML(event.target.data);			
 			if (xml.namespace("") != undefined) { default xml namespace = xml.namespace(""); }
 			
@@ -86,7 +93,7 @@ package com.etherpros.business.loaders
 		
 		private function checkIfFullyLoaded():void {
 			if(isLoaded) {
-				var projectEvent:ProjectEvent = new ProjectEvent(ProjectEvent.FIND_ALL_DONE,true);
+				var projectEvent:ProjectEvent = new ProjectEvent( ProjectEvent.FIND_ALL_DONE, true );
 				projectEvent.projects = projects;
 				dispatcher.dispatchEvent(projectEvent);
 			}

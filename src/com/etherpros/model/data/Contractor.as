@@ -10,6 +10,12 @@ package com.etherpros.model.data
 		private var _ContractorID:String;
 		private var _FirstName:String;
 		private var _LastName:String;	
+		private var _Title:String;
+		private var _Tel:String;
+		private var _Email:String;
+		private var _Fax:String;
+		private var _Cell:String;
+		private var _Password:String;
 
 		public function Contractor() {
 			// pass abstract check
@@ -24,7 +30,6 @@ package com.etherpros.model.data
 			_ContractorID = value;
 		}
 		
-		[Bindable]
 		public function get FullName():String {
 			return this.FirstName + " " + this.LastName;
 		}
@@ -57,6 +62,66 @@ package com.etherpros.model.data
 		public function set ContractorID(value:String):void
 		{
 			_ContractorID = value;
+		}
+
+		public function get Title():String
+		{
+			return _Title;
+		}
+
+		public function set Title(value:String):void
+		{
+			_Title = value;
+		}
+
+		public function get Tel():String
+		{
+			return _Tel;
+		}
+
+		public function set Tel(value:String):void
+		{
+			_Tel = value;
+		}
+
+		public function get Email():String
+		{
+			return _Email;
+		}
+
+		public function set Email(value:String):void
+		{
+			_Email = value;
+		}
+
+		public function get Fax():String
+		{
+			return _Fax;
+		}
+
+		public function set Fax(value:String):void
+		{
+			_Fax = value;
+		}
+
+		public function get Cell():String
+		{
+			return _Cell;
+		}
+
+		public function set Cell(value:String):void
+		{
+			_Cell = value;
+		}
+
+		public function get Password():String
+		{
+			return _Password;
+		}
+
+		public function set Password(value:String):void
+		{
+			_Password = value;
 		}
 
 

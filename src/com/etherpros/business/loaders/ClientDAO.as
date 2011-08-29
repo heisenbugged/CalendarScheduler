@@ -1,8 +1,8 @@
 package com.etherpros.business.loaders
 {
 	import com.etherpros.events.ClientEvent;
-	import com.etherpros.model.data.Client;
 	import com.etherpros.model.DataModelCollection;
+	import com.etherpros.model.data.Client;
 	
 	import flash.events.Event;
 	import flash.events.IEventDispatcher;
@@ -14,9 +14,9 @@ package com.etherpros.business.loaders
 	public class ClientDAO extends BaseDAO
 	{
 		public static var LAYOUT:String = "Clients";
-		public static var URL:String = SERVER + "fmi/xml/fmresultset.xml?-db="+DATABASE+"&-lay="+LAYOUT+"&-findall";
+		public static var URL:String = SERVER + "fmi/xml/fmresultset.xml?-db="+DATABASE+"&-lay="+LAYOUT;
 	
-		private var clients:DataModelCollection;		
+		private var clients:DataModelCollection = new DataModelCollection();		
 		private var isLoaded:Boolean = false;		
 		private var dispatcher:IEventDispatcher;
 		
@@ -26,13 +26,20 @@ package com.etherpros.business.loaders
 		}
 		
 		public function findAll():void{
-			var urlRequest:URLRequest = new URLRequest(URL);
+			var urlRequest:URLRequest = new URLRequest( URL  + "&-findall" );
 			var urlLoader:URLLoader = new URLLoader(urlRequest);
 			urlLoader.addEventListener(Event.COMPLETE,clientsLoaded);
 		}
 		
+		public function addNewClient( client:Client ):void{
+			var strURL:String = URL + "&ClientName=" + client.ClientName + "&-new";
+			var urlRequest:URLRequest = new URLRequest( strURL );
+			var urlLoader:URLLoader = new URLLoader( urlRequest );
+			urlLoader.addEventListener( Event.COMPLETE,clientsLoaded );
+		}
+		
 		private function clientsLoaded(event:Event):void{
-			clients = new DataModelCollection();			
+						
 			var xml:XML = new XML(event.target.data);			
 			if (xml.namespace("") != undefined) { default xml namespace = xml.namespace(""); }
 			

@@ -3,6 +3,9 @@ package com.etherpros.controllers
 	import com.asfusion.mate.events.Dispatcher;
 	import com.asfusion.mate.events.Listener;
 	import com.etherpros.components.*;
+	import com.etherpros.components.popups.EditContractorPopup;
+	import com.etherpros.components.popups.EditCustomerPopup;
+	import com.etherpros.components.popups.EditProjectPopup;
 	import com.etherpros.components.popups.JobAssignmentPopup;
 	import com.etherpros.events.*;
 	import com.etherpros.model.*;
@@ -36,6 +39,9 @@ package com.etherpros.controllers
 		public var yOffset:int;
 		
 		private var jobAssignmentPopup:JobAssignmentPopup = new JobAssignmentPopup();
+		private var editCustomerPopup:EditCustomerPopup = new EditCustomerPopup();
+		private var editContractorPopup:EditContractorPopup = new EditContractorPopup();
+		private var editProjectPopup:EditProjectPopup = new EditProjectPopup();
 		// View associated to this controller.
 		private var _container:CalendarForm;
 		// day range being viewed on the calendar.
@@ -424,6 +430,40 @@ package com.etherpros.controllers
 			}
 			
 			return jobCounter;
+		}
+		
+		public function showEditCustomer():void{
+			PopUpManager.addPopUp(editCustomerPopup, _container, true);			
+			editCustomerPopup.addEventListener(CloseEvent.CLOSE, onCloseEditCustomer);
+			PopUpManager.centerPopUp(editCustomerPopup);
+		}
+		
+		private function onCloseEditCustomer(event:CloseEvent):void{
+			var editCustomer:EditCustomerPopup = event.currentTarget as EditCustomerPopup;
+			PopUpManager.removePopUp(editCustomer);
+		}
+		
+		public function showEditContractor():void{
+			PopUpManager.addPopUp(editContractorPopup, _container, true);			
+			editContractorPopup.addEventListener(CloseEvent.CLOSE, onCloseEditContractor);
+			PopUpManager.centerPopUp(editContractorPopup);
+		}
+		
+		private function onCloseEditContractor(event:CloseEvent):void{
+			var editEditContractorPopup:EditContractorPopup = event.currentTarget as EditContractorPopup;
+			PopUpManager.removePopUp(editEditContractorPopup);
+		}
+		
+		public function showEditProject():void{
+			PopUpManager.addPopUp(editProjectPopup, _container, true);
+			editProjectPopup.init(this.selectedClient);
+			editProjectPopup.addEventListener(CloseEvent.CLOSE, onCloseEditProject);
+			PopUpManager.centerPopUp(editProjectPopup);
+		}
+		
+		private function onCloseEditProject(event:CloseEvent):void{
+			var editProjectPopup:EditProjectPopup = event.currentTarget as EditProjectPopup;
+			PopUpManager.removePopUp(editProjectPopup);
 		}
 		
 		private function getDayByColumnAndRow(column:int, row:int):Day {

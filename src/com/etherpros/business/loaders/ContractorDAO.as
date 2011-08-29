@@ -2,8 +2,8 @@ package com.etherpros.business.loaders
 {
 	import com.asfusion.mate.events.Dispatcher;
 	import com.etherpros.events.ContractorEvent;
-	import com.etherpros.model.data.Contractor;
 	import com.etherpros.model.DataModelCollection;
+	import com.etherpros.model.data.Contractor;
 	
 	import flash.events.Event;
 	import flash.events.IEventDispatcher;
@@ -15,10 +15,10 @@ package com.etherpros.business.loaders
 	public class ContractorDAO extends BaseDAO
 	{
 		public static var LAYOUT:String = "Contractors";
-		public static var URL:String = SERVER + "fmi/xml/fmresultset.xml?-db="+DATABASE+"&-lay="+LAYOUT+"&-findall";	
+		public static var URL:String = SERVER + "fmi/xml/fmresultset.xml?-db="+DATABASE+"&-lay="+LAYOUT;	
 		
 		public static var CDN_URL:String =  "";
-		private var contractors:DataModelCollection;
+		private var contractors:DataModelCollection = new DataModelCollection();
 		private var isLoaded:Boolean = false;		
 		private var dispatcher:IEventDispatcher;
 		
@@ -28,13 +28,21 @@ package com.etherpros.business.loaders
 		}
 		
 		public function findAll():void{
-			var urlRequest:URLRequest = new URLRequest(URL);
+			var urlRequest:URLRequest = new URLRequest( URL +"&-findall" );
 			var urlLoader:URLLoader = new URLLoader(urlRequest);
 			urlLoader.addEventListener(Event.COMPLETE,loadedContractors);
 		}
 		
-		private function loadedContractors(event:Event):void {
-			contractors  = new DataModelCollection();
+		public function addNewContractor( contractor:Contractor ):void{
+			var strURL:String = URL + "&FirstName=" + contractor.FirstName + "&LastName="+contractor.LastName+"&Title="+contractor.Title
+				+ "&Tel="+ contractor.Tel + "&Email="+contractor.Email + "&Fax="+contractor.Fax + "&Cell="+contractor.Fax 
+				+ "&Password=" + contractor.Password + "&-new";
+			var urlRequest:URLRequest = new URLRequest( strURL );
+			var urlLoader:URLLoader = new URLLoader( urlRequest );
+			urlLoader.addEventListener( Event.COMPLETE,loadedContractors );
+		}
+		
+		private function loadedContractors(event:Event):void {			
 			var contractor:Contractor;
 			var xml:XML = new XML(event.target.data);			
 			if (xml.namespace("") != undefined) { default xml namespace = xml.namespace(""); }			
